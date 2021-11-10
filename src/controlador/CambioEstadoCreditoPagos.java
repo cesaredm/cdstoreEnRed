@@ -10,32 +10,32 @@ package controlador;
  * @author CESAR DIAZ MARADIAGA
  */
 public class CambioEstadoCreditoPagos implements EstadoCreditos {
-
+	float saldoCordobas,
+		saldoDolares;
 	@Override
 	public void updateApendiente(int idCredito) {
-		float pagos = 0, credito = 0, saldo = 0;
 		if (idCredito > 0) {
-			pagos = this.pagos.pagosCredito(idCredito);
-			credito = creditos.TotalCreditoCliente(idCredito);
-			saldo = credito - pagos;
-			if (saldo > 0.0) {
+			creditos.pagosPorCedito(idCredito);
+			creditos.saldoPorCredito(idCredito);
+			saldoCordobas = creditos.getSaldoCordobas() - creditos.getPagosCordobas();
+			saldoDolares = creditos.getSaldoDolares() - creditos.getPagosDolar();
+			if (saldoCordobas > 0.0 || saldoDolares > 0.0) {
 				creditos.ActualizarEstadoCredito(idCredito, "Pendiente");
 			}
 		} else {
 
 		}
-
 	}
 
 	@Override
 	public void updateAabierto(int idCredito) {
-//	variable para almacenar total de credito de cliete
-		float credito = creditos.creditoPorCliente(idCredito);
-		//condicion para saber si el saldo esta en 0.0 o menor de 0.0
-		if (credito == 0.0 || credito < 0) {
+		//variable para almacenar total de credito de cliete
+		creditos.pagosPorCedito(idCredito);
+		creditos.saldoPorCredito(idCredito);
+		saldoCordobas = creditos.getSaldoCordobas() - creditos.getPagosCordobas();
+		saldoDolares = creditos.getSaldoDolares()- creditos.getPagosDolar();
+		if (saldoCordobas <= 0 && saldoDolares <= 0) {
 			creditos.ActualizarEstadoCredito(idCredito, "Abierto");
-		}else{
-
 		}
 	}
 

@@ -456,20 +456,18 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 	public void generarPago() {
 		int filaseleccionada = menu.tblCreditos.getSelectedRow();
 		String credito, totalCredito;
-
 		try {
-			if (filaseleccionada == -1) {
-
-			} else {
+			if (filaseleccionada != -1) {
 				this.modelo = (DefaultTableModel) menu.tblCreditos.getModel();
 				credito = (String) this.modelo.getValueAt(filaseleccionada, 0);
 				totalCredito = (String) this.modelo.getValueAt(filaseleccionada, 1);
 				menu.txtCreditoPago.setText(credito);
-				menu.txtMontoPago.setText("0.0");
-				menu.txtMontoPago.requestFocus();
+				menu.jsMontoPago.setValue(0);
+				menu.jsMontoPago.requestFocus();
 				menu.pagosAcreditos.setSize(860, 540);
 				menu.pagosAcreditos.setVisible(true);
 				menu.pagosAcreditos.setLocationRelativeTo(null);
+			} else {
 
 			}
 		} catch (Exception err) {
@@ -478,7 +476,6 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 	}
 
 	//retorna el Saldo del cliente 
-	
 	public float limiteCredito(String id) {
 		return creditos.limiteCredito(id);
 	}

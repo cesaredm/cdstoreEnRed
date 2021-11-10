@@ -135,16 +135,20 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 
 	public void alinearTextoTabla() {
 		this.formatColumn.setHorizontalAlignment(SwingConstants.RIGHT);
+		this.formatColumn.setForeground(new Color(255,204,51));
+		this.formatColumn.setBackground(new Color(105, 105, 105));
 		menu.tblReporteDiarioCordobas.getColumnModel().getColumn(2).setCellRenderer(this.formatColumn);
-
-		this.modelColumn = this.menu.tblReporteDiarioCordobas.getColumnModel();
-		this.modelColumn.getColumn(0).setPreferredWidth(250);
-
-		this.formatColumn.setHorizontalAlignment(SwingConstants.RIGHT);
 		menu.tblReporteDiarioDolares.getColumnModel().getColumn(2).setCellRenderer(this.formatColumn);
 
+		/* ANCHO DE CILUMNA TABLA REPORTES CORDOBAS */
+		this.modelColumn = this.menu.tblReporteDiarioCordobas.getColumnModel();
+		this.modelColumn.getColumn(0).setPreferredWidth(250);
+		this.modelColumn.getColumn(1).setPreferredWidth(5);
+
+		/* ANCHO DE CILUMNA TABLA REPORTES DOLARES */
 		this.modelColumn = this.menu.tblReporteDiarioDolares.getColumnModel();
 		this.modelColumn.getColumn(0).setPreferredWidth(250);
+		this.modelColumn.getColumn(1).setPreferredWidth(3);
 	}
 
 	@Override
@@ -289,7 +293,7 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 	}
 
 	public void reportesDiarios(Date fecha) {
-		String[] tiulos = {"Cuentas", "C$", "Monto"};
+		String[] tiulos = {"Cuentas", "", "Monto"};
 		float totalVendidio = 0,
 			exisCaja = 0,
 			existCajaDolar = 0,
@@ -299,12 +303,17 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		long f1 = fecha.getTime();
 		java.sql.Date fechaInicio = new java.sql.Date(f1);
 		reportes.ventasEfectivoDiario(fechaInicio);
-		reportes.pagosEfectivoCordobasDiario(fechaInicio);
+		reportes.ventasTarjetaDiario(fechaInicio);
 		reportes.ingresoEfectivoDiario(fechaInicio);
 		reportes.ventasCreditoDiario(fechaInicio);
 		reportes.salidaEfectivoDiario(fechaInicio);
+		reportes.abonosEfectivoCordobasDiario(fechaInicio);
 		reportes.abonosTarjetaCordobasDiario(fechaInicio);
+		reportes.abonosEfecitvoDolarDiario(fechaInicio);
+		reportes.abonosTarjetaDolarDiario(fechaInicio);
 		reportes.IngresosTotalesDiario(fechaInicio);
+		reportes.IngresoAbancosDiarioCordobas();
+		reportes.IngresoAbancosDiarioDolares();
 
 		base = reportes.baseEfectivoDiario(fechaInicio);
 		ingresosEfectivo
@@ -323,14 +332,14 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		String[][] dataCordobas = {
 			{"Apertura caja", "C$", this.formato.format(base)},
 			{"Ingresos ventas Efectivo", "C$", this.formato.format(this.reportes.getVentasEfectivoDiarioCordobas())},
-			{"Ingresos ventas Tarjeta", "C$", this.formato.format(this.reportes.IngresoAbancosDiario(fechaInicio))},
+			{"Ingresos ventas Tarjeta", "C$", this.formato.format(this.reportes.getVentasTajetaDiarioCordobas())},
 			{"Ingresos por abonos efectivo", "C$", this.formato.format(this.reportes.getAbonosDiariosCordobas())},
 			{"Ingresos por abonos Tarjeta", "C$", this.formato.format(this.reportes.getAbonosTajetaCordobasDiario())},
 			{"Igresos de efectivo", "C$", this.formato.format(this.reportes.getIngresoDiarioCordobas())},
 			{"Creditos", "C$", this.formato.format(reportes.getVentasCreditoDiarioCordobas())},
 			{"Egresos", "C$", this.formato.format(this.reportes.getSalidaDiarioCordobas())},
 			{"Total vendido", "C$", this.formato.format(totalVendidio)},
-			{"Bancos", "C$", ""},
+			{"Bancos", "C$", this.formato.format(this.reportes.getTotalIngresoBancosCordobas())},
 			{"Total efectivo en caja", "C$", this.formato.format(exisCaja)}
 		};
 
@@ -343,7 +352,7 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 			{"Creditos", "$", this.formato.format(this.reportes.getVentasCreditoDiarioDolar())},
 			{"Egresos", "$", this.formato.format(this.reportes.getSalidaDiarioDolares())},
 			{"Total vendido", "$", this.formato.format(this.reportes.getVentasTotalesDolarDiario())},
-			{"", "", ""},
+			{"Bancos", "$", this.formato.format(this.reportes.getTotalIngresosBancosDolar())},
 			{"Total efectivo en caja", "$", this.formato.format(existCajaDolar)},};
 
 		this.modelo = new DefaultTableModel(dataCordobas, tiulos) {
@@ -372,19 +381,19 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		//ventas en efectivo
 		menu.lblTotalVentasEfectivoFiltro.setText("" + this.formato.format(reportes.ventasEfectivoRango(fechaInicio, fechaFinal)));
 		//ingreso de efectivo a caja
-		ingresosEfectivo = reportes.ventasEfectivoRango(fechaInicio, fechaFinal) + reportes.pagosEfectivoCordobasRango(fechaInicio, fechaFinal) + reportes.ingresoEfecitivoRango(fechaInicio, fechaFinal);
+		ingresosEfectivo = reportes.ventasEfectivoRango(fechaInicio, fechaFinal) + reportes.abonosEfectivoCordobasRango(fechaInicio, fechaFinal) + reportes.ingresoEfecitivoRango(fechaInicio, fechaFinal);
 		menu.lblIngresosEfectivo.setText("" + this.formato.format(reportes.ingresoEfecitivoRango(fechaInicio, fechaFinal)));
 		//ingresos ventas con tarjetas
 		menu.lblVentasTarjetaFiltro.setText("" + this.formato.format(reportes.IngresoAbancos(fechaInicio, fechaFinal)));
 		//ingreso´por abonos en efectivo
-		menu.lblAbonosEfectivoFiltro.setText("" + this.formato.format(reportes.pagosEfectivoCordobasRango(fechaInicio, fechaFinal)));
+		menu.lblAbonosEfectivoFiltro.setText("" + this.formato.format(reportes.abonosEfectivoCordobasRango(fechaInicio, fechaFinal)));
 		//ingreso por abonos con tarjeta
 		menu.lblAbonosTarjetaFiltro.setText("" + this.formato.format(reportes.abonosTarjetaCordobasRango(fechaInicio, fechaFinal)));
 		//ingresos a bancos
 		Ingresosbancos = reportes.IngresoAbancos(fechaInicio, fechaFinal) + reportes.abonosTarjetaCordobasRango(fechaInicio, fechaFinal);
 		menu.lblTotalBancosReportFiltro.setText("" + this.formato.format(Ingresosbancos));
 		//creditos realizados
-		creditos = reportes.ventasCreditosRango(fechaInicio, fechaFinal) - (reportes.pagosEfectivoCordobasRango(fechaInicio, fechaFinal) + reportes.abonosTarjetaCordobasRango(fechaInicio, fechaFinal));
+		creditos = reportes.ventasCreditosRango(fechaInicio, fechaFinal) - (reportes.abonosEfectivoCordobasRango(fechaInicio, fechaFinal) + reportes.abonosTarjetaCordobasRango(fechaInicio, fechaFinal));
 		menu.lblCreditosReportFiltro.setText("" + this.formato.format(creditos));
 		//salida de efectivo
 		Egresos = reportes.salidaEfectivoRango(fechaInicio, fechaFinal);

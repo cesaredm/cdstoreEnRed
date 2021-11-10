@@ -46,7 +46,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		subTotal,
 		pagoCon,
 		cambio,
-		descuento;
+		descuento,
+		precioDolar;
 	String formaPago,
 		comprador,
 		cliente,
@@ -77,6 +78,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		this.menu = menu;
 		this.facturaModel = factura;
 		this.detalle = new DetalleFactura();
+
 		this.estadosCreditos = new CambioEstadoCreditoFactura();
 		this.menu.cmbFormaPago.setModel(factura.FormasPago());
 		this.formato = new DecimalFormat("#,###,###,###,#00.00");
@@ -115,8 +117,10 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		this.menu.tblFactura.addKeyListener(this);
 		this.menu.txtBuscarPorCategoria.addCaretListener(this);
 		this.menu.txtBuscarPorLaboratorio.addCaretListener(this);
-		this.menu.txtPagoCon.addCaretListener(this);
-		this.menu.txtPagoCon.addKeyListener(this);
+		this.menu.txtPagoConCordobas.addCaretListener(this);
+		this.menu.txtPagoConCordobas.addKeyListener(this);
+		this.menu.txtPagoConDolares.addCaretListener(this);
+		this.menu.txtPagoConDolares.addKeyListener(this);
 		this.menu.txtCambio.addCaretListener(this);
 		this.menu.txtTotalCordobas.addCaretListener(this);
 		this.menu.cmbFormaPago.addActionListener(this);
@@ -250,17 +254,50 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		}
 	}
 
+	public boolean isNumeric(String valor) {
+		try {
+			Float.parseFloat(valor);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+
+	}
+
+	public void cambio() {
+		/*Logica de cambio*/
+		float pagoConCordobas = 0,
+			pagoConDolaresCompra = 0,
+			pagoConDolaresVenta = 0,
+			totalFactura = Float.parseFloat(CleanChars(this.menu.txtTotalGlobalCordobas.getText())),
+			cambio = 0,
+			precioDolarCompra,
+			precioDolarVenta;
+		pagoConCordobas = (!isNumeric(this.menu.txtPagoConCordobas.getText()))
+			? 0 : Float.parseFloat(this.menu.txtPagoConCordobas.getText());
+		pagoConDolaresCompra = (!isNumeric(this.menu.txtPagoConDolares.getText()))
+			? 0 : Float.parseFloat(this.menu.txtPagoConDolares.getText());
+		pagoConDolaresVenta = (!isNumeric(this.menu.txtPagoConDolaresVenta.getText()))
+			? 0 : Float.parseFloat(this.menu.txtPagoConDolaresVenta.getText());
+		precioDolarCompra = (!isNumeric(this.menu.txtPrecioDolarCompra.getText()))
+			? 1 : Float.parseFloat(this.menu.txtPrecioDolarCompra.getText());
+		precioDolarVenta = (!isNumeric(this.menu.txtPrecioDolarVenta.getText()))
+			? 1 : Float.parseFloat(this.menu.txtPrecioDolarVenta.getText());
+
+		cambio = ((pagoConDolaresCompra * precioDolarCompra)
+			+ (pagoConDolaresVenta * precioDolarVenta)
+			+ pagoConCordobas)
+			- totalFactura;
+
+		menu.txtCambio.setText(String.valueOf(cambio));
+	}
+
 	@Override
 	public void caretUpdate(CaretEvent e) {
-		if (e.getSource() == menu.txtPagoCon) {
-			String total = menu.txtTotalCordobas.getText(), pagoCon = menu.txtPagoCon.getText();
-			float cambio = 0;
-			if (menu.isNumeric(pagoCon)) {
-				cambio = Float.parseFloat(pagoCon) - Float.parseFloat(total);
-				menu.txtCambio.setText(String.valueOf(cambio));
-			} else if (pagoCon.equals("")) {
-				menu.txtCambio.setText("");
-			}
+		if (e.getSource() == menu.txtPagoConCordobas
+			|| e.getSource() == menu.txtPagoConDolares
+			|| e.getSource() == menu.txtPagoConDolaresVenta) {
+			cambio();
 		}
 		if (e.getSource() == menu.txtBuscarPorLaboratorio) {
 			String laboratorio = menu.txtBuscarPorLaboratorio.getText();
@@ -354,7 +391,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 
 	public void validar() {
 		try {
-			this.pagoCon = (menu.txtPagoCon.getText().equals("")) ? 0 : Float.parseFloat(menu.txtPagoCon.getText());
+			this.pagoCon = (menu.txtPagoConCordobas.getText().equals("")) ? 0 : Float.parseFloat(menu.txtPagoConCordobas.getText());
 			this.cambio = (menu.txtCambio.getText().equals("")) ? 0 : Float.parseFloat(menu.txtCambio.getText());
 			this.subTotal = (menu.txtSubTotal.getText().equals("")) ? 0 : Float.parseFloat(menu.txtSubTotal.getText());
 			this.comprador = menu.txtCompradorFactura.getText();
@@ -544,48 +581,48 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 	}
 
 	public void AgregarProductoFacturaEnter() {
-		String codBarra = menu.txtCodBarraFactura.getText();
-		String precioDolar = menu.txtPrecioDolarVenta.getText(), id = "";
+		String codBarra = menu.txtCodBarraFactura.getText(),
+			id;
+		float precioDolarCompra = (!isNumeric(this.menu.txtPrecioDolarCompra.getText()))
+			? 1 : Float.parseFloat(this.menu.txtPrecioDolarCompra.getText());
+		float precioDolarVenta = (!isNumeric(this.menu.txtPrecioDolarVenta.getText()))
+			? 1 : Float.parseFloat(this.menu.txtPrecioDolarVenta.getText());
 		int filas = 0;
-		float totalImports = 0,
-			sacarImpuesto = 0,
-			porcentajeImp = 0,
-			cantidadUpdate = 0,
-			importeUpdate = 0,
-			cantidadActual = 0,
-			precio = 0;
-		if (!menu.isNumeric(precioDolar) || precioDolar.equals("0")) {
-			menu.txtPrecioDolarVenta.setText("1");
-		} else {
-			precioDolar = menu.txtPrecioDolarVenta.getText();
-			this.facturaModel.setPrecioDolar(Float.parseFloat(precioDolar));
-			this.facturaModel.obtenerPorCodBarra(codBarra);
-			if (this.facturaModel.isExito()) {
-				if (this.facturaModel.getStock() > 0) {
-					this.modelo = (DefaultTableModel) menu.tblFactura.getModel();
-					this.modelo.addRow(this.facturaModel.getProducto());
-					filas = this.modelo.getRowCount();
-					this.facturaModel.Vender(this.facturaModel.getProducto()[0], this.facturaModel.getProducto()[2]);
-					for (int i = 0; i < filas; i++) {
-						totalImports += Float.parseFloat(this.modelo.getValueAt(i, 5).toString());
-					}
-					sacarImpuesto = Float.parseFloat(1 + "." + menu.lblImpuestoISV.getText());
-					porcentajeImp = Float.parseFloat(menu.lblImpuestoISV.getText());
-					this.total = totalImports;
-					this.isv = ((this.total / sacarImpuesto) * porcentajeImp) / 100;
-					this.subTotal = this.total - this.isv;
-					menu.txtSubTotal.setText("" + formato.format(this.subTotal));
-					menu.txtImpuesto.setText("" + formato.format(this.isv));
-					menu.txtTotalCordobas.setText("" + formato.format(this.total));
-					menu.txtCodBarraFactura.setText("");
-					DeshabilitarBtnGuardarFactura();
-					this.mostrarProductosVender("");
+		float sacarImpuesto = 0,
+			porcentajeImp = 0;
+		this.facturaModel.obtenerPorCodBarra(codBarra);
+		if (this.facturaModel.isExito()) {
+			if (this.facturaModel.getStock() > 0) {
+				this.modelo = (DefaultTableModel) menu.tblFactura.getModel();
+				this.modelo.addRow(this.facturaModel.getProducto());
+				if (this.facturaModel.getMonedaVenta().equals("Dolar")) {
+					this.totalImporteDolar += Float.parseFloat(CleanChars(this.facturaModel.getProducto()[5]));
 				} else {
-					JOptionPane.showMessageDialog(null, "No hay suficiente producto en stock para realizar la venta");
+					this.totalImporteCordobas += Float.parseFloat(CleanChars(this.facturaModel.getProducto()[5]));
 				}
+				this.facturaModel.Vender(this.facturaModel.getProducto()[0], this.facturaModel.getProducto()[2]);
+				sacarImpuesto = Float.parseFloat(1 + "." + menu.lblImpuestoISV.getText());
+				porcentajeImp = Float.parseFloat(menu.lblImpuestoISV.getText());
+				this.totalGlobalCordobas = totalImporteCordobas + (totalImporteDolar * precioDolarVenta);
+				this.totalGlobalDolar = totalImporteDolar + (totalImporteCordobas / precioDolarCompra);
+				this.total = totalImporteCordobas;
+				this.totalDolar = totalImporteDolar;
+				this.isv = ((this.totalGlobalCordobas / sacarImpuesto) * porcentajeImp) / 100;
+				this.subTotal = this.total - this.isv;
+				menu.txtSubTotal.setText("" + formato.format(this.subTotal));
+				menu.txtImpuesto.setText("" + formato.format(this.isv));
+				menu.txtTotalCordobas.setText("" + formato.format(this.total));
+				menu.txtTotalDolar.setText(this.formato.format(this.totalDolar));
+				menu.txtTotalGlobalCordobas.setText(this.formato.format(this.totalGlobalCordobas));
+				menu.txtTotalGolbalDolar.setText(this.formato.format(this.totalGlobalDolar));
+				menu.txtCodBarraFactura.setText("");
+				DeshabilitarBtnGuardarFactura();
+				this.mostrarProductosVender("");
 			} else {
-				this.menu.txtCodBarraFactura.setText("");
+				JOptionPane.showMessageDialog(null, "No hay suficiente producto en stock para realizar la venta");
 			}
+		} else {
+			this.menu.txtCodBarraFactura.setText("");
 		}
 	}
 
@@ -693,7 +730,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			menu.txtCreditoFactura.setText("");
 			menu.txtCompradorFactura.setText("");
 			menu.cmbFormaPago.setSelectedItem("Efectivo");
-			menu.txtPagoCon.setText("");
+			menu.txtPagoConCordobas.setText("");
 			menu.txtCambio.setText("");
 			this.total = 0;
 			this.totalDolar = 0;
@@ -745,7 +782,9 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 				stock,
 				cantidadPVender,
 				importe = 0,
-				precioDolar = Float.parseFloat(menu.txtPrecioDolarVenta.getText()),
+				precioDolarCompra = Float.parseFloat(menu.txtPrecioDolarCompra.getText()),
+				precioDolarVenta = (isNumeric(this.menu.txtPrecioDolarVenta.getText()))
+				? 1 : Float.parseFloat(this.menu.txtPrecioDolarVenta.getText()),
 				sacarImpuesto = Float.parseFloat(1 + "." + menu.lblImpuestoISV.getText()),
 				porcentajeImp = Float.parseFloat(menu.lblImpuestoISV.getText());
 
@@ -780,8 +819,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 							simboloMoneda + " " + this.formato.format(importe)
 						};
 						this.modelo.addRow(FilaElementos);
-						this.totalGlobalCordobas = totalImporteCordobas + (totalImporteDolar * precioDolar);
-						this.totalGlobalDolar = totalImporteDolar + (totalImporteCordobas / precioDolar);
+						this.totalGlobalCordobas = totalImporteCordobas + (totalImporteDolar * precioDolarVenta);
+						this.totalGlobalDolar = totalImporteDolar + (totalImporteCordobas / precioDolarCompra);
 						this.total = totalImporteCordobas;
 						this.totalDolar = totalImporteDolar;
 						impuesto = ((this.totalGlobalCordobas / sacarImpuesto) * porcentajeImp) / 100;
@@ -865,15 +904,19 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 	public void addMasProducto() {
 		String nombre = "",
 			id = "",
-			codBarra = "",
-			iu;
+			codBarra,
+			iu,
+			moneda;
 		float cantidadIngresar = 0,
 			cantidadActual = 0,
 			precio = 0,
 			cantidadUpdate = 0,
 			importeUpdate = 0,
 			totalImports = 0,
-			precioDolar = 0,
+			precioDolarCompra = (!isNumeric(this.menu.txtPrecioDolarCompra.getText()))
+			? 1 : Float.parseFloat(this.menu.txtPrecioDolarCompra.getText()),
+			precioDolarVenta = (!isNumeric(this.menu.txtPrecioDolarVenta.getText()))
+			? 1 : Float.parseFloat(this.menu.txtPrecioDolarVenta.getText()),
 			sacarImpuesto = 0,
 			porcentajeImp = 0;
 		int filas = 0,
@@ -891,7 +934,6 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 				);
 			} else {
 
-				precioDolar = Float.parseFloat(menu.txtPrecioDolarVenta.getText());
 				id = (String) this.modelo.getValueAt(filaseleccionada, 0);
 				nombre = (String) this.modelo.getValueAt(filaseleccionada, 3);
 				codBarra = (String) this.modelo.getValueAt(filaseleccionada, 1);
@@ -905,29 +947,35 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 				cantidadIngresar = Float.parseFloat(spiner.getValue().toString());
 				if (cantidadIngresar <= facturaModel.getStock()) {
 					cantidadActual = Float.parseFloat(this.modelo.getValueAt(filaseleccionada, 2).toString());
-					precio = Float.parseFloat(this.modelo.getValueAt(filaseleccionada, 4).toString());
+					precio = Float.parseFloat(this.CleanChars(this.modelo.getValueAt(filaseleccionada, 4).toString()));
 					this.facturaModel.monedaVentaProducto(id);
 					cantidadUpdate = cantidadActual + cantidadIngresar;
 					if (this.facturaModel.getMonedaVenta().equalsIgnoreCase("Dolar")) {
-						importeUpdate = (cantidadUpdate * precio) * precioDolar;
+						importeUpdate = (cantidadUpdate * precio);
+						this.totalImporteDolar += (cantidadIngresar * precio);
+						moneda = "$";
 					} else if (this.facturaModel.getMonedaVenta().equalsIgnoreCase("Córdobas")) {
 						importeUpdate = (cantidadUpdate * precio);
+						this.totalImporteCordobas += (cantidadIngresar * precio);
+						moneda = "C$";
 					}
 					this.modelo.setValueAt(String.valueOf(cantidadUpdate), filaseleccionada, 2);
 					this.modelo.setValueAt(formato.format(importeUpdate), filaseleccionada, 5);
 					this.facturaModel.Vender(id, String.valueOf(cantidadIngresar));
-					for (int i = 0; i < filas; i++) {
-						totalImports += Float.parseFloat(this.modelo.getValueAt(i, 5).toString());
-					}
-
+					this.totalGlobalCordobas = totalImporteCordobas + (totalImporteDolar * precioDolarVenta);
+					this.totalGlobalDolar = totalImporteDolar + (totalImporteCordobas / precioDolarCompra);
 					sacarImpuesto = Float.parseFloat(1 + "." + menu.lblImpuestoISV.getText());
-					this.total = totalImports;
 					porcentajeImp = Float.parseFloat(menu.lblImpuestoISV.getText());
-					this.isv = (float) ((this.total / sacarImpuesto) * porcentajeImp) / 100;
-					this.subTotal = this.total - this.isv;
+					this.total = this.totalImporteCordobas;
+					this.totalDolar = this.totalImporteDolar;
+					this.isv = (float) ((this.totalGlobalCordobas / sacarImpuesto) * porcentajeImp) / 100;
+					this.subTotal = this.totalGlobalCordobas - this.isv;
 					menu.txtSubTotal.setText("" + formato.format(this.subTotal));
 					menu.txtImpuesto.setText("" + formato.format(this.isv));
 					menu.txtTotalCordobas.setText("" + formato.format(this.total));
+					menu.txtTotalDolar.setText(this.formato.format(this.totalDolar));
+					menu.txtTotalGlobalCordobas.setText(this.formato.format(this.totalGlobalCordobas));
+					menu.txtTotalGolbalDolar.setText(this.formato.format(this.totalGlobalDolar));
 					menu.txtCodBarraFactura.requestFocus();
 					spiner.setValue(0.00);
 					this.mostrarProductosVender("");
@@ -1225,7 +1273,6 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			menu.txtPrecioDolarVenta.setText("1");
 		} else {
 			precioDolar = menu.txtPrecioDolarVenta.getText();
-			this.facturaModel.setPrecioDolar(Float.parseFloat(precioDolar));
 			this.facturaModel.obtenerPorCodBarra(codBarra);
 			if (this.facturaModel.getProducto()[0] != null) {
 				this.modelo = (DefaultTableModel) menu.tblFactura.getModel();
@@ -1574,7 +1621,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		long f1 = fecha.getTime();
 		java.sql.Date fechaInicio = new java.sql.Date(f1);//convertir la fecha a formato sql
 		reportes.ventasEfectivoDiario(fechaInicio);
-		reportes.pagosEfectivoCordobasDiario(fechaInicio);
+		reportes.abonosEfectivoCordobasDiario(fechaInicio);
 		reportes.ingresoEfectivoDiario(fechaInicio);
 		reportes.ventasCreditoDiario(fechaInicio);
 		reportes.salidaEfectivoDiario(fechaInicio);
@@ -1585,18 +1632,17 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		//ingresos por ventas en efectivo
 		ingresosVentaE = this.reportes.getVentasEfectivoDiarioCordobas();
 		//ingresos por ventas cobradas con tarjeta
-		ingresosVentasT = reportes.IngresoAbancosDiario(fechaInicio);
 		//ingresos por pagos cobrados en efectivo
 		ingresosPagosE = this.reportes.getAbonosDiariosCordobas();
 		//ingresos por pagos cobrados con tarjeta
 		ingresosPagoT = this.reportes.getAbonosTajetaCordobasDiario();
 		//ingresos totales diarios en efectivo
-		ingresosEfectivo = 
-			this.reportes.getVentasEfectivoDiarioCordobas()
+		ingresosEfectivo
+			= this.reportes.getVentasEfectivoDiarioCordobas()
 			+ this.reportes.getAbonosDiariosCordobas()
 			+ this.reportes.getIngresoDiarioCordobas();
 		//ingreso a bancos por ventas con tarjeta y pagos con tarjeta diarios
-		//Ingresosbancos = reportes.IngresoAbancosDiario(fechaInicio) + reportes.abonosTarjetaCordobasDiario(fechaInicio);
+		//Ingresosbancos = reportes.IngresoAbancosDiarioCordobas(fechaInicio) + reportes.abonosTarjetaCordobasDiario(fechaInicio);
 		//creditos realizados 
 		creditos = reportes.getVentasCreditoDiarioCordobas();
 		//egresos realizados

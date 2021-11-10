@@ -15,7 +15,6 @@ import vista.IMenu;
  */
 public interface EstadoCreditos {
 	IMenu menu = new IMenu();
-	PagosCreditos pagos = new PagosCreditos();
 	Creditos creditos = new Creditos();
 
 	public void updateApendiente(int idCredito);

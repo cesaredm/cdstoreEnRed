@@ -28,6 +28,18 @@ import vista.IMenu;
  */
 public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretListener, MouseListener {
 
+	private int id;
+	private int credito;
+	private float monto,
+		saldo,
+		saldoActual;
+
+	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-YYYY");
+	String fechaString;
+	private java.sql.Date fechaSQL;
+	private int formaPago;
+	private String anotacion;
+	private String moneda;
 	IMenu menu;
 	PagosCreditos pagos;
 	SockectCliente socketCliente;
@@ -37,7 +49,6 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 	PrintReportes print;
 	InfoFactura info;
 	DefaultTableModel modelo;
-	String id;
 	Date fecha;
 	DecimalFormat formato;
 
@@ -75,90 +86,84 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 			guardarPago();
 		}
 		if (e.getSource() == menu.btnActualizarPago) {
-			int c;
-			float montoPago;
-			String credito = menu.txtCreditoPago.getText(),
-				monto = menu.txtMontoPago.getText(),
-				formaPago = menu.cmbFormaPagoCredito.getSelectedItem().toString(),
-				anotacion = menu.txtAreaAnotacionPago.getText();
-			Date f = menu.jcFechaPago.getDate();
-			int idFormaPago = Integer.parseInt(pagos.ObtenerFormaPago(formaPago));
-			long fecha = f.getTime();
-			java.sql.Date fechaPago = new java.sql.Date(fecha);
-			if (!credito.equals("") && !monto.equals("")) {
-				if (isNumeric(credito) && isNumeric(monto)) {
-					c = Integer.parseInt(credito);
-					montoPago = Float.parseFloat(monto);
-					pagos.Actualizar(this.id, c, montoPago, fechaPago, idFormaPago, anotacion);
-					MostrarPagos("");
-					MostrarCreditos("");
-					estadoCreditos.updateApendiente(c);
-					estadoCreditos.updateAabierto(c);
-					LimpiarPago();
-					menu.btnGuardarPago.setEnabled(true);
-					menu.btnActualizarPago.setEnabled(false);
-				}
-			} else {
-
-			}
+			this.actualizar();
 		}
 		if (e.getSource() == menu.btnNuevoPago) {
 			HabilitarPago();
 			LimpiarPago();
-			menu.txtMontoPago.requestFocus();
+			menu.jsMontoPago.requestFocus();
 		}
 		if (e.getSource() == menu.EditarPago) {
-			int filaseleccionada = menu.tblPagos.getSelectedRow();
-			String id, monto, credito, formaPago, anotacion;
-			Date fecha;
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			try {
-				if (filaseleccionada == -1) {
-
-				} else {
-					this.modelo = (DefaultTableModel) menu.tblPagos.getModel();
-					id = (String) this.modelo.getValueAt(filaseleccionada, 0);
-					monto = (String) this.modelo.getValueAt(filaseleccionada, 1);
-					credito = (String) this.modelo.getValueAt(filaseleccionada, 2);
-					fecha = sdf.parse(this.modelo.getValueAt(filaseleccionada, 3).toString());
-					formaPago = (String) this.modelo.getValueAt(filaseleccionada, 6).toString();
-					anotacion = (String) this.modelo.getValueAt(filaseleccionada, 7).toString();
-					this.id = id;
-
-					HabilitarPago();
-					menu.txtMontoPago.setText(monto);
-					menu.txtCreditoPago.setText(credito);
-					menu.jcFechaPago.setDate(fecha);
-					menu.cmbFormaPagoCredito.setSelectedItem(formaPago);
-					menu.txtAreaAnotacionPago.setText(anotacion);
-					menu.btnGuardarPago.setEnabled(false);
-					menu.btnActualizarPago.setEnabled(true);
-				}
-			} catch (Exception err) {
-			}
+			this.editar();
 		}
 		if (e.getSource() == menu.BorrarPago) {
-			int filaseleccionada = menu.tblPagos.getSelectedRow(), id = 0;
-			try {
-				if (filaseleccionada == -1) {
-
-				} else {
-					this.modelo = (DefaultTableModel) menu.tblPagos.getModel();
-					id = Integer.parseInt(this.modelo.getValueAt(filaseleccionada, 0).toString());
-					this.pagos.Eliminar(id);
-					MostrarPagos("");
-					this.estadoCreditos.updateApendiente(id);
-					this.estadoCreditos.updateAabierto(id);
-				}
-			} catch (Exception err) {
-				JOptionPane.showMessageDialog(null, e + " en la funcion Borrar Pago", "Error", JOptionPane.ERROR_MESSAGE);
-			}
+			this.eliminar();
 
 		}
 		if (e.getSource() == menu.btnMostrarPagosRegistrados) {
 			menu.pagosAcreditos.setSize(860, 540);
 			menu.pagosAcreditos.setVisible(true);
 			menu.pagosAcreditos.setLocationRelativeTo(null);
+		}
+	}
+
+	public void eliminar() {
+		int filaseleccionada = menu.tblPagos.getSelectedRow();
+		try {
+			if (filaseleccionada == -1) {
+
+			} else {
+				this.modelo = (DefaultTableModel) menu.tblPagos.getModel();
+				this.id = Integer.parseInt(this.modelo.getValueAt(filaseleccionada, 0).toString());
+				this.credito = Integer.parseInt(this.modelo.getValueAt(filaseleccionada, 2).toString());
+				this.pagos.setId(this.id);
+				this.pagos.Eliminar();
+				MostrarPagos("");
+				this.estadoCreditos.updateApendiente(this.credito);
+				this.estadoCreditos.updateAabierto(this.credito);
+			}
+		} catch (Exception err) {
+			JOptionPane.showMessageDialog(null, err + " en la funcion Borrar Pago", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public void editar() {
+		int filaseleccionada = menu.tblPagos.getSelectedRow();
+		try {
+			if (filaseleccionada != -1) {
+				this.modelo = (DefaultTableModel) menu.tblPagos.getModel();
+				this.id = Integer.parseInt(this.modelo.getValueAt(filaseleccionada, 0).toString());
+				this.pagos.setId(this.id);
+				this.pagos.editar();
+				HabilitarPago();
+				menu.jcFechaPago.setDate(this.pagos.getFecha());
+				menu.cmbFormaPagoCredito.setSelectedItem(this.pagos.getFormaPagoString());
+				menu.txtAreaAnotacionPago.setText(this.pagos.getAnotacion());
+				menu.cmbMonedaPago.setSelectedItem(this.pagos.getMoneda());
+				menu.txtCreditoPago.setText(String.valueOf(this.pagos.getCredito()));
+				menu.btnGuardarPago.setEnabled(false);
+				menu.btnActualizarPago.setEnabled(true);
+			}
+		} catch (Exception err) {
+		}
+	}
+
+	public void actualizar() {
+		if (this.validar()) {
+			this.pagos.setCredito(this.credito);
+			this.pagos.setMonto(this.monto);
+			this.pagos.setMoneda(this.moneda);
+			this.pagos.setFecha(this.fechaSQL);
+			this.pagos.setFormaPago(this.formaPago);
+			this.pagos.setAnotacion(this.anotacion);
+			pagos.Actualizar();
+			MostrarPagos("");
+			MostrarCreditos("");
+			estadoCreditos.updateApendiente(this.credito);
+			estadoCreditos.updateAabierto(this.credito);
+			LimpiarPago();
+			menu.btnGuardarPago.setEnabled(true);
+			menu.btnActualizarPago.setEnabled(false);
 		}
 	}
 
@@ -182,7 +187,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 
 	//metodo para limpiar el formulario Pagos
 	public void LimpiarPago() {
-		menu.txtMontoPago.setText("");
+		menu.jsMontoPago.setValue(0);
 		menu.cmbFormaPagoCredito.setSelectedItem("Efectivo");
 		menu.txtAreaAnotacionPago.setText("");
 	}
@@ -203,61 +208,65 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 		this.menu.lblNumeroPago.setText("" + creditos.obtenerUltimoPago());
 	}
 
-	public void guardarPago() {
-		int c;
-		String[] ips = {"127.0.0.1"};
-		float montoPago,
-			saldo = 0,
-			saldoActual = 0;
-		String fechaString = "",
-			credito = menu.txtCreditoPago.getText(),
-			monto = menu.txtMontoPago.getText(),
-			formaPago = menu.cmbFormaPagoCredito.getSelectedItem().toString(),
-			anotacion = menu.txtAreaAnotacionPago.getText(),
-			numeroPago = menu.lblNumeroPago.getText();
-		int idFormaPago = Integer.parseInt(pagos.ObtenerFormaPago(formaPago));
-		Date f = menu.jcFechaPago.getDate();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-YYYY");
-		long fecha = f.getTime();
-		java.sql.Date fechaPago = new java.sql.Date(fecha);
-		fechaString = sdf.format(fecha);
-		if (!credito.equals("") && !monto.equals("")) {
-			if (isNumeric(credito) && isNumeric(monto)) {
-				try {
-					c = Integer.parseInt(credito);
-					montoPago = Float.parseFloat(monto);
-					saldo = pagos.deuda(credito) - pagos.PagosSegunCredito(credito);
-					this.pagos.setCredito(c);
-					this.pagos.setMonto(montoPago);
-					this.pagos.setFecha(fechaPago);
-					this.pagos.setFormaPago(idFormaPago);
-					this.pagos.setAnotacion(anotacion);
-					pagos.Guardar();
-					this.estadoCreditos.updateAabierto(c);
-					this.socketCliente.setIps(ips);
-					this.socketCliente.socketInit(this.pagos);
-					saldoActual = pagos.deuda(credito) - pagos.PagosSegunCredito(credito);
-					UltimoPago();
-					info.obtenerInfoFactura();
-					imprimir(info.getNombre(),
-						numeroPago,
-						fechaString, this.pagos.cliente(credito),
-						credito, this.formato.format(saldo),
-						monto, this.formato.format(saldoActual));
-					MostrarPagos("");
-					LimpiarPago();
-					this.MostrarCreditos("");
-					this.MostrarCreditos("");
-					MostrarPagos("");
-					menu.btnGuardarPago.setEnabled(true);
-					menu.btnActualizarPago.setEnabled(false);
-				} catch (Exception e) {
-
-				}
-			}
+	public boolean validar() {
+		boolean validar = true;
+		this.credito = (this.menu.txtCreditoPago.getText().equals("")) ? 0 : Integer.parseInt(menu.txtCreditoPago.getText());
+		this.monto = Float.parseFloat(menu.jsMontoPago.getValue().toString());
+		this.formaPago = Integer.parseInt(this.pagos.ObtenerFormaPago(this.menu.cmbFormaPagoCredito.getSelectedItem().toString()));
+		this.anotacion = menu.txtAreaAnotacionPago.getText();
+		this.fechaSQL = new java.sql.Date(this.menu.jcFechaPago.getDate().getTime());
+		this.moneda = this.menu.cmbMonedaPago.getSelectedItem().toString();
+		this.fechaString = sdf.format(this.menu.jcFechaPago.getDate());
+		if (this.credito == 0) {
+			validar = false;
+		} else if (this.monto == 0) {
+			validar = false;
 		} else {
-
+			validar = true;
 		}
+		return validar;
+	}
+
+	public void guardarPago() {
+		String[] ips = {"127.0.0.1"};
+		float saldo = 0,
+			saldoActual = 0;
+		String numeroPago = menu.lblNumeroPago.getText();
+		if (this.validar()) {
+			try {
+				saldo = pagos.deuda(String.valueOf(this.credito)) - pagos.PagosSegunCredito(String.valueOf(this.credito));
+				this.pagos.setCredito(this.credito);
+				this.pagos.setMonto(this.monto);
+				this.pagos.setMoneda(moneda);
+				this.pagos.setFecha(this.fechaSQL);
+				this.pagos.setFormaPago(this.formaPago);
+				this.pagos.setAnotacion(this.anotacion);
+				pagos.Guardar();
+				this.estadoCreditos.updateAabierto(this.credito);
+				this.socketCliente.setIps(ips);
+				this.socketCliente.socketInit(this.pagos);
+				saldoActual = pagos.deuda(String.valueOf(this.credito)) - pagos.PagosSegunCredito(String.valueOf(this.credito));
+				UltimoPago();
+				info.obtenerInfoFactura();
+				imprimir(
+					info.getNombre(),
+					numeroPago,
+					fechaString,
+					this.pagos.cliente(String.valueOf(this.credito)),
+					String.valueOf(this.credito),
+					this.formato.format(saldo),
+					this.formato.format(this.monto),
+					this.formato.format(saldoActual));
+				MostrarPagos("");
+				LimpiarPago();
+				this.MostrarCreditos("");
+				menu.btnGuardarPago.setEnabled(true);
+				menu.btnActualizarPago.setEnabled(false);
+			} catch (Exception e) {
+
+			}
+		}
+
 	}
 
 	public void MostrarCreditos(String buscar) {

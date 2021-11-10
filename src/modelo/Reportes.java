@@ -53,7 +53,9 @@ public class Reportes extends Conexiondb {
 		ventasTotalesDolarRango,
 		ventasTotalesCordobasRango,
 		ventasTotalesCordobasDiario,
-		ventasTotalesDolarDiario;
+		ventasTotalesDolarDiario,
+		totalIngresoBancosCordobas,
+		totalIngresosBancosDolar;
 	
 
 	public Reportes() {
@@ -318,6 +320,22 @@ public class Reportes extends Conexiondb {
 		this.ventasTotalesDolarDiario = ventasTotalesDolarDiario;
 	}
 
+	public float getTotalIngresoBancosCordobas() {
+		return totalIngresoBancosCordobas;
+	}
+
+	public void setTotalIngresoBancosCordobas(float totalIngresoBancosCordobas) {
+		this.totalIngresoBancosCordobas = totalIngresoBancosCordobas;
+	}
+
+	public float getTotalIngresosBancosDolar() {
+		return totalIngresosBancosDolar;
+	}
+
+	public void setTotalIngresosBancosDolar(float totalIngresosBancosDolar) {
+		this.totalIngresosBancosDolar = totalIngresosBancosDolar;
+	}
+
 
 	public void setPrecioDolar(float precio) {
 		this.precioDolar = precio;
@@ -580,7 +598,7 @@ public class Reportes extends Conexiondb {
 	}
 	//metodo para Obtener el total de ingreso por pagos de creditos en efectivo por rangos de fechas
 
-	public void pagosEfectivoCordobasRango(Date fecha1, Date fecha2) {
+	public void abonosEfectivoCordobasRango(Date fecha1, Date fecha2) {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Efectivo'"
@@ -599,7 +617,7 @@ public class Reportes extends Conexiondb {
 		}
 	}
 
-	public void pagosEfectivoDolarRango(Date fecha1, Date fecha2) {
+	public void abonosEfectivoDolarRango(Date fecha1, Date fecha2) {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Efectivo'"
@@ -619,7 +637,7 @@ public class Reportes extends Conexiondb {
 	}
 
 	//metodo para Obtener el total de Ingresos por pagos en efectivo por dia 
-	public void pagosEfectivoCordobasDiario(Date fecha1) {
+	public void abonosEfectivoCordobasDiario(Date fecha1) {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Efectivo' AND pagoscreditos.moneda = 'cordobas'"
@@ -637,7 +655,7 @@ public class Reportes extends Conexiondb {
 		}
 	}
 
-	public void pagosEfecitvoDolarDiario(Date fecha1) {
+	public void abonosEfecitvoDolarDiario(Date fecha1) {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Efectivo' AND pagoscreditos.moneda = 'Dolar'"
@@ -962,6 +980,25 @@ public class Reportes extends Conexiondb {
 		}
 	}
 
+	public void ventasTarjetaDiario(Date fecha1){
+		cn = Conexion();
+		this.consulta = "SELECT SUM(totalCordobas) AS totalCordobas, SUM(totalDolares) AS totalDolares FROM facturas"
+			+ " INNER JOIN formapago ON(formapago.id=facturas.tipoVenta) INNER JOIN cajas ON(facturas.caja=cajas.id)"
+			+ " WHERE fecha = ? AND formapago.tipoVenta = 'Tarjeta' AND cajas.caja='CAJA1'";
+		try {
+			PreparedStatement pst = this.cn.prepareStatement(this.consulta);
+			pst.setDate(1, fecha1);
+			ResultSet rs = pst.executeQuery();
+			while (rs.next()) {
+				this.ventasTarjetaDiarioDolar = rs.getFloat("totalDolares");
+				this.ventasTajetaDiarioCordobas = rs.getFloat("totalCordobas");
+			}
+			this.cn.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e + "funcion IngresoEfectivoCaja en modelo reportes");
+		}
+	}
+	
 	public float ingresoEfectivoCajaGlobal() {
 		float total = 0;
 		cn = Conexion();
@@ -1058,22 +1095,12 @@ public class Reportes extends Conexiondb {
 	}
 
 	//Ingresos totales a bancos por dia (ventas con tarjeta de credito o debito)
-	public float IngresoAbancosDiario(Date fecha1) {
-		float total = 0;
-		cn = Conexion();
-		this.consulta = "SELECT SUM(totalFactura) AS total FROM facturas INNER JOIN formapago ON(formapago.id=facturas.tipoVenta) INNER JOIN cajas ON(facturas.caja=cajas.id) WHERE facturas.fecha = ? AND formapago.tipoVenta = 'Tarjeta' AND cajas.caja = 'CAJA1'";
-		try {
-			PreparedStatement pst = this.cn.prepareStatement(this.consulta);
-			pst.setDate(1, fecha1);
-			ResultSet rs = pst.executeQuery();
-			while (rs.next()) {
-				total = rs.getFloat("total");
-			}
-			this.cn.close();
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e + "funcion Ingreso A bancos en modelo");
-		}
-		return total;
+	public void IngresoAbancosDiarioCordobas() {
+		this.totalIngresoBancosCordobas = this.abonosTajetaCordobasDiario + this.ventasTajetaDiarioCordobas;
+	}
+
+	public void IngresoAbancosDiarioDolares() {
+		this.totalIngresosBancosDolar = this.abonosTarjetaDolarDiario + this.ventasTarjetaDiarioDolar;
 	}
 
 	public float IngresoAbancosGlobal() {

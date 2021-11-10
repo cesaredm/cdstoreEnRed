@@ -22,7 +22,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 	transient ResultSet rs;
 	int banderin;
 	private String[] producto;
-	private float stock, precioDolar;
+	private float stock;
 	private String monedaVenta;
 	private boolean exito;
 	private int caja;
@@ -156,11 +156,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 		return monedaVenta;
 	}
 
-	public void setPrecioDolar(float precio) {
-		this.precioDolar = precio;
-	}
 //Guardar Factura
-
 	public void GuardarFactura() {
 		cn = Conexion();
 		this.consulta = "INSERT INTO facturas(caja ,fecha, nombre_comprador, credito, tipoVenta, impuestoISV, totalCordobas, totalDolares)"
@@ -208,15 +204,14 @@ public class Facturacion extends Conexiondb implements Serializable {
 	}
 //Guardar detalleFactura
 
-
-	public void editar(){
+	public void editar() {
 		this.cn = Conexion();
 		this.consulta = "SELECT f.*,cl.nombres,apellidos,formapago.tipoVenta AS pago FROM facturas AS f LEFT JOIN creditos AS c ON(f.credito=c.id) LEFT JOIN clientes AS cl ON(cl.id=c.cliente) INNER JOIN formapago ON(formaPago.id=f.tipoVenta) WHERE f.id = ?";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
 			this.pst.setInt(1, this.id);
 			this.rs = this.pst.executeQuery();
-			while(this.rs.next()){
+			while (this.rs.next()) {
 				this.id = this.rs.getInt("id");
 				this.caja = this.rs.getInt("caja");
 				this.credito = this.rs.getInt("credito");
@@ -227,13 +222,13 @@ public class Facturacion extends Conexiondb implements Serializable {
 				this.formapago = this.rs.getString("pago");
 				this.iva = this.rs.getFloat("impuestoISV");
 				this.totalCordobas = this.rs.getFloat("totalFactura");
-			}	
+			}
 			this.cn.close();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e);
 		}
 	}
-	
+
 //metodo para busqueda general y por nombre y cod. barra de producto
 	public DefaultTableModel BusquedaGeneralProductoVender(String buscar) {
 		cn = Conexion();
@@ -394,7 +389,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 	public int ObtenerFormaPago(String pago) {
 		cn = Conexion();
 		this.consulta = "SELECT id FROM formapago WHERE tipoVenta = '" + pago + "'";
-		int id =  0;
+		int id = 0;
 		try {
 			Statement st = this.cn.createStatement();
 			ResultSet rs = st.executeQuery(this.consulta);
@@ -431,9 +426,9 @@ public class Facturacion extends Conexiondb implements Serializable {
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			pst.setInt(1, this.caja);
-			if(this.credito > 0){
+			if (this.credito > 0) {
 				this.pst.setInt(2, this.credito);
-			}else{
+			} else {
 				this.pst.setNull(2, java.sql.Types.INTEGER);
 			}
 			pst.setString(3, this.nombreComprador);
@@ -497,6 +492,12 @@ public class Facturacion extends Conexiondb implements Serializable {
 		return isYes;
 	}
 
+	public String cleanChars(String value){
+		value = value.replace("C", "");
+		value = value.replace("$", "");
+		return value;	
+	}
+	
 	public void obtenerPorCodBarra(String codBarra) {
 		this.producto = new String[6];
 		float importe;
@@ -513,19 +514,19 @@ public class Facturacion extends Conexiondb implements Serializable {
 					this.producto[1] = rs.getString("codigoBarra");
 					this.producto[2] = "1.0";
 					this.producto[3] = rs.getString("nombre");
-					this.producto[4] = rs.getString("precioVenta");
 					this.stock = rs.getFloat("stock");
 					this.monedaVenta = rs.getString("monedaVenta");
+					this.producto[4] = (this.monedaVenta.equals("Dolar")) 
+						? "$" + rs.getString("precioVenta") : "C$" + rs.getString("precioVenta");
 				}
-				if (this.producto[4] == null) {
-
-				} else {
-					importe = Float.parseFloat(producto[2]) * Float.parseFloat(producto[4]);
+				if (this.producto[4] != null) {
+					importe = Float.parseFloat(producto[2]) * Float.parseFloat(cleanChars(producto[4]));
 					if (this.monedaVenta.equals("Dolar")) {
-						importe = importe * precioDolar;
+						this.producto[5] = "$" + formato.format(importe);
+					} else {
+						this.producto[5] = "C$" + formato.format(importe);
 					}
-					this.producto[5] = formato.format(importe);
-				}
+				} 
 			} else {
 				this.exito = false;
 				JOptionPane.showMessageDialog(null, "Producto no esta insgresado.. O no tiene código de barra");
@@ -559,9 +560,10 @@ public class Facturacion extends Conexiondb implements Serializable {
 			} else {
 				importe = Float.parseFloat(producto[2]) * Float.parseFloat(producto[4]);
 				if (this.monedaVenta.equals("Dolar")) {
-					importe = importe * precioDolar;
+					this.producto[5] = "$" + formato.format(importe);
+				} else {
+					this.producto[5] = "C$" + formato.format(importe);
 				}
-				this.producto[5] = formato.format(importe);
 			}
 			this.cn.close();
 		} catch (SQLException e) {
