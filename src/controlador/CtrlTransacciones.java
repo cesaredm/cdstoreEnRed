@@ -28,7 +28,8 @@ public class CtrlTransacciones implements ActionListener, CaretListener {
 	private java.sql.Date fechaSQL;
 	private String Descripcion,
 		TipoTrans,
-		nombreCaja;
+		nombreCaja,
+		moneda;
 	private int idCaja,
 		id;
 	IMenu menu;
@@ -62,6 +63,7 @@ public class CtrlTransacciones implements ActionListener, CaretListener {
 		this.nombreCaja = (String) menu.cmbCajaTransaccion.getSelectedItem();
 		this.idCaja = this.transaccion.IdCaja(nombreCaja);
 		this.TipoTrans = (String) menu.cmbTipoTransaccion.getSelectedItem();
+		this.moneda = (String) menu.cmbMonedaTransaccion.getSelectedItem();
 		now = menu.jcFechaGasto.getDate();
 		long f = now.getTime();
 		this.fechaSQL = new java.sql.Date(f);
@@ -77,6 +79,7 @@ public class CtrlTransacciones implements ActionListener, CaretListener {
 	public void guardar() {
 		if (this.validar()) {
 			this.transaccion.setMonto(monto);
+			this.transaccion.setMoneda(this.moneda);
 			this.transaccion.setDescripcion(Descripcion);
 			this.transaccion.setIdCaja(idCaja);
 			this.transaccion.setTipoTrans(TipoTrans);
@@ -92,6 +95,7 @@ public class CtrlTransacciones implements ActionListener, CaretListener {
 	public void actualizar() {
 		if (this.validar()) {
 			this.transaccion.setMonto(monto);
+			this.transaccion.setMoneda(this.moneda);
 			this.transaccion.setDescripcion(Descripcion);
 			this.transaccion.setIdCaja(idCaja);
 			this.transaccion.setTipoTrans(TipoTrans);
@@ -115,6 +119,7 @@ public class CtrlTransacciones implements ActionListener, CaretListener {
 				this.transaccion.setId(this.id);
 				this.transaccion.editar();
 				menu.jsMontoTransaccion.setValue(this.transaccion.getMonto());
+				menu.cmbMonedaTransaccion.setSelectedItem(this.transaccion.getMoneda());
 				menu.txtDescripcionGasto.setText(this.transaccion.getDescripcion());
 				menu.jcFechaGasto.setDate(this.transaccion.getFecha());
 				menu.cmbCajaTransaccion.setSelectedItem(this.transaccion.getNombreCaja());
@@ -201,10 +206,12 @@ public class CtrlTransacciones implements ActionListener, CaretListener {
 	public void LimpiarGastos() {
 		menu.jsMontoTransaccion.setValue(0);
 		menu.txtDescripcionGasto.setText("");
+		menu.cmbMonedaTransaccion.setSelectedIndex(1);
 	}
 
 	public void HabilitarGastos() {
 		menu.jsMontoTransaccion.setEnabled(true);
+		menu.cmbMonedaTransaccion.setEnabled(true);
 		menu.cmbTipoTransaccion.setEnabled(true);
 		menu.btnActualizarGasto.setEnabled(false);
 		menu.btnGuardarGasto.setEnabled(true);
@@ -214,6 +221,7 @@ public class CtrlTransacciones implements ActionListener, CaretListener {
 
 	public void DeshabilitarGastos() {
 		menu.jsMontoTransaccion.setEnabled(false);
+		menu.cmbMonedaTransaccion.setEnabled(false);
 		menu.txtDescripcionGasto.setEnabled(false);
 		menu.btnActualizarGasto.setEnabled(false);
 		menu.btnGuardarGasto.setEnabled(false);

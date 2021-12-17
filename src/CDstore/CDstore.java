@@ -5,10 +5,7 @@
  */
 package CDstore;
 
-import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.intellijthemes.FlatOneDarkIJTheme;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMonokaiProIJTheme;
 import modelo.*;
 import controlador.*;
 import java.util.logging.Level;
@@ -24,20 +21,27 @@ import vista.ILogin;
  * @author CESAR DIAZ MARADIAGA
  */
 public class CDstore {
-    CDstore(){
-        
-    }
-    public static void main(String[] args) {
-            FlatIntelliJLaf.install();
-            ILogin login = new ILogin();
-            Login modelLogin = new Login();
-            CtrlLogin ctrl = new CtrlLogin(login, modelLogin);
-            ctrl.iniciar();
-            try {
-            JFrame.setDefaultLookAndFeelDecorated(true);
-            JDialog.setDefaultLookAndFeelDecorated(true);
-            UIManager.setLookAndFeel("com.formdev.flatlaf.FlatIntelliJLaf");
-            } catch (Exception e) {
-        }
-    }
+
+	CDstore() {
+
+	}
+
+	public static void main(String[] args) {
+		FlatMonokaiProIJTheme.install();
+		UIManager.put("Button.arc", 999);
+		UIManager.put("Component.arc", 999);
+		UIManager.put("ProgressBar.arc", 999);
+		UIManager.put("TextComponent.arc", 999);
+		ILogin login = new ILogin();
+		Login modelLogin = new Login();
+		CtrlLogin ctrl = new CtrlLogin(login, modelLogin);
+		ctrl.iniciar();
+		try {
+			JFrame.setDefaultLookAndFeelDecorated(true);
+			JDialog.setDefaultLookAndFeelDecorated(true);
+			//UIManager.setLookAndFeel("com.formdev.flatlaf.FlatIntelliJLaf");
+			UIManager.setLookAndFeel("com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMonokaiProIJTheme");
+		} catch (Exception e) {
+		}
+	}
 }

@@ -3,6 +3,8 @@ package modelo;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.text.DecimalFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -19,7 +21,10 @@ public class Creditos extends Conexiondb {
 		pagosDolar,
 		pagosCordobas,
 		saldoCordobas = 0,
-		saldoDolares = 0;
+		saldoDolares = 0,
+		saldoInicialDolares = 0,
+		saldoInicialCordobas = 0;
+	float saldoInicialD, saldoInicialC;
 	DefaultTableModel modelo;
 	Connection cn;
 	String consulta;
@@ -111,19 +116,36 @@ public class Creditos extends Conexiondb {
 	public void setPagosCordobas(float pagosCordobas) {
 		this.pagosCordobas = pagosCordobas;
 	}
-	
+
+	public float getSaldoInicialDolares() {
+		return saldoInicialDolares;
+	}
+
+	public void setSaldoInicialDolares(float saldoInicialDolares) {
+		this.saldoInicialDolares = saldoInicialDolares;
+	}
+
+	public float getSaldoInicialCordobas() {
+		return saldoInicialCordobas;
+	}
+
+	public void setSaldoInicialCordobas(float saldoInicialCordobas) {
+		this.saldoInicialCordobas = saldoInicialCordobas;
+	}
 
 	//Funcion para guardar los creditos
 	public void GuardarCredito() {
 		cn = Conexion();
 		//consulta sql para guardar creditos
-		this.consulta = "INSERT INTO creditos(cliente, estado, fecha, limite) VALUES(?,?,?,?)";
+		this.consulta = "INSERT INTO creditos(cliente, estado, fecha, limite, saldoInicialDolar, saldoInicialCordobas) VALUES(?,?,?,?,?,?)";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			pst.setInt(1, cliente);
 			pst.setString(2, estado);
 			pst.setDate(3, fecha);
 			pst.setFloat(4, limite);
+			pst.setFloat(5, this.saldoInicialDolares);
+			pst.setFloat(6, this.saldoInicialCordobas);
 			this.banderin = pst.executeUpdate();
 			if (this.banderin > 0) {
 				JOptionPane.showMessageDialog(null, "Credito Agregado exitosamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
@@ -137,14 +159,17 @@ public class Creditos extends Conexiondb {
 	//Funcion para actualizar los creditos
 	public void Actualizar() {
 		cn = Conexion();
-		this.consulta = "UPDATE creditos SET cliente = ?, estado = ?, fecha = ?, limite = ? WHERE id=?";
+		this.consulta = "UPDATE creditos SET cliente = ?, estado = ?, fecha = ?, limite = ?, saldoInicialDolar = ?, saldoInicialCordobas = ?"
+			+ " WHERE id=?";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			pst.setInt(1, cliente);
 			pst.setString(2, estado);
 			pst.setDate(3, fecha);
 			pst.setFloat(4, limite);
-			pst.setInt(5, id);
+			pst.setFloat(5, this.saldoInicialDolares);
+			pst.setFloat(6, this.saldoInicialCordobas);
+			pst.setInt(7, id);
 			this.banderin = pst.executeUpdate();
 			if (this.banderin > 0) {
 				JOptionPane.showMessageDialog(
@@ -172,6 +197,8 @@ public class Creditos extends Conexiondb {
 				this.estado = rs.getString("estado");
 				this.fecha = rs.getDate("fecha");
 				this.limite = rs.getFloat("limite");
+				this.saldoInicialCordobas = rs.getFloat("saldoInicialCordobas");
+				this.saldoInicialDolares = rs.getFloat("saldoInicialDolar");
 			}
 			this.cn.close();
 		} catch (SQLException e) {
@@ -204,10 +231,11 @@ public class Creditos extends Conexiondb {
 	//funcion de consulta de datos de creditos y retornar una tabla con los creditos para mostrarla en interfaz
 	public DefaultTableModel Mostrar(String buscar) {
 		cn = Conexion();
-		this.consulta = "SELECT c.id,SUM(f.totalCordobas) AS totalCordobas, SUM(f.totalDolares) AS totalDolares,"
-			+ " c.limite ,cl.id as idCliente,nombres,apellidos, c.estado FROM creditos AS c INNER JOIN"
-			+ " clientes AS cl ON(c.cliente = cl.id) INNER JOIN facturas AS f ON(f.credito = c.id)"
-			+ " WHERE CONCAT(c.id, cl.nombres, cl.apellidos) LIKE '%" + buscar + "%' AND c.estado = 'Pendiente' GROUP BY cl.id";
+//		this.consulta = "SELECT c.id,(SUM(f.totalCordobas) + c.saldoInicialCordobas) AS totalCordobas, (SUM(f.totalDolares) + c.saldoInicialDolar) AS totalDolares,"
+//			+ " c.limite ,cl.id as idCliente,nombres,apellidos, c.estado FROM creditos AS c INNER JOIN"
+//			+ " clientes AS cl ON(c.cliente = cl.id) INNER JOIN facturas AS f ON(f.credito = c.id)"
+//			+ " WHERE CONCAT(c.id, cl.nombres, cl.apellidos) LIKE '%" + buscar + "%' AND c.estado = 'Pendiente' GROUP BY cl.id";
+		this.consulta = "SELECT c.id, c.limite, cl.id AS idCliente, cl.nombres,apellidos, c.estado  FROM creditos AS c INNER JOIN clientes AS cl ON(c.cliente=cl.id) WHERE CONCAT(c.id, cl.nombres, cl.apellidos) LIKE '%" + buscar + "%' AND c.estado = 'Pendiente' GROUP BY cl.id";
 		String[] titulos = {"N° Credito", "Saldo C$", "Saldo $", "Limite", "Id Cliente", "Nombres", "Apellidos", "Estado"};
 		this.registros = new String[9];
 		this.modelo = new DefaultTableModel(null, titulos) {
@@ -218,18 +246,18 @@ public class Creditos extends Conexiondb {
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			ResultSet rs = pst.executeQuery();
-			float pd,pc,sd,sc;
+			float pd, pc, sd, sc;
 			while (rs.next()) {
 				pd = 0;
 				pc = 0;
 				//en la variable monto obtengo el total de pagos de el cliente
 				//this.PagosCliente(rs.getInt("idCliente"));
 				this.pagosPorCedito(rs.getInt("id"));
+				this.saldoInicialCredito(rs.getInt("id"));
+				this.saldoPorCredito(rs.getInt("id"));
 				//en la variable saldo obtengo lo que queda de la resta de lo que debe el cliente menos total de pagos que ha hecho
-				sc = rs.getFloat("totalCordobas") - this.pagosCordobas;
-				sd = rs.getFloat("totalDolares") - this.pagosDolar;
-				System.out.println(rs.getFloat("totalCordobas") +"-" +this.pagosCordobas);
-				
+				sc = /*rs.getFloat("totalCordobas")*/ this.saldoCordobas - this.pagosCordobas;
+				sd = /*rs.getFloat("totalDolares")*/ this.saldoDolares - this.pagosDolar;
 				this.registros[0] = rs.getString("id");
 				this.registros[1] = this.formato.format(sc);
 				this.registros[2] = this.formato.format(sd);
@@ -243,6 +271,12 @@ public class Creditos extends Conexiondb {
 			cn.close();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e + " mostrar creditos");
+		} finally {
+			try {
+				this.cn.close();
+			} catch (SQLException ex) {
+				Logger.getLogger(Creditos.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 		return this.modelo;
 	}
@@ -350,7 +384,7 @@ public class Creditos extends Conexiondb {
 	}
 
 	//
-	public DefaultTableModel MostrarProductosCreditoDolar(int id) {
+	public DefaultTableModel MostrarHistorialProductosCreditoDolar(int id) {
 		this.cn = Conexion();
 		float tasaCambio;
 		String[] titulos = {"Fecha", "Nombre", "Cantidad", "Precio", "", "TC", "Total C$", "N. Fact"};
@@ -387,7 +421,7 @@ public class Creditos extends Conexiondb {
 		return this.modelo;
 	}
 
-	public DefaultTableModel MostrarProductosCreditoCordobas(int id) {
+	public DefaultTableModel MostrarHistorialProductosCreditoCordobas(int id) {
 		this.cn = Conexion();
 		String[] titulos = {"Fecha", "Nombre", "Cantidad", "Precio", "", "Total C$", "N. Fact"};
 		registros = new String[7];
@@ -421,16 +455,142 @@ public class Creditos extends Conexiondb {
 		return this.modelo;
 	}
 
-	public DefaultTableModel MostrarAbonosCliente(int id) {
+	public boolean isExistePagoCancelacion(int credito) {
+		boolean isExiste = true;
+		int cont = 0;
 		this.cn = Conexion();
-		this.consulta = "SELECT p.id,p.fecha AS f,p.monto,p.anotacion FROM pagoscreditos AS p INNER JOIN creditos AS c ON(p.credito=c.id) WHERE c.id = ?";
-		String[] titulos = {"Id Pago", "Fecha", "Monto", "Anotación"};
+		this.consulta = "SELECT fecha FROM pagoscreditos WHERE credito = ? AND pagoCancelacion = 'cancelado'"
+			+ " ORDER BY id DESC LIMIT 1";
+		try {
+			this.pst = this.cn.prepareStatement(this.consulta);
+			this.pst.setInt(1, credito);
+			ResultSet rs = this.pst.executeQuery();
+			while (rs.next()) {
+				cont++;
+			}
+			if (cont > 0) {
+				isExiste = true;
+			} else {
+				isExiste = false;
+			}
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e);
+		}
+		return isExiste;
+	}
+
+	public DefaultTableModel listaProductoCreditosDolar(int credito) {
+		String[] titulos = {"Cantidad", "Producto", "Precio", "Importe", "Factura", "Fecha"};
+		this.cn = Conexion();
+		this.registros = new String[6];
+		String consultaSecundary = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,f.fecha"
+			+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
+			+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Dolar'";
+		this.modelo = new DefaultTableModel(null, titulos) {
+			@Override
+			public boolean isCellEditable(int row, int col) {
+				return false;
+			}
+		};
+		try {
+			if (this.isExistePagoCancelacion(credito)) {
+				this.consulta = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,f.fecha"
+					+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
+					+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Dolar'"
+					+ " AND f.fecha > (SELECT fecha FROM pagoscreditos WHERE credito = ? AND pagoCancelacion = 'cancelado'"
+					+ " ORDER BY id DESC LIMIT 1)";
+				this.pst = this.cn.prepareStatement(this.consulta);
+				this.pst.setInt(1, credito);
+				this.pst.setInt(2, credito);
+			} else {
+				this.pst = this.cn.prepareStatement(consultaSecundary);
+				this.pst.setInt(1, credito);
+			}
+
+			ResultSet rs = this.pst.executeQuery();
+			while (rs.next()) {
+				this.registros[0] = rs.getString("cantidadProducto");
+				this.registros[1] = rs.getString("nombre");
+				this.registros[2] = rs.getString("precioProducto");
+				this.registros[3] = rs.getString("totalVenta");
+				this.registros[4] = rs.getString("factura");
+				this.registros[5] = rs.getString("fecha");
+				this.modelo.addRow(this.registros);
+			}
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e);
+		} finally {
+			try {
+				this.cn.close();
+			} catch (SQLException ex) {
+				Logger.getLogger(Creditos.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		return this.modelo;
+	}
+
+	public DefaultTableModel listaProductoCreditosCordobas(int credito) {
+		String[] titulos = {"Cantidad", "Producto", "Precio", "Importe", "Factura", "Fecha"};
+		this.cn = Conexion();
+		this.registros = new String[6];
+
+		String consultaSecundary = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,f.fecha"
+			+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
+			+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Córdobas'";
+		this.modelo = new DefaultTableModel(null, titulos) {
+			@Override
+			public boolean isCellEditable(int row, int col) {
+				return false;
+			}
+		};
+		try {
+			if (this.isExistePagoCancelacion(credito)) {
+				this.consulta = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,f.fecha"
+					+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
+					+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta='Córdobas'"
+					+ " AND f.fecha > (SELECT fecha FROM pagoscreditos WHERE credito = ? AND pagoCancelacion = 'cancelado'"
+					+ " ORDER BY id DESC LIMIT 1)";
+				this.pst = this.cn.prepareStatement(this.consulta);
+				this.pst.setInt(1, credito);
+				this.pst.setInt(2, credito);
+			} else {
+				this.pst = this.cn.prepareStatement(consultaSecundary);
+				this.pst.setInt(1, credito);
+			}
+
+			ResultSet rs = this.pst.executeQuery();
+			while (rs.next()) {
+				this.registros[0] = rs.getString("cantidadProducto");
+				this.registros[1] = rs.getString("nombre");
+				this.registros[2] = rs.getString("precioProducto");
+				this.registros[3] = rs.getString("totalVenta");
+				this.registros[4] = rs.getString("factura");
+				this.registros[5] = rs.getString("fecha");
+				this.modelo.addRow(this.registros);
+			}
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e);
+		} finally {
+			try {
+				this.cn.close();
+			} catch (SQLException ex) {
+				Logger.getLogger(Creditos.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		return this.modelo;
+	}
+
+	public DefaultTableModel MostrarAbonosCreditos(int id) {
+		this.cn = Conexion();
+		this.consulta = "SELECT p.id,p.fecha AS f,p.monto,p.moneda,p.anotacion FROM pagoscreditos AS p"
+			+ " INNER JOIN creditos AS c ON(p.credito=c.id) WHERE c.id = ?";
+		String[] titulos = {"Id Pago", "Fecha", "Monto", "Moneda", "Anotación"};
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
 			}
 		};
-		this.registros = new String[4];
+		this.registros = new String[5];
 
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
@@ -440,7 +600,8 @@ public class Creditos extends Conexiondb {
 				this.registros[0] = rs.getString("id");
 				this.registros[1] = rs.getString("f");
 				this.registros[2] = rs.getString("monto");
-				this.registros[3] = rs.getString("anotacion");
+				this.registros[3] = rs.getString("moneda");
+				this.registros[4] = rs.getString("anotacion");
 				this.modelo.addRow(this.registros);
 			}
 			this.cn.close();
@@ -492,13 +653,13 @@ public class Creditos extends Conexiondb {
 	}
 
 	//metodo para obtener el nombre de cliente que tiene el credito
-	public String NombreCliente(String idCredito) {
+	public String NombreCliente(int idCredito) {
 		String nombre = "";
 		this.cn = Conexion();
 		this.consulta = "SELECT c.nombres, c.apellidos FROM clientes AS c INNER JOIN creditos ON(c.id = creditos.cliente) WHERE creditos.id = ?";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
-			this.pst.setString(1, idCredito);
+			this.pst.setInt(1, idCredito);
 			ResultSet rs = this.pst.executeQuery();
 			while (rs.next()) {
 				nombre = rs.getString("nombres") + " " + rs.getString("apellidos");
@@ -528,7 +689,7 @@ public class Creditos extends Conexiondb {
 		return limite;
 	}
 
-/*                          vinculado con la funcion morosos   */
+	/*                          vinculado con la funcion morosos   */
 	public float creditoGlobalCliente(int id) {
 		this.consulta = "SELECT SUM(facturas.totalFactura) AS totalCredito FROM creditos INNER JOIN clientes ON(creditos.cliente = clientes.id) "
 			+ "INNER JOIN facturas ON(facturas.credito = creditos.id) WHERE creditos.id = ?";
@@ -547,7 +708,8 @@ public class Creditos extends Conexiondb {
 		}
 		return total;
 	}
-/*                          vinculado con la funcion morosos   */
+
+	/*                          vinculado con la funcion morosos   */
 	public float AbonoGlobalCliente(int id) {
 		this.consulta = "SELECT SUM(p.monto) AS totalAbonos FROM pagoscreditos AS p "
 			+ "INNER JOIN creditos AS c ON(p.credito = c.id) INNER JOIN clientes ON(c.cliente=clientes.id) WHERE c.id = ?";
@@ -665,7 +827,7 @@ public class Creditos extends Conexiondb {
 		return isPago;
 	}
 
-	public void pagosPorCedito(int credito){
+	public void pagosPorCedito(int credito) {
 		this.cn = Conexion();
 		this.consulta = "SELECT DISTINCT (SELECT SUM(pc.monto) FROM pagoscreditos AS pc "
 			+ "WHERE moneda = 'Dolar' AND credito = ?) AS pagosDolar, (SELECT SUM(pc.monto) "
@@ -675,7 +837,7 @@ public class Creditos extends Conexiondb {
 			this.pst.setInt(1, credito);
 			this.pst.setInt(2, credito);
 			ResultSet rs = this.pst.executeQuery();
-			while(rs.next()){
+			while (rs.next()) {
 				this.pagosCordobas = rs.getFloat("pagosCordobas");
 				this.pagosDolar = rs.getFloat("pagosDolar");
 			}
@@ -685,7 +847,25 @@ public class Creditos extends Conexiondb {
 		}
 	}
 
-	public void saldoPorCredito(int credito){
+	public void saldoInicialCredito(int credito) {
+		this.cn = Conexion();
+		this.consulta = "SELECT saldoInicialCordobas, saldoInicialDolar FROM creditos WHERE id = ?";
+
+		try {
+			this.pst = this.cn.prepareStatement(this.consulta);
+			this.pst.setInt(1, credito);
+			ResultSet rs = this.pst.executeQuery();
+			while (rs.next()) {
+				this.saldoInicialC = rs.getFloat("saldoInicialCordobas");
+				this.saldoInicialD = rs.getFloat("saldoInicialDolar");
+			}
+			this.cn.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e);
+		}
+	}
+
+	public void saldoPorCredito(int credito) {
 		this.cn = Conexion();
 		this.consulta = "SELECT SUM(f.totalCordobas) AS cordobas, SUM(f.totalDolares) AS dolares FROM"
 			+ " facturas as f INNER JOIN creditos AS c ON(f.credito = c.id) WHERE c.id = ?";
@@ -693,9 +873,9 @@ public class Creditos extends Conexiondb {
 			this.pst = this.cn.prepareStatement(this.consulta);
 			this.pst.setInt(1, credito);
 			ResultSet rs = this.pst.executeQuery();
-			while(rs.next()){
-				this.saldoCordobas = rs.getFloat("cordobas");
-				this.saldoDolares = rs.getFloat("dolares");
+			while (rs.next()) {
+				this.saldoCordobas = this.saldoInicialC + rs.getFloat("cordobas");
+				this.saldoDolares = this.saldoInicialD + rs.getFloat("dolares");
 			}
 			this.cn.close();
 		} catch (SQLException e) {

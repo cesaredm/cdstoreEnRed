@@ -17,7 +17,8 @@ public class Transacciones extends Conexiondb {
 	private Date fecha;
 	private String Descripcion,
 		TipoTrans,
-		nombreCaja;
+		nombreCaja,
+		moneda;
 	private int idCaja,
 		id;
 	DefaultTableModel modelo;
@@ -92,9 +93,17 @@ public class Transacciones extends Conexiondb {
 		this.idCaja = idCaja;
 	}
 
+	public String getMoneda() {
+		return moneda;
+	}
+
+	public void setMoneda(String moneda) {
+		this.moneda = moneda;
+	}
+
 	public void Guardar() {
 		cn = Conexion();
-		this.consulta = "INSERT INTO transaccion(monto, fecha, descripcion, tipoTransaccion, caja) VALUES(?,?,?,?,?)";
+		this.consulta = "INSERT INTO transaccion(monto, fecha, descripcion, tipoTransaccion, caja, moneda) VALUES(?,?,?,?,?,?)";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			pst.setFloat(1, this.monto);
@@ -102,6 +111,7 @@ public class Transacciones extends Conexiondb {
 			pst.setString(3, this.Descripcion);
 			pst.setString(4, this.TipoTrans);
 			pst.setInt(5, this.idCaja);
+			pst.setString(6,this.moneda);
 			this.banderin = pst.executeUpdate();
 			if (this.banderin > 0) {
 				JOptionPane.showMessageDialog(null, "Gasto guardado exitosamente", "Infromacion", JOptionPane.INFORMATION_MESSAGE);
@@ -126,6 +136,7 @@ public class Transacciones extends Conexiondb {
 				this.Descripcion = this.rs.getString("descripcion");
 				this.monto = this.rs.getFloat("monto");
 				this.nombreCaja = this.rs.getString("ncaja");
+				this.moneda = this.rs.getString("moneda");
 			}
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e);
@@ -144,7 +155,7 @@ public class Transacciones extends Conexiondb {
 
 	public void Actualizar() {
 		cn = Conexion();
-		this.consulta = "UPDATE transaccion SET tipoTransaccion = ?, monto = ?, caja = ?, fecha = ?, descripcion = ? WHERE id = ?";
+		this.consulta = "UPDATE transaccion SET tipoTransaccion = ?, monto = ?, caja = ?, fecha = ?, descripcion = ?, moneda = ? WHERE id = ?";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			pst.setString(1, this.TipoTrans);
@@ -152,7 +163,8 @@ public class Transacciones extends Conexiondb {
 			pst.setInt(3, this.idCaja);
 			pst.setDate(4, fecha);
 			pst.setString(5, Descripcion);
-			pst.setInt(6, id);
+			pst.setString(6,this.moneda);
+			pst.setInt(7, id);
 			this.banderin = pst.executeUpdate();
 			if (this.banderin > 0) {
 				JOptionPane.showMessageDialog(null, "Gasto actualizado exitosamente", "Infromacion", JOptionPane.INFORMATION_MESSAGE);
@@ -181,14 +193,14 @@ public class Transacciones extends Conexiondb {
 
 	public DefaultTableModel Mostrar(String Buscar) {
 		cn = Conexion();
-		this.resgistros = new String[6];
-		String[] titulos = {"Id Transac.", "Tipo Transac", "Caja", "Monto", "Fecha", "Descripción"};
+		this.resgistros = new String[7];
+		String[] titulos = {"Id Transac.", "Tipo Transac", "Caja", "Monto", "Moneda", "Fecha", "Descripción"};
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
 			}
 		};
-		this.consulta = "SELECT transaccion.id,transaccion.tipoTransaccion,cajas.caja,transaccion.monto,transaccion.fecha,transaccion.descripcion FROM transaccion INNER JOIN cajas ON(transaccion.caja=cajas.id) WHERE CONCAT(transaccion.id, transaccion.monto, transaccion.fecha, cajas.caja, transaccion.tipoTransaccion) LIKE '%" + Buscar + "%'";
+		this.consulta = "SELECT transaccion.id,transaccion.tipoTransaccion,cajas.caja,transaccion.monto,moneda,transaccion.fecha,transaccion.descripcion FROM transaccion INNER JOIN cajas ON(transaccion.caja=cajas.id) WHERE CONCAT(transaccion.id, transaccion.monto, transaccion.fecha, cajas.caja, transaccion.tipoTransaccion) LIKE '%" + Buscar + "%'";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			ResultSet rs = pst.executeQuery();
@@ -197,8 +209,9 @@ public class Transacciones extends Conexiondb {
 				this.resgistros[1] = rs.getString("tipoTransaccion");
 				this.resgistros[2] = rs.getString("caja");
 				this.resgistros[3] = rs.getString("Monto");
-				this.resgistros[4] = rs.getString("Fecha");
-				this.resgistros[5] = rs.getString("descripcion");
+				this.resgistros[4] = rs.getString("moneda");
+				this.resgistros[5] = rs.getString("Fecha");
+				this.resgistros[6] = rs.getString("descripcion");
 				this.modelo.addRow(this.resgistros);
 			}
 			cn.close();

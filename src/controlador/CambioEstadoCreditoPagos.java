@@ -16,6 +16,7 @@ public class CambioEstadoCreditoPagos implements EstadoCreditos {
 	public void updateApendiente(int idCredito) {
 		if (idCredito > 0) {
 			creditos.pagosPorCedito(idCredito);
+			creditos.saldoInicialCredito(idCredito);
 			creditos.saldoPorCredito(idCredito);
 			saldoCordobas = creditos.getSaldoCordobas() - creditos.getPagosCordobas();
 			saldoDolares = creditos.getSaldoDolares() - creditos.getPagosDolar();
@@ -31,6 +32,7 @@ public class CambioEstadoCreditoPagos implements EstadoCreditos {
 	public void updateAabierto(int idCredito) {
 		//variable para almacenar total de credito de cliete
 		creditos.pagosPorCedito(idCredito);
+		creditos.saldoInicialCredito(idCredito);
 		creditos.saldoPorCredito(idCredito);
 		saldoCordobas = creditos.getSaldoCordobas() - creditos.getPagosCordobas();
 		saldoDolares = creditos.getSaldoDolares()- creditos.getPagosDolar();

@@ -35,18 +35,17 @@ public class Ticket extends CtrlImprimir{
             + "========================================== \n"
             + "{{items}} \n"
             + "========================================== \n"
-            + "TOTAL:{{total}} \n"
+            + "TOTAL C$:{{totalCordobas}} \n"
+	    + "TOTAL $ :{{totalDolares}} \n"
             + "RECIBIDO: {{recibo}}\n"
             + "CAMBIO: {{change}}\n"
-//            + "========================================== \n"
-//            + "Un lector vive mil vidas antes\n"
-//            + "de morir aquel que nunca lee vive\n"
-//            + "solo una.\n"
+            + "========================================== \n"
+            + "||{{message}}                            \n"
             + "\n"
             + "\n";
 
     //El constructor que setea los valores a la instancia
-    Ticket(String nameLocal, String direccion, String telefono, String RFC, String Rango, String box, String ticket, String caissier, String comprador, String cliente, String tipoVenta, String formaPago, String dateTime, String[] items, String subTotal, String iva, String total, String recibo, String change) {
+    Ticket(String nameLocal, String direccion, String telefono, String RFC, String Rango, String box, String ticket, String caissier, String comprador, String cliente, String tipoVenta, String formaPago, String dateTime, String[] items, String subTotal, String iva, String totalCordobas, String totalDolares, String recibo, String change,String message) {
         StringBuffer a = new StringBuffer("");
         this.contentTicket = this.contentTicket.replace("{{nameLocal}}", nameLocal);
         this.contentTicket = this.contentTicket.replace("{{direccion}}", direccion);
@@ -61,6 +60,7 @@ public class Ticket extends CtrlImprimir{
         this.contentTicket = this.contentTicket.replace("{{tipoVenta}}", tipoVenta);
         this.contentTicket = this.contentTicket.replace("{{formaPago}}", formaPago);
         this.contentTicket = this.contentTicket.replace("{{dateTime}}", dateTime);
+	this.contentTicket = this.contentTicket.replace ("{{message}}", message);
         //recorro el array de Productos ITEMS
         for (int i = 0; i < items.length; i++) {
             a.append(items[i]);
@@ -68,14 +68,15 @@ public class Ticket extends CtrlImprimir{
         this.contentTicket = this.contentTicket.replace("{{items}}", a);
         //this.contentTicket = this.contentTicket.replace("{{subTotal}}", subTotal);
         //this.contentTicket = this.contentTicket.replace("{{iva}}", iva);
-        this.contentTicket = this.contentTicket.replace("{{total}}", total);
+        this.contentTicket = this.contentTicket.replace("{{totalCordobas}}", totalCordobas);
+	this.contentTicket = this.contentTicket.replace("{{totalDolares}}", totalDolares);
         this.contentTicket = this.contentTicket.replace("{{recibo}}", recibo);
         this.contentTicket = this.contentTicket.replace("{{change}}", change);
         
         System.out.println(this.contentTicket);
     }
 
-    public void printInfo() {
+    public void printFactura() {
         try {
             escpos.write(imageWrapper, escposImage).feed(1);
 

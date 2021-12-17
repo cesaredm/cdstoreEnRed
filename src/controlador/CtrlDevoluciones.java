@@ -31,7 +31,9 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 	float precio = 0,
 		cantidadActual = 0,
 		total = 0,
+		totalDolares,
 		totalUpdate = 0,
+		totalGlobalCordobas=0,
 		ivaUpdate = 0,
 		subTotalUpdate = 0,
 		cantidadUpdate = 0,
@@ -39,15 +41,15 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 		sacarImpuesto = 0,
 		porcentajeImp = 0,
 		importe = 0,
-		restar = 0;
+		restar = 0,
+		precioDolar;
 	int idProducto = 0,
 		filaseleccionada = 0,
 		filaseleccionadaR = 0,
 		idDetalle = 0,
 		idFactura = 0,
 		filas;
-	String precioDolar,
-		restarString = "";
+	String restarString = "";
 	IMenu menu;
 	Reportes reportes;
 	Facturacion factura;
@@ -81,12 +83,21 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 			DevolverProducto();
 		}
 	}
-	//funcion para devolver productos
 
+	public boolean isNumeric(String dato){
+		try {
+			Float.parseFloat(dato);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+	
+	//funcion para devolver productos
 	public void DevolverProducto() {
 		this.fecha = menu.jcFacturasEmitidas.getDate();
 
-		this.precioDolar = menu.txtPrecioDolarVenta.getText();
+		this.precioDolar = (!isNumeric(menu.txtPrecioDolarVenta.getText())) ? 1 : Float.parseFloat(menu.txtPrecioDolarVenta.getText());
 
 		this.modelo = (DefaultTableModel) menu.tblMostrarDetalleFactura.getModel();
 		try {
@@ -111,35 +122,30 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 					this.precio = Float.parseFloat(this.modelo.getValueAt(filaseleccionada, 5).toString());
 					this.cantidadActual = Float.parseFloat(this.modelo.getValueAt(filaseleccionada, 4).toString());
 					this.idFactura = Integer.parseInt(menu.tblReporte.getValueAt(filaseleccionadaR, 0).toString());
-					this.total = this.factura.obtenerTotalFacturaSeleccionada(idFactura);
+					this.factura.obtenerTotalFacturaSeleccionada(idFactura);
+					this.total = this.factura.getTotalCordobas();
+					this.totalDolares = this.factura.getTotalCordobas();
 					this.factura.monedaVentaProducto(String.valueOf(idProducto));
 					//validar que lo que se va a devolver sea menor o igual que lo que compro
 					if (cantidadDevolver <= cantidadActual) {
 						cantidadUpdate = cantidadActual - cantidadDevolver;
 						//validar que moneda
 						if (this.factura.getMonedaVenta().equals("Dolar")) {
+							this.importe = (cantidadUpdate * precio);
+							/*this.restar = (cantidadDevolver * precio);
+							this.restarString = this.formato.format(restar);
+							this.restar = Float.parseFloat(restarString);*/
+							this.totalDolares = totalDolares - this.importe;
 							//validar que precioDolar sea numerico
-							if (menu.isNumeric(precioDolar)) {
-								this.importe = (cantidadUpdate * precio) * Float.parseFloat(precioDolar);
-								this.restar = (cantidadDevolver * precio) * Float.parseFloat(precioDolar);
-								this.restarString = this.formato.format(restar);
-								this.restar = Float.parseFloat(restarString);
-								this.totalUpdate = total - restar;
-							} else {
-								JOptionPane.showMessageDialog(
-									null,
-									"El valor del dolar establecido es inavalido.."
-								);
-							}
-
 						} else {
 							this.importe = this.cantidadUpdate * this.precio;
-							this.totalUpdate = this.total - (this.cantidadDevolver * this.precio);
+							this.total = this.total - this.importe;
 						}
+						this.totalGlobalCordobas = this.total + (this.totalDolares * this.precioDolar);
 						//calcular el nuevo impuesto
-						this.ivaUpdate = ((this.totalUpdate / this.sacarImpuesto) * this.porcentajeImp) / 100;
+						this.ivaUpdate = ((this.totalGlobalCordobas / this.sacarImpuesto) * this.porcentajeImp) / 100;
 						//calcular el nuevo subtotal
-						this.subTotalUpdate = this.totalUpdate - this.ivaUpdate;
+						this.subTotalUpdate = this.totalGlobalCordobas - this.ivaUpdate;
 						try {
 							//llamar las funciones para actualizar los datos correpondientes
 							this.factura.ActualizarDetalle(
@@ -152,7 +158,8 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 							this.factura.ActualizarDevolucion(
 								this.idFactura,
 								this.ivaUpdate,
-								this.totalUpdate
+								this.total,
+								this.totalDolares
 							);
 							this.producto.AgregarProductoStock(
 								String.valueOf(this.idProducto),

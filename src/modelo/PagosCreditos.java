@@ -22,11 +22,12 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 	private float monto,
 		pagosDolar,
 		pagosCordobas;
-	private Date fecha;
+	private Timestamp fecha;
 	private int formaPago;
 	private String anotacion,
 		moneda,
-		formaPagoString;
+		formaPagoString,
+		verificarCancelado;
 	transient DefaultTableModel modelo;
 	transient Connection cn;
 	transient PreparedStatement pst;
@@ -66,11 +67,11 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 		this.monto = monto;
 	}
 
-	public Date getFecha() {
+	public Timestamp getFecha() {
 		return fecha;
 	}
 
-	public void setFecha(Date fecha) {
+	public void setFecha(Timestamp fecha) {
 		this.fecha = fecha;
 	}
 
@@ -121,20 +122,28 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 	public void setPagosCordobas(float pagosCordobas) {
 		this.pagosCordobas = pagosCordobas;
 	}
-	
+
+	public String getVerificarCancelado() {
+		return verificarCancelado;
+	}
+
+	public void setVerificarCancelado(String verificarCancelado) {
+		this.verificarCancelado = verificarCancelado;
+	}
 
 	//metodo para Guardar pagos
 	public void Guardar() {
-		this.consulta = "INSERT INTO pagoscreditos(credito,monto,moneda,fecha,formaPago,anotacion) VALUES(?,?,?,?,?,?)";
+		this.consulta = "INSERT INTO pagoscreditos(credito,monto,moneda,fecha,formaPago,anotacion,pagoCancelacion) VALUES(?,?,?,?,?,?,?)";
 		cn = Conexion();
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			pst.setInt(1, credito);
 			pst.setFloat(2, monto);
 			pst.setString(3, this.moneda);
-			pst.setDate(4, fecha);
+			pst.setTimestamp(4, fecha);
 			pst.setInt(5, formaPago);
 			pst.setString(6, anotacion);
+			pst.setString(7,verificarCancelado);
 			this.banderin = pst.executeUpdate();
 			if (this.banderin > 0) {
 				JOptionPane.showMessageDialog(null, "Pago guardado exitosamete", "Informacion", JOptionPane.INFORMATION_MESSAGE);
@@ -145,16 +154,16 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 		}
 	}
 
-	public void editar(){
+	public void editar() {
 		this.cn = Conexion();
 		this.consulta = "SELECT p.*, fp.tipoVenta FROM pagoscreditos AS p INNER JOIN formapago AS fp ON(p.formaPago = fp.id) WHERE p.id = ?";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
 			this.pst.setInt(1, this.id);
 			ResultSet rs = this.pst.executeQuery();
-			while(rs.next()){
+			while (rs.next()) {
 				this.credito = rs.getInt("credito");
-				this.fecha = rs.getDate("fecha");
+				this.fecha = rs.getTimestamp("fecha");
 				this.monto = rs.getFloat("monto");
 				this.formaPagoString = rs.getString("tipoVenta");
 				this.anotacion = rs.getString("anotacion");
@@ -162,7 +171,7 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 			}
 			this.cn.close();
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null,e);
+			JOptionPane.showMessageDialog(null, e);
 		}
 	}
 	//metodo para eliminar pago
@@ -192,7 +201,7 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 			pst.setInt(1, this.credito);
 			pst.setFloat(2, this.monto);
 			pst.setString(3, this.moneda);
-			pst.setDate(4, this.fecha);
+			pst.setTimestamp(4, this.fecha);
 			pst.setInt(5, this.formaPago);
 			pst.setString(6, this.anotacion);
 			pst.setInt(7, this.id);
@@ -209,9 +218,13 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 
 	public DefaultTableModel Mostrar(String buscar) {
 		cn = Conexion();
-		this.consulta = "SELECT pagoscreditos.id AS idPago, monto as montoPago, pagoscreditos.moneda, credito, pagoscreditos.fecha, clientes.nombres,apellidos, formapago.tipoVenta,pagoscreditos.anotacion FROM pagoscreditos LEFT JOIN creditos ON(pagoscreditos.credito = creditos.id) LEFT JOIN formapago ON(formapago.id=pagoscreditos.formaPago) LEFT JOIN clientes ON(creditos.cliente = clientes.id) WHERE CONCAT(pagoscreditos.id, pagoscreditos.credito, pagoscreditos.fecha, clientes.nombres, clientes.apellidos) LIKE '%" + buscar + "%'";
+		this.consulta = "SELECT pagoscreditos.id AS idPago, monto as montoPago, pagoscreditos.moneda, credito, pagoscreditos.fecha,"
+			+ " clientes.nombres,apellidos, formapago.tipoVenta,pagoscreditos.anotacion FROM pagoscreditos LEFT JOIN creditos"
+			+ " ON(pagoscreditos.credito = creditos.id) LEFT JOIN formapago ON(formapago.id=pagoscreditos.formaPago) LEFT JOIN"
+			+ " clientes ON(creditos.cliente = clientes.id) WHERE CONCAT(pagoscreditos.id, pagoscreditos.credito, pagoscreditos.fecha,"
+			+ " clientes.nombres, clientes.apellidos) LIKE '%" + buscar + "%'";
 		this.resgistros = new String[9];
-		String[] titulos = {"Id Pago", "Monto de Pago", "Al Credito", "Fecha De Pago", "Nombres Cliente", "Apellidos Cliente", "Forma Pago", "Anotación"};
+		String[] titulos = {"Id Pago", "Monto de Pago", "Moneda", "Al Credito", "Fecha De Pago", "Nombres Cliente", "Apellidos Cliente", "Forma Pago", "Anotación"};
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
@@ -275,9 +288,7 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 		return id;
 	}
 
-	
 	//funcion que me obtiene el total de pagos que tiene el cliete
-
 	public float PagosCliente(int id) {
 		cn = Conexion();
 		float credito = 0;
@@ -346,5 +357,7 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 		}
 		return monto;
 	}
+
 	
+
 }

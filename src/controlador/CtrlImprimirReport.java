@@ -69,9 +69,9 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
         String nombreTienda = info.getNombre();
         String efectivoB = menu.lblIngresosCajaMes.getText(), ventasT = menu.lblIngresosVentasTarjetaMes.getText(), pagosE = menu.lblIngresosPagosEfectivoMes.getText(),
                 pagosT = menu.lblIngresosPagosTarjetaMes.getText(), creditos = menu.lblCreditosFiltro.getText(), existCaja = menu.lblExistenciaCajaFiltro.getText(),
-                bancos = menu.lblIngresosBancoFiltro.getText(), totalV = menu.lblTotalVendidoFiltro.getText(), egresos = menu.lblEgresosFiltro.getText(),
-                ingresosE = menu.lblIngresosEfectivo.getText();
-        llenarTicketGlobal(nombreTienda, efectivoB, ventasT, pagosE, pagosT, ingresosE, creditos, egresos, existCaja, bancos, totalV);
+                bancos = menu.lblIngresosBancoFiltro.getText(), totalV = menu.lblTotalVendidoFiltro.getText(), egresos = menu.lblEgresosFiltro.getText();
+//                ingresosE = menu.lblIngresosEfectivo.getText();
+//        llenarTicketGlobal(nombreTienda, efectivoB, ventasT, pagosE, pagosT, ingresosE, creditos, egresos, existCaja, bancos, totalV);
         try {
             print("Global");
         } catch (Exception err) {
@@ -164,7 +164,7 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-YYYY");
         try {
             String cliente = "", comprador = "", formaPago = "", fecha = "", factura = "", Listaproducto[] = new String[filas], producto = "", precio = "", cantidad = "", importe = "", tipoVenta = "", caja = "", creditoId = "", IVA = "";
-            float total = 0, subTotal =0;
+            float total = 0, subTotal =0, totaldolares = 0;
             factura = (String) menu.tblReporte.getValueAt(filaseleccionada, 0);
             fecha = (String) menu.tblReporte.getValueAt(filaseleccionada, 1);
             //formaPago es con tarjeta efectivo o al credito
@@ -194,10 +194,32 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
                 cliente = "";
             }else{
                 tipoVenta = "Credito";
-                cliente = this.credito.NombreCliente(creditoId);
+                cliente = this.credito.NombreCliente(Integer.parseInt(creditoId));
             }
-            Ticket d = new Ticket(info.getNombre(), info.getDireccion(), info.getTelefono(), info.getRfc(), info.getRango(), "1", factura, "Cajero", comprador, cliente, tipoVenta, formaPago, fecha, Listaproducto, String.valueOf(subTotal), IVA, String.valueOf(total), "", "");
-            d.printInfo();
+            Ticket d = new Ticket(
+		    info.getNombre(),
+		    info.getDireccion(),
+		    info.getTelefono(),
+		    info.getRfc(),
+		    info.getRangoInicio() + " - " + info.getRangoFinal(),
+		    "1",
+		    factura,
+		    "Cajero",
+		    comprador,
+		    cliente,
+		    tipoVenta,
+		    formaPago,
+		    fecha,
+		    Listaproducto,
+		    String.valueOf(subTotal),
+		    IVA,
+		    String.valueOf(total),
+		    String.valueOf(totaldolares),
+		    "",
+		    "",
+		    info.getAnotaciones()
+	    );
+            d.printFactura();
         } catch (Exception err) {
             //JOptionPane.showMessageDialog(null, err + " Erro en la funcion btnReImprimirFactura");
         }
@@ -209,9 +231,9 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
             int filasCordobas = this.menu.tblArticulosCreditoCordobas.getRowCount();
             int filaseleccionada = this.menu.tblCreditos.getSelectedRow();
             String cliente = this.menu.tblCreditos.getValueAt(filaseleccionada, 4).toString() + " " + this.menu.tblCreditos.getValueAt(filaseleccionada, 5).toString();
-            String totalC = this.menu.lblTodalCreditoPorCliente.getText(),
-                   totalP = this.menu.lblTotalAbonosPorCliente.getText(),
-                   saldo = this.menu.lblSaldoCliente.getText();
+            String totalC = this.menu.lblTodalCreditoCordobas.getText(),
+                   totalP = this.menu.lblTotalAbonosCordobas.getText(),
+                   saldo = this.menu.lblSaldoCordobas.getText();
             String listado = "PRODUCTOS EN DOLAR \n";
             
             for (int i = 0; i < filasDolar; i++) {

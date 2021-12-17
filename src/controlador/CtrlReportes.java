@@ -83,7 +83,7 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		this.menu.btnGuardarApertura.setActionCommand("GUARDAR-APERTURA");
 		this.menu.btnAddTotalV.addActionListener(this);
 		this.menu.btnAddTotalV.setActionCommand("ADD-TOTALV");
-		this.menu.btnMostrarRegistroMoneda.addActionListener(this);
+//		this.menu.btnMostrarRegistroMoneda.addActionListener(this);
 		this.menu.tblReporte.addMouseListener(this);
 		this.menu.btnMostrarInversion.addActionListener(this);
 		this.menu.btnMostrarInversion.setActionCommand("MOSTRAR-INVERSION");
@@ -96,11 +96,12 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		this.menu.btnMostrarFacturasEmitidas.setActionCommand("MOSTRARFACTURASEMITIDAS");
 		this.menu.btnDevolverProducto.addActionListener(this);
 		this.menu.btnDevolverProducto.setActionCommand("DEVOLVER-PRODUCTO");
-		this.menu.btnBuscarFiltroReporte.addActionListener(this);
+//		this.menu.btnBuscarFiltroReporte.addActionListener(this);
 		this.menu.txtBuscarFactura.addKeyListener(this);
 		this.menu.btnEnviarRD.addActionListener(this);
 		this.menu.btnEnviarCorreo.addActionListener(this);
-		this.menu.btnMostrarRegistroMonedaHoy.addActionListener(this);
+//		this.menu.btnMostrarRegistroMonedaHoy.addActionListener(this);
+		this.menu.btnActualizarProductosVentasDiarias.addActionListener(this);
 		EstiloTablaTotalV();
 		this.estiloTablaReportes();
 		formato = new DecimalFormat("##############0.00");
@@ -118,8 +119,8 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		this.menu.jcFecha2.setDate(this.fecha);
 		this.menu.jc1.setDate(this.fecha);
 		this.menu.jc2.setDate(this.fecha);
-		this.menu.jcFechaReport1.setDate(this.fecha);
-		this.menu.jcFechaReport2.setDate(this.fecha);
+//		this.menu.jcFechaReport1.setDate(this.fecha);
+//		this.menu.jcFechaReport2.setDate(this.fecha);
 		this.menu.jcFacturasEmitidas.setDate(this.fecha);
 		SumaTotalFiltroReporte(this.fecha, this.fecha);
 		inversion();
@@ -135,7 +136,7 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 
 	public void alinearTextoTabla() {
 		this.formatColumn.setHorizontalAlignment(SwingConstants.RIGHT);
-		this.formatColumn.setForeground(new Color(255,204,51));
+		this.formatColumn.setForeground(new Color(255, 204, 51));
 		this.formatColumn.setBackground(new Color(105, 105, 105));
 		menu.tblReporteDiarioCordobas.getColumnModel().getColumn(2).setCellRenderer(this.formatColumn);
 		menu.tblReporteDiarioDolares.getColumnModel().getColumn(2).setCellRenderer(this.formatColumn);
@@ -216,10 +217,10 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 			Date fecha1 = menu.jc1.getDate(), fecha2 = menu.jc2.getDate();
 			mostrarProductosMasVendidios(fecha1, fecha2);
 		}
-		if (e.getSource() == menu.btnBuscarFiltroReporte) {
-			Date fecha1 = menu.jcFechaReport1.getDate(), fecha2 = menu.jcFechaReport2.getDate();
-			SumaTotalFiltroReporte(fecha1, fecha2);
-		}
+//		if (e.getSource() == menu.btnBuscarFiltroReporte) {
+//			Date fecha1 = menu.jcFechaReport1.getDate(), fecha2 = menu.jcFechaReport2.getDate();
+//			SumaTotalFiltroReporte(fecha1, fecha2);
+//		}
 		if (e.getSource() == menu.btnEnviarRD) {
 			menu.EnviarRD.setSize(460, 111);
 			menu.EnviarRD.setLocationRelativeTo(null);
@@ -233,6 +234,9 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 			} else {
 
 			}
+		}
+		if(e.getSource() == this.menu.btnActualizarProductosVentasDiarias){
+			this.productosVentasDiarias();
 		}
 
 	}
@@ -304,9 +308,11 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		java.sql.Date fechaInicio = new java.sql.Date(f1);
 		reportes.ventasEfectivoDiario(fechaInicio);
 		reportes.ventasTarjetaDiario(fechaInicio);
-		reportes.ingresoEfectivoDiario(fechaInicio);
+		reportes.ingresoEfectivoDiarioCordobas(fechaInicio);
+		reportes.ingresoEfectivoDiarioDolar(fechaInicio);
 		reportes.ventasCreditoDiario(fechaInicio);
-		reportes.salidaEfectivoDiario(fechaInicio);
+		reportes.salidaEfectivoDiarioCordobas(fechaInicio);
+		reportes.salidaEfectivoDiarioDolar(fechaInicio);
 		reportes.abonosEfectivoCordobasDiario(fechaInicio);
 		reportes.abonosTarjetaCordobasDiario(fechaInicio);
 		reportes.abonosEfecitvoDolarDiario(fechaInicio);
@@ -446,10 +452,6 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 	{
 		long f1 = fecha1.getTime();//
 		java.sql.Date fechaInicio = new java.sql.Date(f1);//convertir la fecha a formato sql
-		/*String totalCreditoMensual = reportes.ventasCreditosRango(fechaInicio, fechaFinal);//obtengo el valor de total de creditos cn la funcion TotalCreditoMensula de la clase reortes
-        String totalGastos = reportes.salidaEfectivoRango(fechaInicio, fechaFinal);//total de gastos 
-        String totalPagos = reportes.totalPagos(fechaInicio, fechaFinal);//total pagos 
-        float creditosPendiente = Float.parseFloat(totalCreditoMensual) - Float.parseFloat(totalPagos);//refleja el creditos menos los pagos*/
 		menu.tblReporte.getTableHeader().setFont(new Font("Sugoe UI", Font.PLAIN, 14));
 		menu.tblReporte.getTableHeader().setOpaque(false);
 		menu.tblReporte.getTableHeader().setBackground(new Color(69, 76, 89));
@@ -457,10 +459,6 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		menu.tblReporte.getTableHeader().setPreferredSize(new java.awt.Dimension(0, 35));
 		try {
 			menu.tblReporte.setModel(reportes.ReporteDiario(fechaInicio));
-			/*menu.lblTotalCreditosFiltroReporte.setText(String.valueOf(creditosPendiente));//lleno el lblTotalCreditoFiltroRepote con el  total creditos 
-            menu.lblGastos.setText(totalGastos);//lleno lblGastos con el total de gastos
-            menu.lblTotalPagos.setText(totalPagos);*/
-
 		} catch (Exception err) {
 
 		}
@@ -566,6 +564,18 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		menu.tblReporteDiarioDolares.getTableHeader().setForeground(new Color(255, 255, 255));
 		menu.tblReporteDiarioDolares.getTableHeader().setPreferredSize(new java.awt.Dimension(0, 35));
 
+		menu.tblProductosVentasDiarias.getTableHeader().setFont(new Font("Sugoe UI", Font.PLAIN, 14));
+		menu.tblProductosVentasDiarias.getTableHeader().setOpaque(false);
+		menu.tblProductosVentasDiarias.getTableHeader().setBackground(new Color(100, 100, 100));
+		menu.tblProductosVentasDiarias.getTableHeader().setForeground(new Color(255, 255, 255));
+		menu.tblProductosVentasDiarias.getTableHeader().setPreferredSize(new java.awt.Dimension(0, 35));
+
+	}
+
+	public void productosVentasDiarias(){
+		java.sql.Date fechaSQL = new java.sql.Date(this.fecha.getTime());
+		this.reportes.productosVentasDiarias(fechaSQL);
+		this.menu.tblProductosVentasDiarias.setModel(this.reportes.getModeloTable());
 	}
 
 	public void mostrarProductosMasVendidios(Date fecha1, Date fecha2) {

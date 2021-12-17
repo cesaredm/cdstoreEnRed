@@ -26,7 +26,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 	private String monedaVenta;
 	private boolean exito;
 	private int caja;
-	private Date fecha;
+	private Timestamp fecha;
 	private String nombreComprador,
 		nombres,
 		apellidos,
@@ -56,7 +56,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 		this.caja = caja;
 	}
 
-	public void setFecha(Date fecha) {
+	public void setFecha(Timestamp fecha) {
 		this.fecha = fecha;
 	}
 
@@ -100,7 +100,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 		return caja;
 	}
 
-	public Date getFecha() {
+	public Timestamp getFecha() {
 		return fecha;
 	}
 
@@ -165,7 +165,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 			try {
 				pst = this.cn.prepareStatement(this.consulta);
 				pst.setInt(1, caja);
-				pst.setDate(2, fecha);
+				pst.setTimestamp(2, fecha);
 				pst.setString(3, nombreComprador);
 				pst.setInt(4, credito);
 				pst.setInt(5, pago);
@@ -184,7 +184,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 			try {
 				pst = this.cn.prepareStatement(this.consulta);
 				pst.setInt(1, caja);
-				pst.setDate(2, fecha);
+				pst.setTimestamp(2, fecha);
 				pst.setString(3, nombreComprador);
 				pst.setNull(4, java.sql.Types.INTEGER);
 				pst.setInt(5, pago);
@@ -206,7 +206,9 @@ public class Facturacion extends Conexiondb implements Serializable {
 
 	public void editar() {
 		this.cn = Conexion();
-		this.consulta = "SELECT f.*,cl.nombres,apellidos,formapago.tipoVenta AS pago FROM facturas AS f LEFT JOIN creditos AS c ON(f.credito=c.id) LEFT JOIN clientes AS cl ON(cl.id=c.cliente) INNER JOIN formapago ON(formaPago.id=f.tipoVenta) WHERE f.id = ?";
+		this.consulta = "SELECT f.*,cl.nombres,apellidos,formapago.tipoVenta AS pago FROM facturas AS f LEFT JOIN creditos AS c"
+			+ " ON(f.credito=c.id) LEFT JOIN clientes AS cl ON(cl.id=c.cliente) INNER JOIN formapago ON(formaPago.id=f.tipoVenta)"
+			+ " WHERE f.id = ?";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
 			this.pst.setInt(1, this.id);
@@ -218,10 +220,11 @@ public class Facturacion extends Conexiondb implements Serializable {
 				this.nombreComprador = this.rs.getString("nombre_comprador");
 				this.nombres = this.rs.getString("nombres");
 				this.apellidos = this.rs.getString("apellidos");
-				this.fecha = this.rs.getDate("fecha");
+				this.fecha = this.rs.getTimestamp("fecha");
 				this.formapago = this.rs.getString("pago");
 				this.iva = this.rs.getFloat("impuestoISV");
-				this.totalCordobas = this.rs.getFloat("totalFactura");
+				this.totalCordobas = this.rs.getFloat("totalCordobas");
+				this.totalDolar = this.rs.getFloat("totalDolares");
 			}
 			this.cn.close();
 		} catch (SQLException e) {
@@ -422,7 +425,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 	public void ActualizarFactura() {
 		cn = Conexion();
 		this.consulta = "UPDATE facturas SET caja = ?, credito = ?, nombre_comprador = ?,fecha = ? , tipoVenta = ?, impuestoISV = ?,"
-			+ " totalFactura = ? WHERE id=?";
+			+ " totalCordobas = ?, totalDolares = ? WHERE id=?";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			pst.setInt(1, this.caja);
@@ -432,11 +435,12 @@ public class Facturacion extends Conexiondb implements Serializable {
 				this.pst.setNull(2, java.sql.Types.INTEGER);
 			}
 			pst.setString(3, this.nombreComprador);
-			pst.setDate(4, this.fecha);
+			pst.setTimestamp(4, this.fecha);
 			pst.setInt(5, this.pago);
 			pst.setFloat(6, this.iva);
 			pst.setFloat(7, this.totalCordobas);
-			pst.setInt(8, this.id);
+			pst.setFloat(8, this.totalDolar);
+			pst.setInt(9, this.id);
 			pst.execute();
 			this.banderin = pst.executeUpdate();
 			if (this.banderin > 0) {
@@ -588,15 +592,18 @@ public class Facturacion extends Conexiondb implements Serializable {
 		}
 	}
 
-	public void ActualizarDevolucion(int id, float iva, float total) {
+	public void ActualizarDevolucion(int id, float iva, float totalCordobas, float totalDolares) {
 		this.cn = Conexion();
-		String IVA = formato.format(iva), TOTAL = formato.format(total);
-		this.consulta = "UPDATE facturas SET impuestoISV = ?, totalFactura = ? WHERE id = ?";
+		String IVA = formato.format(iva), 
+			TOTALCORDOBAS = formato.format(totalCordobas),
+			TOTALDOLARES = formato.format(totalDolares);
+		this.consulta = "UPDATE facturas SET impuestoISV = ?, totalCordobas = ?, totalDolares = ? WHERE id = ?";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
 			this.pst.setString(1, IVA);
-			this.pst.setString(2, TOTAL);
-			this.pst.setInt(3, id);
+			this.pst.setString(2, TOTALCORDOBAS);
+			this.pst.setString(3, TOTALDOLARES);
+			this.pst.setInt(4, id);
 			this.pst.executeUpdate();
 			this.cn.close();
 		} catch (SQLException e) {
@@ -618,22 +625,21 @@ public class Facturacion extends Conexiondb implements Serializable {
 		}
 	}
 
-	public float obtenerTotalFacturaSeleccionada(int id) {
-		float total = 0;
+	public void obtenerTotalFacturaSeleccionada(int id) {
 		this.cn = Conexion();
-		this.consulta = "SELECT totalFactura FROM facturas WHERE id = ?";
+		this.consulta = "SELECT totalCordobas, totalDolares FROM facturas WHERE id = ?";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
 			this.pst.setInt(1, id);
 			ResultSet rs = this.pst.executeQuery();
 			while (rs.next()) {
-				total = rs.getFloat("totalFactura");
+				this.totalCordobas = rs.getFloat("totalCordobas");
+				this.totalDolar = rs.getFloat("totalDolares");
 			}
 			this.cn.close();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e + " en la funcion obtenerTotalFacturaSeleccionada en modelo Facturacion");
 		}
-		return total;
 	}
 
 }

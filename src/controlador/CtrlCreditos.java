@@ -1,14 +1,5 @@
 package controlador;
 
-import com.github.anastaciocintra.escpos.EscPos;
-import com.github.anastaciocintra.escpos.EscPosConst;
-import com.github.anastaciocintra.escpos.Style;
-import com.github.anastaciocintra.escpos.image.Bitonal;
-import com.github.anastaciocintra.escpos.image.BitonalThreshold;
-import com.github.anastaciocintra.escpos.image.CoffeeImageImpl;
-import com.github.anastaciocintra.escpos.image.EscPosImage;
-import com.github.anastaciocintra.escpos.image.RasterBitImageWrapper;
-import com.github.anastaciocintra.output.PrinterOutputStream;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -37,7 +28,9 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 	private int cliente;
 	private Date fecha;
 	private String estado;
-	private float limite;
+	private float limite,
+		saldoInicialDolares,
+		saldoInicialCordobas;
 	private java.sql.Date fechaSQL;
 	IMenu menu;
 	Creditos creditos;
@@ -56,23 +49,21 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		this.ctrlReport = new CtrlReportes(menu, report);
 		this.modelo = new DefaultTableModel();
 		this.fecha = new Date();
-		this.formato = new DecimalFormat("##########00.00");
+		this.formato = new DecimalFormat("###,###,###,#00.00");
 		info = new InfoFactura();
 		this.menu.btnCrearCredito.addActionListener(this);
-		this.menu.btnCrearCredito.setActionCommand("CREAR-CREDITO");
 		this.menu.btnNuevoCredito.addActionListener(this);
-		this.menu.btnNuevoCredito.setActionCommand("NUEVO-CREDITO");
 		this.menu.btnActualizarCredito.addActionListener(this);
 		this.menu.EditarCredito.addActionListener(this);
 		this.menu.EliminarCredito.addActionListener(this);
 		this.menu.GenerarPago.addActionListener(this);
 		this.menu.btnAddClienteCredito.addActionListener(this);
-		this.menu.btnAddClienteCredito.setActionCommand("AGREGAR-CLIENTE");
 		this.menu.txtBuscarCreditosCreados.addCaretListener(this);
 		this.menu.txtBuscarCredito.addCaretListener(this);
 		this.menu.txtBuscarCreditoFactura.addCaretListener(this);
 		this.menu.tblAddClienteCredito.addMouseListener(this);
 		this.menu.tblCreditos.addMouseListener(this);
+		this.menu.tblCreditosCreados.addMouseListener(this);
 		this.menu.btnYes.addActionListener(this);
 		this.menu.btnCancel.addActionListener(this);
 		this.menu.btnMonedasRecibidasPagoCreditos.addActionListener(this);
@@ -172,15 +163,42 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		}
 		if (e.getSource() == menu.tblCreditos) {
 			int filaseleccionada = menu.tblCreditos.getSelectedRow();
-			String id;
+			
+			if (e.getClickCount() == 2) {
+				try {
+					if (filaseleccionada != -1) {
+						this.modelo = (DefaultTableModel) menu.tblCreditos.getModel();
+						this.id = Integer.parseInt(
+							this.modelo.getValueAt(filaseleccionada, 0)
+								.toString()
+						);
+						//MostrarHistorialCrediticio(id);
+						this.mostrarInfoCrediticiaActual(this.id);
+						menu.jdInfoCrediticia.setSize(910, 538);
+						menu.jdInfoCrediticia.setVisible(true);
+						menu.jdInfoCrediticia.setLocationRelativeTo(null);
+					} else {
+
+					}
+				} catch (Exception err) {
+					JOptionPane.showMessageDialog(null, err + "mostrar facturasporcreditos");
+				}
+			}
+		}
+		if (e.getSource() == menu.tblCreditosCreados) {
+			int filaseleccionada = menu.tblCreditosCreados.getSelectedRow();
+			int id;
 			if (e.getClickCount() == 2) {
 				try {
 					if (filaseleccionada == -1) {
 
 					} else {
-						this.modelo = (DefaultTableModel) menu.tblCreditos.getModel();
-						id = (String) this.modelo.getValueAt(filaseleccionada, 0);
-						MostrarDatosCrediticio(id);
+						this.modelo = (DefaultTableModel) menu.tblCreditosCreados.getModel();
+						id = Integer.parseInt(
+							this.modelo.getValueAt(filaseleccionada, 0)
+								.toString()
+						);
+						MostrarHistorialCrediticio(id);
 						menu.jdInfoCrediticia.setSize(910, 538);
 						menu.jdInfoCrediticia.setVisible(true);
 						menu.jdInfoCrediticia.setLocationRelativeTo(null);
@@ -236,6 +254,8 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		this.fechaSQL = new java.sql.Date(f);
 		this.estado = menu.cmbEstadoCredito.getSelectedItem().toString();
 		this.limite = Float.parseFloat(menu.jsLimiteCredito.getValue().toString());
+		this.saldoInicialCordobas = Float.parseFloat(menu.jsSaldoInicialCordobasCredito.getValue().toString());
+		this.saldoInicialDolares = Float.parseFloat(menu.jsSaldoInicialDolarCreditos.getValue().toString());
 
 		if (menu.txtClienteCredito.getText().equals("")) {
 			validar = false;
@@ -252,12 +272,11 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		MostrarCreditosCreados("");
 		MostrarCreditos("");
 		DeshabilitarCreditos();
-		MostrarDatosCrediticio("");
 		menu.jcFechaPago.setDate(fecha);
 		fechaLimiteMorosos();
 	}
 
-//deshabilitar los elementos del form creditos
+	//deshabilitar los elementos del form creditos
 	public void DeshabilitarCreditos() {
 		menu.btnActualizarCredito.setEnabled(false);
 		menu.btnCrearCredito.setEnabled(false);
@@ -304,6 +323,8 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		menu.txtClienteCredito.setText("");
 		menu.cmbEstadoCredito.setSelectedItem("Abierto");
 		menu.jsLimiteCredito.setValue(0);
+		menu.jsSaldoInicialCordobasCredito.setValue(0);
+		menu.jsSaldoInicialDolarCreditos.setValue(0);
 	}
 
 	public void MostrarCreditos(String buscar) {
@@ -315,21 +336,52 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		menu.tblCreditos.setModel(this.creditos.Mostrar(buscar));
 	}
 
-	public void MostrarDatosCrediticio(String id) {
-		if (!id.equals("")) {
-			float credito, abonos, saldo;
-			int idC = Integer.parseInt(id);
-			credito = creditos.creditoGlobalCliente(idC);
-			abonos = creditos.AbonoGlobalCliente(idC);
-			menu.jpInformacionCrediticia.setBorder(javax.swing.BorderFactory.createTitledBorder(creditos.NombreCliente(id)));
-			menu.tblArticulosCredito.setModel(creditos.MostrarProductosCreditoDolar(idC));
-			menu.tblArticulosCreditoCordobas.setModel(creditos.MostrarProductosCreditoCordobas(idC));
-			menu.tblAbonosCreditos.setModel(creditos.MostrarAbonosCliente(idC));
-			menu.lblTodalCreditoPorCliente.setText("" + credito);
-			menu.lblTotalAbonosPorCliente.setText("" + abonos);
-			saldo = credito - abonos;
-			menu.lblSaldoCliente.setText(this.formato.format(saldo));
-		}
+	public void mostrarInfoCrediticiaActual(int credito) {
+		float saldoCordobas, saldoDolar;
+		/* solicitar datos */
+		this.creditos.saldoInicialCredito(credito);
+		this.creditos.saldoPorCredito(credito);
+		this.creditos.pagosPorCedito(credito);
+		/*    crear borde con el nombre del cliente   */
+		menu.jpInformacionCrediticia.setBorder(javax.swing.BorderFactory.createTitledBorder(creditos.NombreCliente(credito)));
+		menu.tblArticulosCredito.setModel(creditos.listaProductoCreditosDolar(credito));
+		menu.tblArticulosCreditoCordobas.setModel(creditos.listaProductoCreditosCordobas(credito));
+		/*    historial de abonos     */
+		menu.tblAbonosCreditos.setModel(creditos.MostrarAbonosCreditos(credito));
+		/*    pagos, saldo en dolares y cordobas   */
+		menu.lblTodalCreditoCordobas.setText(this.formato.format(creditos.getSaldoCordobas()));
+		menu.lblTotalCreditoDolar.setText(this.formato.format(creditos.getSaldoDolares()));
+		menu.lblTotalAbonosCordobas.setText(this.formato.format(this.creditos.getPagosCordobas()));
+		menu.lblTotalAbonosDolar.setText(this.formato.format(this.creditos.getPagosDolar()));
+		/*    calculos para scar los saldo   */
+		saldoCordobas = this.creditos.getSaldoCordobas() - this.creditos.getPagosCordobas();
+		saldoDolar = this.creditos.getSaldoDolares() - this.creditos.getPagosDolar();
+		menu.lblSaldoCordobas.setText(this.formato.format(saldoCordobas));
+		menu.lblSaldoDolar.setText(this.formato.format(saldoDolar));
+	}
+
+	public void MostrarHistorialCrediticio(int credito) {
+		float saldoCordobas, saldoDolar;
+		/*    llamar los datos    */
+		this.creditos.saldoInicialCredito(credito);
+		this.creditos.saldoPorCredito(credito);
+		this.creditos.pagosPorCedito(credito);
+		/*    crear borde con el nombre del cliente   */
+		menu.jpInformacionCrediticia.setBorder(javax.swing.BorderFactory.createTitledBorder(creditos.NombreCliente(credito)));
+		menu.tblArticulosCredito.setModel(creditos.MostrarHistorialProductosCreditoDolar(credito));
+		menu.tblArticulosCreditoCordobas.setModel(creditos.MostrarHistorialProductosCreditoCordobas(credito));
+		/*    historial de abonos     */
+		menu.tblAbonosCreditos.setModel(creditos.MostrarAbonosCreditos(credito));
+		/*    pagos, saldo en dolares y cordobas   */
+		menu.lblTodalCreditoCordobas.setText(this.formato.format(creditos.getSaldoCordobas()));
+		menu.lblTotalCreditoDolar.setText(this.formato.format(creditos.getSaldoDolares()));
+		menu.lblTotalAbonosCordobas.setText(this.formato.format(this.creditos.getPagosCordobas()));
+		menu.lblTotalAbonosDolar.setText(this.formato.format(this.creditos.getPagosDolar()));
+		/*    calculos para scar los saldo   */
+		saldoCordobas = this.creditos.getSaldoCordobas() - this.creditos.getPagosCordobas();
+		saldoDolar = this.creditos.getSaldoDolares() - this.creditos.getPagosDolar();
+		menu.lblSaldoCordobas.setText(this.formato.format(saldoCordobas));
+		menu.lblSaldoDolar.setText(this.formato.format(saldoDolar));
 	}
 
 	public void crearCredito() {
@@ -338,6 +390,8 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 			this.creditos.setEstado(estado);
 			this.creditos.setFecha(fechaSQL);
 			this.creditos.setLimite(limite);
+			this.creditos.setSaldoInicialCordobas(saldoInicialCordobas);
+			this.creditos.setSaldoInicialDolares(saldoInicialDolares);
 			this.creditos.GuardarCredito();
 			MostrarCreditosCreados("");
 			MostrarCreditosAddFactura("");
@@ -356,15 +410,6 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 			if (filaseleccionada == -1) {
 
 			} else {
-				/*confirmacion = JOptionPane.showConfirmDialog(null, "Seguro que Quieres Borrar Este Credito", "Advertencia", JOptionPane.OK_CANCEL_OPTION);
-                    if(confirmacion == JOptionPane.YES_OPTION)
-                    {
-                    modelo = (DefaultTableModel) menu.tblCreditosCreados.getModel();
-                    id = Integer.parseInt(modelo.getValueAt(filaseleccionada, 0).toString());
-                    creditos.Eliminar(id);
-                    MostrarCreditosCreados("");
-                    }*/
-				menu.ConfimarEliminarCredito.setSize(272, 98);
 				menu.ConfimarEliminarCredito.setVisible(true);
 				menu.ConfimarEliminarCredito.setLocationRelativeTo(null);
 			}
@@ -380,9 +425,6 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 			if (filaseleccionada == -1) {
 
 			} else {
-				//confirmacion = JOptionPane.showConfirmDialog(null, "Seguro que Quieres Borrar Este Credito", "Advertencia", JOptionPane.OK_CANCEL_OPTION);
-				//if(confirmacion == JOptionPane.YES_OPTION)
-				//{
 				modelo = (DefaultTableModel) menu.tblCreditosCreados.getModel();
 				id = Integer.parseInt(modelo.getValueAt(filaseleccionada, 0).toString());
 				String estado = (String) modelo.getValueAt(filaseleccionada, 5);
@@ -393,7 +435,6 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 				} else {
 					JOptionPane.showMessageDialog(null, "El crédito no se puede eliminar por que esta pendiente", "Advertencia", JOptionPane.WARNING_MESSAGE);
 				}
-				//}
 			}
 		} catch (Exception err) {
 			JOptionPane.showMessageDialog(null, err + "en la funcion eliminar Credito");
@@ -406,6 +447,8 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 			this.creditos.setEstado(estado);
 			this.creditos.setFecha(fechaSQL);
 			this.creditos.setLimite(limite);
+			this.creditos.setSaldoInicialCordobas(saldoInicialCordobas);
+			this.creditos.setSaldoInicialDolares(saldoInicialDolares);
 			this.creditos.Actualizar();
 			MostrarCreditosCreados("");
 			MostrarCreditosAddFactura("");
@@ -431,6 +474,8 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 					menu.cmbEstadoCredito.setSelectedItem(this.creditos.getEstado());
 					menu.cmbEstadoCredito.setEnabled(false);
 					menu.jsLimiteCredito.setValue(this.creditos.getLimite());
+					menu.jsSaldoInicialCordobasCredito.setValue(this.creditos.getSaldoInicialCordobas());
+					menu.jsSaldoInicialDolarCreditos.setValue(this.creditos.getSaldoInicialDolares());
 
 					menu.btnActualizarCredito.setEnabled(true);
 					menu.btnCrearCredito.setEnabled(false);
@@ -441,6 +486,8 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 					menu.cmbEstadoCredito.setSelectedItem(this.creditos.getEstado());
 					menu.cmbEstadoCredito.setEnabled(true);
 					menu.jsLimiteCredito.setValue(this.creditos.getLimite());
+					menu.jsSaldoInicialCordobasCredito.setValue(this.creditos.getSaldoInicialCordobas());
+					menu.jsSaldoInicialDolarCreditos.setValue(this.creditos.getSaldoInicialDolares());
 
 					menu.btnActualizarCredito.setEnabled(true);
 					menu.btnCrearCredito.setEnabled(false);
@@ -464,7 +511,7 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 				menu.txtCreditoPago.setText(credito);
 				menu.jsMontoPago.setValue(0);
 				menu.jsMontoPago.requestFocus();
-				menu.pagosAcreditos.setSize(860, 540);
+				menu.pagosAcreditos.setSize(900, 540);
 				menu.pagosAcreditos.setVisible(true);
 				menu.pagosAcreditos.setLocationRelativeTo(null);
 			} else {

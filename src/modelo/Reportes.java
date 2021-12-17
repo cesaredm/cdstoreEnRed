@@ -7,6 +7,8 @@ package modelo;
 
 import java.sql.Date;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -24,7 +26,7 @@ public class Reportes extends Conexiondb {
 	private float Dolares, EgresoDolares, dolaresComprados, precioDolar;
 	private float ventasEfectivoDiarioDolar,
 		ventasEfectivoDiarioCordobas,
-		ventasEfectivoRangoDolar ,
+		ventasEfectivoRangoDolar,
 		ventasEfectivoRangoCordobas,
 		ventasCreditoDiarioDolar,
 		ventasCreditoDiarioCordobas,
@@ -56,7 +58,6 @@ public class Reportes extends Conexiondb {
 		ventasTotalesDolarDiario,
 		totalIngresoBancosCordobas,
 		totalIngresosBancosDolar;
-	
 
 	public Reportes() {
 		this.pst = null;
@@ -336,7 +337,6 @@ public class Reportes extends Conexiondb {
 		this.totalIngresosBancosDolar = totalIngresosBancosDolar;
 	}
 
-
 	public void setPrecioDolar(float precio) {
 		this.precioDolar = precio;
 	}
@@ -353,15 +353,19 @@ public class Reportes extends Conexiondb {
 		return this.dolaresComprados;
 	}
 
+	public DefaultTableModel getModeloTable() {
+		return this.modelo;
+	}
+
 	//mostrar facturas realizadas por dia 
 	public DefaultTableModel ReporteDiario(Date Fecha) {
 		cn = Conexion();
 		this.consulta = "SELECT facturas.id,facturas.fecha AS fechaFactura, impuestoISV, totalDolares, totalCordobas, nombre_comprador,"
 			+ " formapago.tipoVenta,creditos.id as idCredito, cajas.caja from facturas LEFT JOIN formapago ON(formapago.id = facturas.tipoVenta)"
 			+ " LEFT JOIN creditos ON(facturas.credito = creditos.id) LEFT JOIN cajas ON(facturas.caja=cajas.id) WHERE"
-			+ " facturas.fecha = ? ORDER BY facturas.id DESC";
+			+ " DATE(facturas.fecha) = ? ORDER BY facturas.id DESC";
 		String[] Resultados = new String[9];
-		String[] titulos = {"Factura", "Fecha", "IVA", "Total Dolar", "Total Cordobas", "Comprador", "Forma Pago", "N° Credito", "Caja"};
+		String[] titulos = {"Factura", "Fecha y hora", "IVA", "Total Dolar", "Total Cordobas", "Comprador", "Forma Pago", "N° Credito", "Caja"};
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
@@ -428,7 +432,7 @@ public class Reportes extends Conexiondb {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(totalCordobas) AS totalCordobas, SUM(totalDolares) AS totalDolares FROM facturas"
 			+ " INNER JOIN creditos ON(facturas.credito = creditos.id) INNER JOIN cajas ON(facturas.caja=cajas.id)"
-			+ " WHERE facturas.fecha = ? AND cajas.caja='CAJA1'";
+			+ " WHERE DATE(facturas.fecha) = ? AND cajas.caja='CAJA1'";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			pst.setDate(1, fecha);
@@ -469,7 +473,7 @@ public class Reportes extends Conexiondb {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(totalCordobas) AS totalCordobas, SUM(totalDolares) AS totalDolares FROM facturas"
 			+ " INNER JOIN creditos ON(facturas.credito = creditos.id) INNER JOIN cajas ON(facturas.caja=cajas.id)"
-			+ " WHERE facturas.fecha BETWEEN ? AND ? AND cajas.caja='CAJA1'";
+			+ " WHERE DATE(facturas.fecha) BETWEEN ? AND ? AND cajas.caja='CAJA1'";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			pst.setDate(1, fechaInicio);
@@ -489,7 +493,7 @@ public class Reportes extends Conexiondb {
 	public void salidaEfectivoRango(Date fecha1, Date fecha2) {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS totalGasto FROM transaccion INNER JOIN cajas ON(transaccion.caja=cajas.id)"
-			+ " WHERE fecha BETWEEN ? AND ? AND tipoTransaccion = 'Egreso' AND cajas.caja = 'CAJA1'";
+			+ " WHERE DATE(fecha) BETWEEN ? AND ? AND tipoTransaccion = 'Egreso' AND cajas.caja = 'CAJA1'";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			pst.setDate(1, fecha1);
@@ -505,10 +509,10 @@ public class Reportes extends Conexiondb {
 	}
 
 	//mostrar los egresos por dias
-	public void salidaEfectivoDiario(Date fecha1) {
+	public void salidaEfectivoDiarioCordobas(Date fecha1) {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS totalGasto FROM transaccion INNER JOIN cajas ON(transaccion.caja = cajas.id)"
-			+ " WHERE fecha = ? AND cajas.caja='CAJA1' AND transaccion.tipoTransaccion = 'Egreso'";
+			+ " WHERE DATE(fecha) = ? AND cajas.caja='CAJA1' AND transaccion.tipoTransaccion = 'Egreso' AND moneda = 'Córdobas'";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			pst.setDate(1, fecha1);
@@ -522,10 +526,29 @@ public class Reportes extends Conexiondb {
 		}
 	}
 
+	public void salidaEfectivoDiarioDolar(Date fecha) {
+		cn = Conexion();
+		this.consulta = "SELECT SUM(monto) AS totalGasto FROM transaccion INNER JOIN cajas ON(transaccion.caja = cajas.id)"
+			+ " WHERE DATE(fecha) = ? AND cajas.caja='CAJA1' AND transaccion.tipoTransaccion = 'Egreso' AND moneda = 'Dolar'";
+		try {
+			pst = this.cn.prepareStatement(this.consulta);
+			pst.setDate(1, fecha);
+			ResultSet rs = pst.executeQuery();
+			while (rs.next()) {
+				this.salidaDiarioDolares = rs.getFloat("totalGasto");
+			}
+			cn.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e + " gasto diario");
+		}
+
+	}
+
 	public float TotalGastosGlobal() {
 		cn = Conexion();
 		float totalGasto = 0;
-		this.consulta = "SELECT SUM(monto) AS totalGasto FROM transaccion INNER JOIN cajas ON(transaccion.caja = cajas.id) WHERE cajas.caja='CAJA1' AND transaccion.tipoTransaccion = 'Egreso'";
+		this.consulta = "SELECT SUM(monto) AS totalGasto FROM transaccion INNER JOIN cajas ON(transaccion.caja = cajas.id) WHERE"
+			+ " cajas.caja='CAJA1' AND transaccion.tipoTransaccion = 'Egreso'";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			ResultSet rs = pst.executeQuery();
@@ -545,7 +568,8 @@ public class Reportes extends Conexiondb {
 	public float TotalIngresoEfectivoGlobal() {
 		float ingresos = 0;
 		cn = Conexion();
-		this.consulta = "SELECT SUM(monto) AS totalGasto FROM transaccion INNER JOIN cajas ON(transaccion.caja = cajas.id) WHERE cajas.caja='CAJA1' AND transaccion.tipoTransaccion = 'Ingreso'";
+		this.consulta = "SELECT SUM(monto) AS totalGasto FROM transaccion INNER JOIN cajas ON(transaccion.caja = cajas.id) WHERE"
+			+ " cajas.caja='CAJA1' AND transaccion.tipoTransaccion = 'Ingreso'";
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
 			ResultSet rs = pst.executeQuery();
@@ -562,10 +586,11 @@ public class Reportes extends Conexiondb {
 		return ingresos;
 	}
 
-	public void ingresoEfectivoDiario(Date fecha) {
+	public void ingresoEfectivoDiarioCordobas(Date fecha) {
 		this.cn = Conexion();
 		this.consulta = "SELECT SUM(t.monto) AS total FROM transaccion AS t "
-			+ "INNER JOIN cajas AS c ON(t.caja = c.id) WHERE t.fecha = ? AND c.caja = 'CAJA1' AND t.tipoTransaccion = 'Ingreso'";
+			+ "INNER JOIN cajas AS c ON(t.caja = c.id) WHERE DATE(t.fecha) = ? AND c.caja = 'CAJA1' AND t.tipoTransaccion = 'Ingreso' AND "
+			+ "moneda = 'Córdobas'";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
 			this.pst.setDate(1, fecha);
@@ -579,10 +604,28 @@ public class Reportes extends Conexiondb {
 		}
 	}
 
+	public void ingresoEfectivoDiarioDolar(Date fecha) {
+		this.cn = Conexion();
+		this.consulta = "SELECT SUM(t.monto) AS total FROM transaccion AS t "
+			+ "INNER JOIN cajas AS c ON(t.caja = c.id) WHERE DATE(t.fecha) = ? AND c.caja = 'CAJA1' AND t.tipoTransaccion = 'Ingreso' AND "
+			+ "moneda = 'Dolar'";
+		try {
+			this.pst = this.cn.prepareStatement(this.consulta);
+			this.pst.setDate(1, fecha);
+			ResultSet rs = this.pst.executeQuery();
+			while (rs.next()) {
+				this.ingresoDiarioDolar = rs.getFloat("total");
+			}
+			this.cn.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e + " en la funcion IngresoDiarioEfectivo en modelo Reportes");
+		}
+	}
+
 	public void ingresoEfecitivoRango(Date fecha1, Date fecha2) {
 		this.cn = Conexion();
 		this.consulta = "SELECT SUM(t.monto) AS total FROM transaccion AS t INNER JOIN cajas AS c ON(t.caja = c.id) WHERE"
-			+ " t.fecha BETWEEN ? AND ? AND c.caja = 'CAJA1' AND t.tipoTransaccion = 'Ingreso'";
+			+ " DATE(t.fecha) BETWEEN ? AND ? AND c.caja = 'CAJA1' AND t.tipoTransaccion = 'Ingreso'";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
 			this.pst.setDate(1, fecha1);
@@ -602,7 +645,7 @@ public class Reportes extends Conexiondb {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Efectivo'"
-			+ " AND pagoscreditos.moneda = 'Cordobas' AND pagoscreditos.fecha BETWEEN ? AND ?";
+			+ " AND pagoscreditos.moneda = 'Cordobas' AND DATE(pagoscreditos.fecha) BETWEEN ? AND ?";
 		try {
 			pst = cn.prepareStatement(consulta);
 			pst.setDate(1, fecha1);
@@ -621,7 +664,7 @@ public class Reportes extends Conexiondb {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Efectivo'"
-			+ " AND pagoscreditos.moneda = 'Dolar' AND pagoscreditos.fecha BETWEEN ? AND ?";
+			+ " AND pagoscreditos.moneda = 'Dolar' AND DATE(pagoscreditos.fecha) BETWEEN ? AND ?";
 		try {
 			pst = cn.prepareStatement(consulta);
 			pst.setDate(1, fecha1);
@@ -641,7 +684,7 @@ public class Reportes extends Conexiondb {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Efectivo' AND pagoscreditos.moneda = 'cordobas'"
-			+ " AND pagoscreditos.fecha = ?";
+			+ " AND DATE(pagoscreditos.fecha) = ?";
 		try {
 			pst = cn.prepareStatement(consulta);
 			pst.setDate(1, fecha1);
@@ -659,7 +702,7 @@ public class Reportes extends Conexiondb {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Efectivo' AND pagoscreditos.moneda = 'Dolar'"
-			+ " AND pagoscreditos.fecha = ?";
+			+ " AND DATE(pagoscreditos.fecha) = ?";
 		try {
 			pst = cn.prepareStatement(consulta);
 			pst.setDate(1, fecha1);
@@ -672,6 +715,7 @@ public class Reportes extends Conexiondb {
 			JOptionPane.showMessageDialog(null, e + " totalpagoefectivodiario");
 		}
 	}
+
 	public float totalPagosEfectivoGlobal() {
 		cn = Conexion();
 		float pagos = 0;
@@ -697,13 +741,13 @@ public class Reportes extends Conexiondb {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Tarjeta' AND pagoscreditos.moneda = 'Cordobas'"
-			+ " AND pagoscreditos.fecha = ?";
+			+ " AND DATE(pagoscreditos.fecha) = ?";
 		try {
 			pst = cn.prepareStatement(consulta);
 			pst.setDate(1, fecha1);
 			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
-				this.abonosTajetaCordobasDiario = rs.getFloat("TotalPagos");	
+				this.abonosTajetaCordobasDiario = rs.getFloat("TotalPagos");
 			}
 			cn.close();
 		} catch (SQLException e) {
@@ -715,13 +759,13 @@ public class Reportes extends Conexiondb {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Tarjeta' AND pagoscreditos.moneda = 'Dolar'"
-			+ " AND pagoscreditos.fecha = ?";
+			+ " AND DATE(pagoscreditos.fecha) = ?";
 		try {
 			pst = cn.prepareStatement(consulta);
 			pst.setDate(1, fecha1);
 			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
-				this.abonosTarjetaDolarDiario = rs.getFloat("TotalPagos");	
+				this.abonosTarjetaDolarDiario = rs.getFloat("TotalPagos");
 			}
 			cn.close();
 		} catch (SQLException e) {
@@ -755,7 +799,7 @@ public class Reportes extends Conexiondb {
 		float pagos = 0;
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Tarjeta' AND pagoscreditos.moneda = 'cordobas' AND"
-			+ " pagoscreditos.fecha BETWEEN ? AND ?";
+			+ " DATE(pagoscreditos.fecha) BETWEEN ? AND ?";
 		try {
 			pst = cn.prepareStatement(consulta);
 			pst.setDate(1, fecha1);
@@ -775,7 +819,7 @@ public class Reportes extends Conexiondb {
 		float pagos = 0;
 		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos INNER JOIN formapago"
 			+ " ON(pagoscreditos.formaPago = formapago.id) WHERE formapago.tipoVenta = 'Tarjeta' AND pagoscreditos.moneda = 'cordobas' AND"
-			+ " pagoscreditos.fecha BETWEEN ? AND ?";
+			+ " DATE(pagoscreditos.fecha) BETWEEN ? AND ?";
 		try {
 			pst = cn.prepareStatement(consulta);
 			pst.setDate(1, fecha1);
@@ -794,7 +838,7 @@ public class Reportes extends Conexiondb {
 	public String totalPagos(Date fecha1, Date fecha2) {
 		cn = Conexion();
 		String pagos = "";
-		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos WHERE pagoscreditos.fecha BETWEEN ? AND ?";
+		this.consulta = "SELECT SUM(monto) AS TotalPagos FROM pagoscreditos WHERE DATE(pagoscreditos.fecha) BETWEEN ? AND ?";
 		try {
 			pst = cn.prepareStatement(consulta);
 			pst.setDate(1, fecha1);
@@ -944,7 +988,7 @@ public class Reportes extends Conexiondb {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(totalCordobas) AS totalCordobas, SUM(totalDolares) AS totalDolares FROM facturas"
 			+ " INNER JOIN formapago ON(formapago.id=facturas.tipoVenta) INNER JOIN cajas ON(facturas.caja=cajas.id)"
-			+ " WHERE fecha BETWEEN ? AND ? AND formapago.tipoVenta = 'Efectivo' AND cajas.caja='CAJA1'";
+			+ " WHERE DATE(fecha) BETWEEN ? AND ? AND formapago.tipoVenta = 'Efectivo' AND cajas.caja='CAJA1'";
 		try {
 			PreparedStatement pst = this.cn.prepareStatement(this.consulta);
 			pst.setDate(1, fecha1);
@@ -965,7 +1009,7 @@ public class Reportes extends Conexiondb {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(totalCordobas) AS totalCordobas, SUM(totalDolares) AS totalDolares FROM facturas"
 			+ " INNER JOIN formapago ON(formapago.id=facturas.tipoVenta) INNER JOIN cajas ON(facturas.caja=cajas.id)"
-			+ " WHERE fecha = ? AND formapago.tipoVenta = 'Efectivo' AND cajas.caja='CAJA1'";
+			+ " WHERE DATE(fecha) = ? AND formapago.tipoVenta = 'Efectivo' AND cajas.caja='CAJA1'";
 		try {
 			PreparedStatement pst = this.cn.prepareStatement(this.consulta);
 			pst.setDate(1, fecha1);
@@ -980,11 +1024,11 @@ public class Reportes extends Conexiondb {
 		}
 	}
 
-	public void ventasTarjetaDiario(Date fecha1){
+	public void ventasTarjetaDiario(Date fecha1) {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(totalCordobas) AS totalCordobas, SUM(totalDolares) AS totalDolares FROM facturas"
 			+ " INNER JOIN formapago ON(formapago.id=facturas.tipoVenta) INNER JOIN cajas ON(facturas.caja=cajas.id)"
-			+ " WHERE fecha = ? AND formapago.tipoVenta = 'Tarjeta' AND cajas.caja='CAJA1'";
+			+ " WHERE DATE(fecha) = ? AND formapago.tipoVenta = 'Tarjeta' AND cajas.caja='CAJA1'";
 		try {
 			PreparedStatement pst = this.cn.prepareStatement(this.consulta);
 			pst.setDate(1, fecha1);
@@ -998,7 +1042,7 @@ public class Reportes extends Conexiondb {
 			JOptionPane.showMessageDialog(null, e + "funcion IngresoEfectivoCaja en modelo reportes");
 		}
 	}
-	
+
 	public float ingresoEfectivoCajaGlobal() {
 		float total = 0;
 		cn = Conexion();
@@ -1020,7 +1064,7 @@ public class Reportes extends Conexiondb {
 	public void IngresosTotales(Date fecha1, Date fecha2) {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(totalCordobas) AS totalCordobas, SUM(totalDolares) AS totalDolares FROM facturas"
-			+ " INNER JOIN cajas ON(facturas.caja=cajas.id) WHERE fecha BETWEEN ? AND ? AND cajas.caja='CAJA1'";
+			+ " INNER JOIN cajas ON(facturas.caja=cajas.id) WHERE DATE(fecha) BETWEEN ? AND ? AND cajas.caja='CAJA1'";
 		try {
 			PreparedStatement pst = this.cn.prepareStatement(this.consulta);
 			pst.setDate(1, fecha1);
@@ -1040,7 +1084,7 @@ public class Reportes extends Conexiondb {
 	public void IngresosTotalesDiario(Date fecha1) {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(totalCordobas) AS totalCordobas, SUM(totalDolares) AS totalDolares FROM facturas INNER JOIN"
-			+ " cajas ON(facturas.caja=cajas.id) WHERE fecha = ? AND cajas.caja = 'CAJA1'";
+			+ " cajas ON(facturas.caja=cajas.id) WHERE DATE(fecha) = ? AND cajas.caja = 'CAJA1'";
 		try {
 			PreparedStatement pst = this.cn.prepareStatement(this.consulta);
 			pst.setDate(1, fecha1);
@@ -1078,7 +1122,7 @@ public class Reportes extends Conexiondb {
 		cn = Conexion();
 		this.consulta = "SELECT SUM(totalFactura) AS total FROM facturas INNER JOIN formapago"
 			+ " ON(formapago.id=facturas.tipoVenta) INNER JOIN cajas ON(facturas.caja=cajas.id) WHERE"
-			+ " fecha BETWEEN ? AND ? AND formapago.tipoVenta = 'Tarjeta' AND cajas.caja = 'CAJA1'";
+			+ " DATE(fecha) BETWEEN ? AND ? AND formapago.tipoVenta = 'Tarjeta' AND cajas.caja = 'CAJA1'";
 		try {
 			PreparedStatement pst = this.cn.prepareStatement(this.consulta);
 			pst.setDate(1, fecha1);
@@ -1156,8 +1200,7 @@ public class Reportes extends Conexiondb {
 	}
 
 	/*                                            REPORTES BUSSINESS INTELIGENCE                                                  */
-/*------------------------------------------------------------------------------------------------------------------------------------------------*/
-
+ /*------------------------------------------------------------------------------------------------------------------------------------------------*/
 	public DefaultTableModel productosMasVendidos(Date fecha1, Date fecha2) {
 		int n = 1;
 		this.cn = Conexion();
@@ -1195,9 +1238,9 @@ public class Reportes extends Conexiondb {
 
 	public DefaultTableModel BuscarFactura(int id) {
 		this.cn = Conexion();
-		this.consulta = "SELECT facturas.id,facturas.fecha AS fechaFactura, impuestoISV, totalFactura, nombre_comprador, formapago.tipoVenta, creditos.id as idCredito, cajas.caja from facturas LEFT JOIN formapago ON(formapago.id = facturas.tipoVenta) LEFT JOIN creditos ON(facturas.credito = creditos.id) LEFT JOIN cajas ON(facturas.caja=cajas.id) WHERE facturas.id = ?";
-		String[] facturas = new String[8];
-		String[] titulos = {"Factura", "Fecha", "IVA", "Total", "Comprador", "Forma Pago", "N° Credito", "Caja"};
+		this.consulta = "SELECT facturas.id,facturas.fecha AS fechaFactura, impuestoISV, totalDolares,totalCordobas, nombre_comprador, formapago.tipoVenta, creditos.id as idCredito, cajas.caja from facturas LEFT JOIN formapago ON(formapago.id = facturas.tipoVenta) LEFT JOIN creditos ON(facturas.credito = creditos.id) LEFT JOIN cajas ON(facturas.caja=cajas.id) WHERE facturas.id = ?";
+		String[] facturas = new String[9];
+		String[] titulos = {"Factura", "Fecha", "IVA", "Total Dólar", "Total Córdobas", "Comprador", "Forma Pago", "N° Credito", "Caja"};
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
@@ -1212,11 +1255,12 @@ public class Reportes extends Conexiondb {
 				facturas[0] = rs.getString("id");
 				facturas[1] = rs.getString("fechaFactura");
 				facturas[2] = rs.getString("impuestoISV");
-				facturas[3] = rs.getString("totalFactura");
-				facturas[4] = rs.getString("nombre_comprador");
-				facturas[5] = rs.getString("tipoVenta");
-				facturas[6] = rs.getString("idCredito");
-				facturas[7] = rs.getString("caja");
+				facturas[3] = rs.getString("totalDolares");
+				facturas[4] = rs.getString("totalCordobas");
+				facturas[5] = rs.getString("nombre_comprador");
+				facturas[6] = rs.getString("tipoVenta");
+				facturas[7] = rs.getString("idCredito");
+				facturas[8] = rs.getString("caja");
 				modelo.addRow(facturas);
 			}
 		} catch (SQLException e) {
@@ -1332,4 +1376,44 @@ public class Reportes extends Conexiondb {
 		return total * this.precioDolar;
 	}
 
+	public void productosVentasDiarias(Date fecha) {
+		this.cn = Conexion();
+		String[] titulos = {"N°", "Cantidad", "Nombre", "Precio", "Importe", "Factura"};
+		String[] datos = new String[6];
+		String numeracion = "SET @numero=0";
+		this.consulta = "SELECT @numero:=@numero+1 AS num,df.cantidadProducto,p.nombre, df.precioProducto, df.totalVenta,"
+			+ " p.monedaVenta, df.factura FROM detalleFactura AS df INNER JOIN facturas AS f ON(df.factura=f.id) INNER JOIN "
+			+ "productos AS p ON(df.producto=p.id) WHERE DATE(f.fecha) = ? ORDER BY df.id ASC";
+		this.modelo = new DefaultTableModel(null, titulos) {
+			@Override
+			public boolean isCellEditable(int row, int col) {
+				return false;
+			}
+		};
+
+		try {
+			this.pst = this.cn.prepareStatement(numeracion);
+			this.pst.execute();
+			this.pst = this.cn.prepareStatement(this.consulta);
+			this.pst.setDate(1, fecha);
+			ResultSet rs = this.pst.executeQuery();
+			while (rs.next()) {
+				datos[0] = rs.getString("num");
+				datos[1] = rs.getString("cantidadProducto");
+				datos[2] = rs.getString("nombre");
+				datos[3] = rs.getString("precioProducto");
+				datos[4] = rs.getString("totalVenta");
+				datos[5] = rs.getString("factura");
+				this.modelo.addRow(datos);
+			}
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e + "ERROR: en el metodo productosVentasDiarias en el modelo reportes");
+		} finally {
+			try {
+				this.cn.close();
+			} catch (SQLException ex) {
+				Logger.getLogger(Reportes.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+	}
 }

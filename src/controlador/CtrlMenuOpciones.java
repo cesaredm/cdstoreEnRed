@@ -95,7 +95,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         ctrlUsua = new CtrlUsuarios(menu, usuarios);
         ctrlGastos = new CtrlTransacciones(menu, gastos);
         ctrlPagos = new CtrlPagos(menu, pagos);
-        this.ctrlRegistroMonedas = new CtrlRegistroMonedas(menu, registroMonedas);
+//        this.ctrlRegistroMonedas = new CtrlRegistroMonedas(menu, registroMonedas);
         this.print = new CtrlImprimirReport(menu, info);
         this.devoluciones = new CtrlDevoluciones(menu, reportes);
         this.codBarra = new CtrlGenCodBarra(menu);
@@ -118,7 +118,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         if (e.getSource() == menu.btnInventario) {
             //menu.btnInventario.setBackground(new java.awt.Color(60,60,60));
-            menu.lblMenuInventario.setForeground(new java.awt.Color(165,95,235));
+            menu.lblMenuInventario.setForeground(new java.awt.Color(255,215,0));
 //            menu.lblTituloDeVentanas.setText("Inventario");
 
 //            menu.btnReportes.setBackground(new java.awt.Color(72,72,72));
@@ -174,7 +174,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         }
         if (e.getSource() == menu.btnClientes) {
 //            menu.btnClientes.setBackground(new java.awt.Color(60,60,60));
-            menu.lblMenuClientes.setForeground(new java.awt.Color(165,95,235));
+            menu.lblMenuClientes.setForeground(new java.awt.Color(255,215,0));
 //            menu.lblTituloDeVentanas.setText("Clientes");
 	    menu.lblNotificacionClientes.setVisible(false);
 
@@ -227,7 +227,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         }
         if (e.getSource() == menu.btnVentas) {
 //            menu.btnVentas.setBackground(new java.awt.Color(60,60,60));
-            menu.lblMenuVentas.setForeground(new java.awt.Color(165,95,235));
+            menu.lblMenuVentas.setForeground(new java.awt.Color(255,215,0));
 //            menu.lblTituloDeVentanas.setText("Facturación");
 
 //            menu.btnReportes.setBackground(new java.awt.Color(72,72,72));
@@ -279,7 +279,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         }
         if (e.getSource() == menu.btnReportes) {
 //            menu.btnReportes.setBackground(new java.awt.Color(60,60,60));
-            menu.lblMenuReportes.setForeground(new java.awt.Color(165,95,235));
+            menu.lblMenuReportes.setForeground(new java.awt.Color(255,215,0));
 //            menu.lblTituloDeVentanas.setText("Reportes");
 
 //            menu.btnVentas.setBackground(new java.awt.Color(72,72,72));
@@ -334,7 +334,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         }
         if (e.getSource() == menu.btnUsuarios) {
 //            menu.btnUsuarios.setBackground(new java.awt.Color(60,60,60));
-            menu.lblMenuUsuarios.setForeground(new java.awt.Color(165,95,235));
+            menu.lblMenuUsuarios.setForeground(new java.awt.Color(255,215,0));
 //            menu.lblTituloDeVentanas.setText("Gestion de Usuarios");
 
 //            menu.btnReportes.setBackground(new java.awt.Color(72,72,72));
@@ -386,7 +386,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         }
         if (e.getSource() == menu.btnTransacciones) {
 //            menu.btnTransacciones.setBackground(new java.awt.Color(60,60,60));
-            menu.lblGastosMenu.setForeground(new java.awt.Color(165,95,235));
+            menu.lblGastosMenu.setForeground(new java.awt.Color(255,215,0));
 //            menu.lblTituloDeVentanas.setText("Compras y Otros Gastos");
 
 //            menu.btnReportes.setBackground(new java.awt.Color(72,72,72));
@@ -438,7 +438,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         }
         if (e.getSource() == menu.btnNotificaciones) {
 //            menu.btnNotificaciones.setBackground(new java.awt.Color(60,60,60));
-            menu.lblMenuNotificacion.setForeground(new java.awt.Color(165,95,235));
+            menu.lblMenuNotificacion.setForeground(new java.awt.Color(255,215,0));
 //            menu.lblTituloDeVentanas.setText("Notificaciones");
             menu.lblNumeroNotificaciones.setVisible(false);
 
@@ -490,7 +490,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         }
         if (e.getSource() == menu.btnInfoFactura) {
 //            menu.btnInfoFactura.setBackground(new java.awt.Color(60,60,60));
-            menu.lblEditarInfoFactura.setForeground(new java.awt.Color(165,95,235));
+            menu.lblEditarInfoFactura.setForeground(new java.awt.Color(255,215,0));
 //            menu.lblTituloDeVentanas.setText("Editar Informacion de Factura");
 
 //            menu.btnClientes.setBackground(new java.awt.Color(72,72,72));

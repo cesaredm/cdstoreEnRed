@@ -36,7 +36,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-YYYY");
 	String fechaString;
-	private java.sql.Date fechaSQL;
+	private java.sql.Timestamp fechaSQL;
 	private int formaPago;
 	private String anotacion;
 	private String moneda;
@@ -210,11 +210,12 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 
 	public boolean validar() {
 		boolean validar = true;
+		this.menu.jcFechaPago.setDate(new Date());
 		this.credito = (this.menu.txtCreditoPago.getText().equals("")) ? 0 : Integer.parseInt(menu.txtCreditoPago.getText());
 		this.monto = Float.parseFloat(menu.jsMontoPago.getValue().toString());
 		this.formaPago = Integer.parseInt(this.pagos.ObtenerFormaPago(this.menu.cmbFormaPagoCredito.getSelectedItem().toString()));
 		this.anotacion = menu.txtAreaAnotacionPago.getText();
-		this.fechaSQL = new java.sql.Date(this.menu.jcFechaPago.getDate().getTime());
+		this.fechaSQL = new java.sql.Timestamp(this.menu.jcFechaPago.getDate().getTime());
 		this.moneda = this.menu.cmbMonedaPago.getSelectedItem().toString();
 		this.fechaString = sdf.format(this.menu.jcFechaPago.getDate());
 		if (this.credito == 0) {
@@ -241,6 +242,10 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 				this.pagos.setFecha(this.fechaSQL);
 				this.pagos.setFormaPago(this.formaPago);
 				this.pagos.setAnotacion(this.anotacion);
+				if (this.verificarCreditoCalcelado(monto, credito, moneda)) {
+					//agregar numero unico de forma ascendente
+					this.pagos.setVerificarCancelado("cancelado");
+				}
 				pagos.Guardar();
 				this.estadoCreditos.updateAabierto(this.credito);
 				this.socketCliente.setIps(ips);
@@ -267,6 +272,28 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 			}
 		}
 
+	}
+
+	/* ------------------- verificar si con el abono actual se esta cancelado el credito ----------------*/
+	public boolean verificarCreditoCalcelado(float abono, int credito, String moneda) {
+		boolean verificar = true;
+		Creditos creditoModel = new Creditos();
+		creditoModel.pagosPorCedito(credito);
+		creditoModel.saldoPorCredito(credito);
+		float saldoCordobas = creditoModel.getSaldoCordobas() - creditoModel.getPagosCordobas(),
+			saldoDolares = creditoModel.getSaldoDolares() - creditoModel.getPagosDolar();
+
+		if (moneda.equals("Dolar")) {
+			saldoDolares -= abono;
+		} else {
+			saldoCordobas -= abono;
+		}
+		if (saldoCordobas <= 0 && saldoDolares <= 0) {
+			verificar = true;
+		} else {
+			verificar = false;
+		}
+		return verificar;
 	}
 
 	public void MostrarCreditos(String buscar) {
