@@ -28,6 +28,7 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 		moneda,
 		formaPagoString,
 		verificarCancelado;
+
 	transient DefaultTableModel modelo;
 	transient Connection cn;
 	transient PreparedStatement pst;
@@ -307,13 +308,13 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 		return credito;
 	}
 
-	public String cliente(String id) {
+	public String cliente(int id) {
 		this.consulta = "select c.nombres, c.apellidos from clientes as c inner join creditos on(c.id = creditos.cliente) where creditos.id = ?";
 		this.cn = Conexion();
 		String nombre = "";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
-			this.pst.setString(1, id);
+			this.pst.setInt(1, id);
 			ResultSet rs = this.pst.executeQuery();
 			while (rs.next()) {
 				nombre = rs.getString("nombres") + " " + rs.getString("apellidos");
@@ -324,39 +325,39 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 		return nombre;
 	}
 
-	public float PagosSegunCredito(String id) {
-		this.consulta = "SELECT SUM(p.monto) AS pagos FROM pagoscreditos AS p INNER JOIN creditos AS c ON(c.id = p.credito) WHERE c.id = ?";
-		this.cn = Conexion();
-		float monto = 0;
-		try {
-			this.pst = this.cn.prepareStatement(this.consulta);
-			this.pst.setString(1, id);
-			ResultSet rs = this.pst.executeQuery();
-			while (rs.next()) {
-				monto = rs.getFloat("pagos");
-			}
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e + " en la funcion saldo en modelo pagodCreditos");
-		}
-		return monto;
-	}
+//	public float PagosSegunCredito(String id) {
+//		this.consulta = "SELECT SUM(p.monto) AS pagos FROM pagoscreditos AS p INNER JOIN creditos AS c ON(c.id = p.credito) WHERE c.id = ?";
+//		this.cn = Conexion();
+//		float monto = 0;
+//		try {
+//			this.pst = this.cn.prepareStatement(this.consulta);
+//			this.pst.setString(1, id);
+//			ResultSet rs = this.pst.executeQuery();
+//			while (rs.next()) {
+//				monto = rs.getFloat("pagos");
+//			}
+//		} catch (SQLException e) {
+//			JOptionPane.showMessageDialog(null, e + " en la funcion saldo en modelo pagodCreditos");
+//		}
+//		return monto;
+//	}
 
-	public float deuda(String id) {
-		this.consulta = "SELECT SUM(f.totalFactura) AS deuda FROM facturas AS f INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id= ?";
-		this.cn = Conexion();
-		float monto = 0;
-		try {
-			this.pst = this.cn.prepareStatement(this.consulta);
-			this.pst.setString(1, id);
-			ResultSet rs = this.pst.executeQuery();
-			while (rs.next()) {
-				monto = rs.getFloat("deuda");
-			}
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e + " en la funcion saldo en modelo pagodCreditos");
-		}
-		return monto;
-	}
+//	public float deuda(String id) {
+//		this.consulta = "SELECT SUM(f.totalFactura) AS deuda FROM facturas AS f INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id= ?";
+//		this.cn = Conexion();
+//		float monto = 0;
+//		try {
+//			this.pst = this.cn.prepareStatement(this.consulta);
+//			this.pst.setString(1, id);
+//			ResultSet rs = this.pst.executeQuery();
+//			while (rs.next()) {
+//				monto = rs.getFloat("deuda");
+//			}
+//		} catch (SQLException e) {
+//			JOptionPane.showMessageDialog(null, e + " en la funcion saldo en modelo pagodCreditos");
+//		}
+//		return monto;
+//	}
 
 	
 

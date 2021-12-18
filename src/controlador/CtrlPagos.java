@@ -31,9 +31,10 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 	private int id;
 	private int credito;
 	private float monto,
-		saldo,
-		saldoActual;
-
+		saldoCordobas,
+		saldoDolar,
+		saldoActualCordobas,
+		saldoActualDolares;
 	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-YYYY");
 	String fechaString;
 	private java.sql.Timestamp fechaSQL;
@@ -230,12 +231,14 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 
 	public void guardarPago() {
 		String[] ips = {"127.0.0.1"};
-		float saldo = 0,
-			saldoActual = 0;
 		String numeroPago = menu.lblNumeroPago.getText();
 		if (this.validar()) {
 			try {
-				saldo = pagos.deuda(String.valueOf(this.credito)) - pagos.PagosSegunCredito(String.valueOf(this.credito));
+				this.creditos.saldoInicialCredito(this.credito);
+				this.creditos.saldoPorCredito(this.credito);
+				this.creditos.pagosPorCedito(this.credito);
+				this.saldoCordobas = this.creditos.getSaldoCordobas() - this.creditos.getPagosCordobas();
+				this.saldoDolar = this.creditos.getSaldoDolares() - this.creditos.getPagosDolar();
 				this.pagos.setCredito(this.credito);
 				this.pagos.setMonto(this.monto);
 				this.pagos.setMoneda(moneda);
@@ -248,20 +251,27 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 				}
 				pagos.Guardar();
 				this.estadoCreditos.updateAabierto(this.credito);
-				this.socketCliente.setIps(ips);
-				this.socketCliente.socketInit(this.pagos);
-				saldoActual = pagos.deuda(String.valueOf(this.credito)) - pagos.PagosSegunCredito(String.valueOf(this.credito));
+				//this.socketCliente.setIps(ips);
+				//this.socketCliente.socketInit(this.pagos);
+				this.creditos.saldoInicialCredito(this.credito);
+				this.creditos.saldoPorCredito(this.credito);
+				this.creditos.pagosPorCedito(this.credito);
+				this.saldoActualCordobas = this.creditos.getSaldoCordobas() - this.creditos.getPagosCordobas();
+				this.saldoActualDolares = this.creditos.getSaldoDolares() - this.creditos.getPagosDolar();
 				UltimoPago();
 				info.obtenerInfoFactura();
 				imprimir(
 					info.getNombre(),
 					numeroPago,
 					fechaString,
-					this.pagos.cliente(String.valueOf(this.credito)),
+					this.pagos.cliente(this.credito),
 					String.valueOf(this.credito),
-					this.formato.format(saldo),
+					this.formato.format(this.saldoCordobas),
+					this.formato.format(this.saldoDolar),
 					this.formato.format(this.monto),
-					this.formato.format(saldoActual));
+					this.moneda,
+					this.formato.format(this.saldoActualCordobas),
+					this.formato.format(this.saldoActualDolares));
 				MostrarPagos("");
 				LimpiarPago();
 				this.MostrarCreditos("");
@@ -306,7 +316,19 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 	}
 	//IMPRIMIR TICKET COMPOBANTE DE PAGO
 
-	public void imprimir(String tienda, String idPago, String fecha, String cliente, String credito, String totalCredito, String monto, String saldo) {
+	public void imprimir(
+		String tienda,
+		String idPago,
+		String fecha,
+		String cliente,
+		String credito,
+		String totalCreditoCordobas,
+		String totalCreditoDolares,
+		String monto,
+		String moneda,
+		String saldoCordobas,
+		String saldoDolar
+	) {
 		try {
 
 			reiniciar();
@@ -320,9 +342,11 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 				.writeLF("N° pago:" + idPago)
 				.writeLF("Cliente:" + cliente)
 				.writeLF("Fecha:" + fecha)
-				.writeLF("Total crédito:" + totalCredito)
-				.writeLF("Monto de abono:" + monto)
-				.write("Saldo:").writeLF(bold, saldo)
+				.writeLF("Total crédito C$:" + totalCreditoCordobas)
+				.writeLF("Total crédito $:" + totalCreditoDolares)
+				.writeLF("Monto de abono:" + monto + " " + moneda)
+				.write("Saldo C$:").writeLF(bold, saldoCordobas)
+				.write("Saldo $:").writeLF(bold, saldoDolar)
 				.feed(4)
 				.writeLF(centrar, "_____________________________________")
 				.writeLF(centrar, "Firma vendedor")

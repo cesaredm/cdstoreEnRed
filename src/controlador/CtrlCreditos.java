@@ -163,7 +163,7 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		}
 		if (e.getSource() == menu.tblCreditos) {
 			int filaseleccionada = menu.tblCreditos.getSelectedRow();
-			
+
 			if (e.getClickCount() == 2) {
 				try {
 					if (filaseleccionada != -1) {
@@ -348,14 +348,15 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		menu.tblArticulosCreditoCordobas.setModel(creditos.listaProductoCreditosCordobas(credito));
 		/*    historial de abonos     */
 		menu.tblAbonosCreditos.setModel(creditos.MostrarAbonosCreditos(credito));
-		/*    pagos, saldo en dolares y cordobas   */
-		menu.lblTodalCreditoCordobas.setText(this.formato.format(creditos.getSaldoCordobas()));
-		menu.lblTotalCreditoDolar.setText(this.formato.format(creditos.getSaldoDolares()));
-		menu.lblTotalAbonosCordobas.setText(this.formato.format(this.creditos.getPagosCordobas()));
-		menu.lblTotalAbonosDolar.setText(this.formato.format(this.creditos.getPagosDolar()));
-		/*    calculos para scar los saldo   */
+ 		/*    calculos para sacar los saldo   */
 		saldoCordobas = this.creditos.getSaldoCordobas() - this.creditos.getPagosCordobas();
 		saldoDolar = this.creditos.getSaldoDolares() - this.creditos.getPagosDolar();
+		/*    seteo de pagos, saldo en dolares y cordobas   */
+		menu.lblTodalCreditoCordobas.setText(this.formato.format(saldoCordobas));
+		menu.lblTotalCreditoDolar.setText(this.formato.format(saldoDolar));
+		menu.lblTotalAbonosCordobas.setText(this.formato.format(this.creditos.getPagosCordobas()));
+		menu.lblTotalAbonosDolar.setText(this.formato.format(this.creditos.getPagosDolar()));
+
 		menu.lblSaldoCordobas.setText(this.formato.format(saldoCordobas));
 		menu.lblSaldoDolar.setText(this.formato.format(saldoDolar));
 	}
