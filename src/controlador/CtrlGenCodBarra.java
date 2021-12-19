@@ -142,7 +142,7 @@ public class CtrlGenCodBarra extends Productos implements ActionListener, CaretL
                 String code = this.menu.txtCrearCodigoBarra.getText();
                 int Ncopias = (int) this.menu.jsNcopias.getValue();
                 if(!code.equals("")){
-                    GenerarCodigoBarra("EPSON TM-T20III Receipt",code, Ncopias);
+                    GenerarCodigoBarra("EPSON TM-T20II Receipt",code, Ncopias);
                     this.menu.txtCrearCodigoBarra.setText("");
                 }else{
                     JOptionPane.showMessageDialog(null, "El campo de codigo de barra esta vacio..!");

@@ -289,6 +289,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 		boolean verificar = true;
 		Creditos creditoModel = new Creditos();
 		creditoModel.pagosPorCedito(credito);
+		creditoModel.saldoInicialCredito(credito);
 		creditoModel.saldoPorCredito(credito);
 		float saldoCordobas = creditoModel.getSaldoCordobas() - creditoModel.getPagosCordobas(),
 			saldoDolares = creditoModel.getSaldoDolares() - creditoModel.getPagosDolar();

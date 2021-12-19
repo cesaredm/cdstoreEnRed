@@ -30,7 +30,8 @@ public class Facturacion extends Conexiondb implements Serializable {
 	private String nombreComprador,
 		nombres,
 		apellidos,
-		formapago;
+		formapago,
+		usuario;
 	private int credito;
 	private int pago;
 	private float iva;
@@ -155,12 +156,19 @@ public class Facturacion extends Conexiondb implements Serializable {
 	public String getMonedaVenta() {
 		return monedaVenta;
 	}
+	
+	public void setUsuario(String usuario){
+		this.usuario = usuario;
+	}
 
+	public String getUsuario(){
+		return this.usuario;
+	}
 //Guardar Factura
 	public void GuardarFactura() {
 		cn = Conexion();
-		this.consulta = "INSERT INTO facturas(caja ,fecha, nombre_comprador, credito, tipoVenta, impuestoISV, totalCordobas, totalDolares)"
-			+ " VALUES(?,?,?,?,?,?,?,?)";
+		this.consulta = "INSERT INTO facturas(caja ,fecha, nombre_comprador, credito, tipoVenta, impuestoISV, totalCordobas, totalDolares,"
+			+ " usuario) VALUES(?,?,?,?,?,?,?,?,?)";
 		if (credito != 0) {
 			try {
 				pst = this.cn.prepareStatement(this.consulta);
@@ -172,6 +180,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 				pst.setFloat(6, iva);
 				pst.setFloat(7, totalCordobas);
 				pst.setFloat(8, totalDolar);
+				pst.setString(9, this.usuario);
 				this.banderin = pst.executeUpdate();
 				if (banderin > 0) {
 					//JOptionPane.showMessageDialog(null, "Factura Guardada Exitosamente", "Informacion", JOptionPane.WARNING_MESSAGE);
@@ -191,6 +200,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 				pst.setFloat(6, iva);
 				pst.setFloat(7, totalCordobas);
 				pst.setFloat(8, totalDolar);
+				pst.setString(9,this.usuario);
 				this.banderin = pst.executeUpdate();
 				if (banderin > 0) {
 					//JOptionPane.showMessageDialog(null, "Factura Guardada Exitosamente", "Informacion", JOptionPane.WARNING_MESSAGE);

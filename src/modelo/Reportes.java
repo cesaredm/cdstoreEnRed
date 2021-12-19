@@ -361,11 +361,11 @@ public class Reportes extends Conexiondb {
 	public DefaultTableModel ReporteDiario(Date Fecha) {
 		cn = Conexion();
 		this.consulta = "SELECT facturas.id,facturas.fecha AS fechaFactura, impuestoISV, totalDolares, totalCordobas, nombre_comprador,"
-			+ " formapago.tipoVenta,creditos.id as idCredito, cajas.caja from facturas LEFT JOIN formapago ON(formapago.id = facturas.tipoVenta)"
+			+ " formapago.tipoVenta,creditos.id as idCredito, cajas.caja, facturas.usuario from facturas LEFT JOIN formapago ON(formapago.id = facturas.tipoVenta)"
 			+ " LEFT JOIN creditos ON(facturas.credito = creditos.id) LEFT JOIN cajas ON(facturas.caja=cajas.id) WHERE"
 			+ " DATE(facturas.fecha) = ? ORDER BY facturas.id DESC";
-		String[] Resultados = new String[9];
-		String[] titulos = {"Factura", "Fecha y hora", "IVA", "Total Dolar", "Total Cordobas", "Comprador", "Forma Pago", "N° Credito", "Caja"};
+		String[] Resultados = new String[10];
+		String[] titulos = {"Factura", "Fecha y hora", "IVA", "Total Dolar", "Total Cordobas", "Comprador", "Forma Pago", "N° Credito", "Caja", "Usuario"};
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
@@ -385,6 +385,7 @@ public class Reportes extends Conexiondb {
 				Resultados[6] = rs.getString("tipoVenta");
 				Resultados[7] = rs.getString("idCredito");
 				Resultados[8] = rs.getString("caja");
+				Resultados[9] = rs.getString("usuario");
 				modelo.addRow(Resultados);
 			}
 			cn.close();
@@ -1238,9 +1239,9 @@ public class Reportes extends Conexiondb {
 
 	public DefaultTableModel BuscarFactura(int id) {
 		this.cn = Conexion();
-		this.consulta = "SELECT facturas.id,facturas.fecha AS fechaFactura, impuestoISV, totalDolares,totalCordobas, nombre_comprador, formapago.tipoVenta, creditos.id as idCredito, cajas.caja from facturas LEFT JOIN formapago ON(formapago.id = facturas.tipoVenta) LEFT JOIN creditos ON(facturas.credito = creditos.id) LEFT JOIN cajas ON(facturas.caja=cajas.id) WHERE facturas.id = ?";
-		String[] facturas = new String[9];
-		String[] titulos = {"Factura", "Fecha", "IVA", "Total Dólar", "Total Córdobas", "Comprador", "Forma Pago", "N° Credito", "Caja"};
+		this.consulta = "SELECT facturas.id,facturas.fecha AS fechaFactura, impuestoISV, totalDolares,totalCordobas, nombre_comprador, formapago.tipoVenta, creditos.id as idCredito, cajas.caja,facturas.usuario from facturas LEFT JOIN formapago ON(formapago.id = facturas.tipoVenta) LEFT JOIN creditos ON(facturas.credito = creditos.id) LEFT JOIN cajas ON(facturas.caja=cajas.id) WHERE facturas.id = ?";
+		String[] facturas = new String[10];
+		String[] titulos = {"Factura", "Fecha", "IVA", "Total Dólar", "Total Córdobas", "Comprador", "Forma Pago", "N° Credito", "Caja", "Usuario"};
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
@@ -1261,6 +1262,7 @@ public class Reportes extends Conexiondb {
 				facturas[6] = rs.getString("tipoVenta");
 				facturas[7] = rs.getString("idCredito");
 				facturas[8] = rs.getString("caja");
+				facturas[9] = rs.getString("usuario");
 				modelo.addRow(facturas);
 			}
 		} catch (SQLException e) {

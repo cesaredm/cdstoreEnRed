@@ -27,6 +27,7 @@ public class SocketServer implements Runnable {
 	CtrlPagos pagosContoller;
 	static String objeto;
 	Thread hiloServidor;
+	
 
 	public SocketServer() {
 		this.factura = new Facturacion();
@@ -43,7 +44,7 @@ public class SocketServer implements Runnable {
 	public void setfacturacionController(CtrlFacturacion facturacionController) {
 		this.facturacionController = facturacionController;
 	}
-
+	
 	//establecer el puerto de escucha de peticiones del sevidor	
 	public void listenPort() {
 		try {

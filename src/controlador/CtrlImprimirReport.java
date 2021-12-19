@@ -46,7 +46,8 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
         }
 
         if (e.getSource() == menu.btnImprimirReporteDiario) {
-            imprimirReporteDiario();
+            imprimirReporteDiarioCordobas();
+	    imprimirReporteDiarioDolares();
         }
 
         if (e.getSource() == menu.btnImprimirTotalV) {
@@ -67,11 +68,15 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
     public void imprimirReporteGlobal() {
         info.obtenerInfoFactura();
         String nombreTienda = info.getNombre();
-        String efectivoB = menu.lblIngresosCajaMes.getText(), ventasT = menu.lblIngresosVentasTarjetaMes.getText(), pagosE = menu.lblIngresosPagosEfectivoMes.getText(),
-                pagosT = menu.lblIngresosPagosTarjetaMes.getText(), creditos = menu.lblCreditosFiltro.getText(), existCaja = menu.lblExistenciaCajaFiltro.getText(),
-                bancos = menu.lblIngresosBancoFiltro.getText(), totalV = menu.lblTotalVendidoFiltro.getText(), egresos = menu.lblEgresosFiltro.getText();
-//                ingresosE = menu.lblIngresosEfectivo.getText();
-//        llenarTicketGlobal(nombreTienda, efectivoB, ventasT, pagosE, pagosT, ingresosE, creditos, egresos, existCaja, bancos, totalV);
+        String efectivoB = menu.lblIngresosCajaMes.getText(),
+		ventasT = menu.lblIngresosVentasTarjetaMes.getText(),
+		pagosE = menu.lblIngresosPagosEfectivoMes.getText(),
+                pagosT = menu.lblIngresosPagosTarjetaMes.getText(),
+		creditos = menu.lblCreditosFiltro.getText(),
+		existCaja = menu.lblExistenciaCajaFiltro.getText(),
+                bancos = menu.lblIngresosBancoFiltro.getText(),
+		totalV = menu.lblTotalVendidoFiltro.getText(),
+		egresos = menu.lblEgresosFiltro.getText();
         try {
             print("Global");
         } catch (Exception err) {
@@ -79,33 +84,52 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
         }
     }
 
-    public void imprimirReporteDiario() {
+    public void imprimirReporteDiarioCordobas() {
         info.obtenerInfoFactura();
         String nombreTienda = info.getNombre();
         Date fechaInicio = menu.jcFechaReporteDario.getDate();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-YYYY");
-//        String fechaR = sdf.format(fechaInicio),
-//		base = menu.lblBase.getText(),
-//		ventasE = menu.lblVentasEfectivoDiario.getText(),
-//		ventasT = menu.lblVentasTarjetaDiario.getText(),
-//                pagosE = menu.lblIngresosPagosEfectivoDiario.getText(),
-//		pagosT = menu.lblIngresosPagosTarjetaDiario.getText(),
-//                creditos = menu.lblCreditosDiarios.getText(),
-//		egresos = menu.lblEgresosDiarios.getText(),
-//		existCaja = menu.lblTotalExistenciaCajaDiario.getText(),
-//                bancos = menu.lblIngresosBancosDiario.getText(),
-//		totalV = menu.lbltotalVendidoDiario.getText(),
-//                ingresosE = menu.lblIngresoEfectivo.getText();
-                /*cordobas = menu.lblDiferenciaEnCordobas.getText(),
-                DV = menu.lblCantidadDolares.getText(),
-                DC = menu.lblCantidadCordobas.getText(),
-                PDC = menu.lblPrecioCompraDolarEnCordobas.getText(),
-                PDV = menu.lblPrecioVentaDolarEnCordobas.getText(),
-                TCDV = menu.lblTotalCordobasPorVentaDolar.getText(),
-                TCDC = menu.lblTotalCordobasPorCompraDolar.getText();*/
-//        llenarTicketDiario(nombreTienda, fechaR, base, ventasE, ventasT, pagosE, pagosT, ingresosE, creditos, egresos, existCaja, bancos, totalV);
+	String fechaR = sdf.format(fechaInicio);
+	    setFecha(fechaR);
+	    setBase(menu.tblReporteDiarioCordobas.getValueAt(0, 2).toString());
+	    setVentasEfectivo(menu.tblReporteDiarioCordobas.getValueAt(1, 2).toString());
+	    setVentasT(menu.tblReporteDiarioCordobas.getValueAt(2, 2).toString());
+	    setPagosE(menu.tblReporteDiarioCordobas.getValueAt(3, 2).toString());
+	    setPagosT(menu.tblReporteDiarioCordobas.getValueAt(4, 2).toString());
+	    setCreditos(menu.tblReporteDiarioCordobas.getValueAt(6, 2).toString());
+	    setEgreso(menu.tblReporteDiarioCordobas.getValueAt(7, 2).toString());
+	    setExistCaja(menu.tblReporteDiarioCordobas.getValueAt(10, 2).toString());
+	    setBancos(menu.tblReporteDiarioCordobas.getValueAt(9, 2).toString());
+	    setTotalV(menu.tblReporteDiarioCordobas.getValueAt(8, 2).toString());
+	    setIngresosE(menu.tblReporteDiarioCordobas.getValueAt(5, 2).toString());
+	    llenarTicketDiarioCordobas();
         try {
-            print("Diario");
+            print("DiarioCordobas");
+        } catch (Exception err) {
+            //JOptionPane.showMessageDialog(null, "");
+        }
+    }
+
+    public void imprimirReporteDiarioDolares() {
+        info.obtenerInfoFactura();
+        String nombreTienda = info.getNombre();
+        Date fechaInicio = menu.jcFechaReporteDario.getDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-YYYY");
+	String fechaR = sdf.format(fechaInicio);
+	    setFecha(fechaR);
+	    setVentasEfectivo(menu.tblReporteDiarioDolares.getValueAt(0, 2).toString());
+	    setVentasT(menu.tblReporteDiarioDolares.getValueAt(1, 2).toString());
+	    setPagosE(menu.tblReporteDiarioDolares.getValueAt(2, 2).toString());
+	    setPagosT(menu.tblReporteDiarioDolares.getValueAt(3, 2).toString());
+	    setCreditos(menu.tblReporteDiarioDolares.getValueAt(5, 2).toString());
+	    setEgreso(menu.tblReporteDiarioDolares.getValueAt(6, 2).toString());
+	    setExistCaja(menu.tblReporteDiarioDolares.getValueAt(9, 2).toString());
+	    setBancos(menu.tblReporteDiarioDolares.getValueAt(8, 2).toString());
+	    setTotalV(menu.tblReporteDiarioDolares.getValueAt(7, 2).toString());
+	    setIngresosE(menu.tblReporteDiarioDolares.getValueAt(4, 2).toString());
+	    llenarTicketDiarioDolares();
+        try {
+            print("DiarioDolares");
         } catch (Exception err) {
             //JOptionPane.showMessageDialog(null, "");
         }
@@ -230,10 +254,14 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
             int filasDolar = this.menu.tblArticulosCredito.getRowCount();
             int filasCordobas = this.menu.tblArticulosCreditoCordobas.getRowCount();
             int filaseleccionada = this.menu.tblCreditos.getSelectedRow();
-            String cliente = this.menu.tblCreditos.getValueAt(filaseleccionada, 4).toString() + " " + this.menu.tblCreditos.getValueAt(filaseleccionada, 5).toString();
+            String cliente = this.menu.tblCreditos.getValueAt(filaseleccionada, 4).toString()
+		    + " " + this.menu.tblCreditos.getValueAt(filaseleccionada, 5).toString();
             String totalC = this.menu.lblTodalCreditoCordobas.getText(),
-                   totalP = this.menu.lblTotalAbonosCordobas.getText(),
-                   saldo = this.menu.lblSaldoCordobas.getText();
+		    totalD = this.menu.lblTotalCreditoDolar.getText(),
+                   totalPagosCordobas = this.menu.lblTotalAbonosCordobas.getText(),
+		    totalPagosDolar = this.menu.lblTotalAbonosDolar.getText(),
+                   saldoCordobas = this.menu.lblSaldoCordobas.getText(),
+		    saldoDolares = this.menu.lblSaldoDolar.getText();
             String listado = "PRODUCTOS EN DOLAR \n";
             
             for (int i = 0; i < filasDolar; i++) {
@@ -247,9 +275,12 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
                            +" "+ this.menu.tblArticulosCreditoCordobas.getValueAt(i,1).toString()
                            +" "+ this.menu.tblArticulosCreditoCordobas.getValueAt(i,3).toString()+" C$\n";
             }
-            setTatalCredito(totalC);
-            setTotalPagos(totalP);
-            setSaldo(saldo);
+            setTotalCreditoCordobas(totalC);
+	    setTotalCreditoDolares(totalD);
+            setTotalPagosCordobas(totalPagosCordobas);
+	    setTotalPagosDolares(totalPagosDolar);
+            setSaldoCordobas(saldoCordobas);
+	    setSaldoDolares(saldoDolares);
             setListaProductosCreditos(listado);
             setNombreCliente(cliente);
             print("ListaCredito");

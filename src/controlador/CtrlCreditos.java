@@ -336,6 +336,25 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		menu.tblCreditos.setModel(this.creditos.Mostrar(buscar));
 	}
 
+	public void sumaParcialCredito() {
+		float saldoCordobas = 0, saldoDolares = 0;
+		int filasDolar = this.menu.tblArticulosCredito.getRowCount(),
+			filasCordobas = this.menu.tblArticulosCreditoCordobas.getRowCount();
+		try {
+			for (int i = 0; i < filasDolar; i++) {
+				saldoDolares += Float.parseFloat(this.menu.tblArticulosCredito.getValueAt(i, 3).toString());
+			}
+			for (int i = 0; i < filasCordobas; i++) {
+				saldoCordobas += Float.parseFloat(this.menu.tblArticulosCreditoCordobas.getValueAt(i, 3).toString());
+			}
+			this.menu.lblTodalCreditoCordobas.setText(this.formato.format(saldoCordobas));
+			this.menu.lblTotalCreditoDolar.setText(this.formato.format(saldoDolares));
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,e + " en el metodo sumaParcialCredito en controller creditos");
+		}
+
+	}
+
 	public void mostrarInfoCrediticiaActual(int credito) {
 		float saldoCordobas, saldoDolar;
 		/* solicitar datos */
@@ -348,12 +367,11 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		menu.tblArticulosCreditoCordobas.setModel(creditos.listaProductoCreditosCordobas(credito));
 		/*    historial de abonos     */
 		menu.tblAbonosCreditos.setModel(creditos.MostrarAbonosCreditos(credito));
- 		/*    calculos para sacar los saldo   */
+		/*    calculos para sacar los saldo   */
 		saldoCordobas = this.creditos.getSaldoCordobas() - this.creditos.getPagosCordobas();
 		saldoDolar = this.creditos.getSaldoDolares() - this.creditos.getPagosDolar();
 		/*    seteo de pagos, saldo en dolares y cordobas   */
-		menu.lblTodalCreditoCordobas.setText(this.formato.format(saldoCordobas));
-		menu.lblTotalCreditoDolar.setText(this.formato.format(saldoDolar));
+		this.sumaParcialCredito();
 		menu.lblTotalAbonosCordobas.setText(this.formato.format(this.creditos.getPagosCordobas()));
 		menu.lblTotalAbonosDolar.setText(this.formato.format(this.creditos.getPagosDolar()));
 

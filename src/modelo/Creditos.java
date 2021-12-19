@@ -386,9 +386,8 @@ public class Creditos extends Conexiondb {
 	//
 	public DefaultTableModel MostrarHistorialProductosCreditoDolar(int id) {
 		this.cn = Conexion();
-		float tasaCambio;
-		String[] titulos = {"Fecha", "Nombre", "Cantidad", "Precio", "", "TC", "Total C$", "N. Fact"};
-		registros = new String[8];
+		String[] titulos = {"Fecha", "Nombre", "Cantidad", "Precio", "","Total $", "N. Fact"};
+		registros = new String[7];
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
@@ -403,15 +402,13 @@ public class Creditos extends Conexiondb {
 			pst.setInt(1, id);
 			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
-				tasaCambio = (rs.getFloat("totalImporte") / rs.getFloat("cantidadProducto")) / rs.getFloat("precioProducto");
 				registros[0] = rs.getString("fecha");
 				registros[1] = rs.getString("nombre");
 				registros[2] = rs.getString("cantidadProducto");
 				registros[3] = rs.getString("precioProducto");
 				registros[4] = "$";
-				registros[5] = this.formato.format(tasaCambio);
-				registros[6] = rs.getString("totalImporte");
-				registros[7] = rs.getString("factura");
+				registros[5] = rs.getString("totalImporte");
+				registros[6] = rs.getString("factura");
 				this.modelo.addRow(registros);
 			}
 			cn.close();

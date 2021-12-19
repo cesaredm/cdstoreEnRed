@@ -40,7 +40,7 @@ public class Ticket extends CtrlImprimir{
             + "RECIBIDO: {{recibo}}\n"
             + "CAMBIO: {{change}}\n"
             + "========================================== \n"
-            + "||{{message}}                            \n"
+            + "{{message}}                            \n"
             + "\n"
             + "\n";
 

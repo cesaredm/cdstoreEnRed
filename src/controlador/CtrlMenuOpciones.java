@@ -565,6 +565,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
             menu.btnTransacciones.setBackground(new java.awt.Color(72,72,72));
             menu.lblGastosMenu.setForeground(new java.awt.Color(255, 255, 255));
             
+	    
             //crear nuevo Objeto de Interfaz de login
             ILogin login = new ILogin();
             //cerrar el sistema

@@ -54,7 +54,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		comprador,
 		cliente,
 		nombreProduct,
-		tipoVenta;
+		tipoVenta,
+		usuario;
 	java.sql.Timestamp fechaFactura;
 	IMenu menu;
 	int permiso;
@@ -404,6 +405,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			this.fecha = menu.jcFechaFactura.getDate();//capturo la fecha del dateshooser
 			//convertir la fecha obtenida a formato sql
 			this.fechaFactura = new java.sql.Timestamp(this.fecha.getTime());
+			this.usuario = this.menu.lblUsuarioSistema.getText();
 			//obtengo el numero de credito al que pertenecera la facturaModel
 			this.idCredito = (menu.txtCreditoFactura.getText().equals("")) ? 0 : Integer.parseInt(menu.txtCreditoFactura.getText());
 			if (idCredito == 0) {
@@ -437,6 +439,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 				this.facturaModel.setCaja(1);
 				this.facturaModel.setFecha(this.fechaFactura);
 				this.facturaModel.setNombreComprador(this.comprador);
+				this.facturaModel.setUsuario(this.usuario);
 				this.facturaModel.setCredito(this.idCredito);
 				this.facturaModel.setPago(this.idFormaPago);
 				this.facturaModel.setIva(this.isv);
@@ -496,7 +499,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 					String.valueOf(this.totalDolar),
 					fechaFactura.toString(),
 					String.valueOf(pagoCon),
-					String.valueOf(cambio)
+					String.valueOf(cambio),
+					this.usuario
 				);
 				LimpiarTablaFactura();
 			} else {
@@ -683,7 +687,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		String totalDolares,
 		String fecha,
 		String recibido,
-		String cambio
+		String cambio,
+		String usuario
 	) {
 		try {
 			InfoFactura info = new InfoFactura();
@@ -696,7 +701,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 				info.getRangoInicio() + " - " + info.getRangoFinal(),
 				"1",
 				Nfactura,
-				"Cajero",
+				usuario,
 				comprador,
 				cliente,
 				tipoVenta,
