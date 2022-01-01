@@ -482,7 +482,8 @@ public class Creditos extends Conexiondb {
 		this.registros = new String[6];
 		String consultaSecundary = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,f.fecha"
 			+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
-			+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Dolar'";
+			+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Dolar'"
+			+ " AND df.cantidadProducto > 0";
 		this.modelo = new DefaultTableModel(null, titulos) {
 			@Override
 			public boolean isCellEditable(int row, int col) {
@@ -495,7 +496,7 @@ public class Creditos extends Conexiondb {
 					+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
 					+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Dolar'"
 					+ " AND f.fecha > (SELECT fecha FROM pagoscreditos WHERE credito = ? AND pagoCancelacion = 'cancelado'"
-					+ " ORDER BY id DESC LIMIT 1)";
+					+ " ORDER BY id DESC LIMIT 1) AND df.cantidadProducto > 0";
 				this.pst = this.cn.prepareStatement(this.consulta);
 				this.pst.setInt(1, credito);
 				this.pst.setInt(2, credito);
@@ -533,7 +534,8 @@ public class Creditos extends Conexiondb {
 
 		String consultaSecundary = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,f.fecha"
 			+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
-			+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Córdobas'";
+			+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Córdobas'"
+			+ " AND df.cantidadProducto > 0";
 		this.modelo = new DefaultTableModel(null, titulos) {
 			@Override
 			public boolean isCellEditable(int row, int col) {
@@ -546,7 +548,7 @@ public class Creditos extends Conexiondb {
 					+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
 					+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta='Córdobas'"
 					+ " AND f.fecha > (SELECT fecha FROM pagoscreditos WHERE credito = ? AND pagoCancelacion = 'cancelado'"
-					+ " ORDER BY id DESC LIMIT 1)";
+					+ " ORDER BY id DESC LIMIT 1) AND df.cantidadProducto > 0";
 				this.pst = this.cn.prepareStatement(this.consulta);
 				this.pst.setInt(1, credito);
 				this.pst.setInt(2, credito);

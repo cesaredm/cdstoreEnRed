@@ -394,7 +394,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 
 	public void validar() {
 		try {
-			if(this.banderaActualizacion){
+			if (this.banderaActualizacion) {
 				this.menu.jcFechaFactura.setDate(new Date());
 			}
 			this.pagoCon = (menu.txtPagoConCordobas.getText().equals("")) ? 0 : Float.parseFloat(menu.txtPagoConCordobas.getText());
@@ -690,35 +690,35 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		String cambio,
 		String usuario
 	) {
+		InfoFactura info = new InfoFactura();
+		info.obtenerInfoFactura();
+		Ticket d = new Ticket();
+		d.nameLocal = info.getNombre();
+		d.direccion = info.getDireccion();
+		d.telefono = info.getTelefono();
+		d.RFC = info.getRfc();
+		d.Rango = info.getRangoInicio() + " - " + info.getRangoFinal();
+		d.box = "1";
+		d.ticket = Nfactura;
+		d.caissier = usuario;
+		d.comprador = comprador;
+		d.cliente = cliente;
+		d.tipoVenta = tipoVenta;
+		d.formaPago = formaPago;
+		d.dateTime = fecha;
+		d.items = Datos;
+		d.subTotal = subtotal;
+		d.iva = isv;
+		d.totalCordobas = total;
+		d.totalDolares = totalDolares;
+		d.recibo = recibido;
+		d.change = cambio;
+		d.message = info.getAnotaciones();
 		try {
-			InfoFactura info = new InfoFactura();
-			info.obtenerInfoFactura();
-			Ticket d = new Ticket(
-				info.getNombre(),
-				info.getDireccion(),
-				info.getTelefono(),
-				info.getRfc(),
-				info.getRangoInicio() + " - " + info.getRangoFinal(),
-				"1",
-				Nfactura,
-				usuario,
-				comprador,
-				cliente,
-				tipoVenta,
-				formaPago,
-				fecha,
-				Datos,
-				subtotal,
-				isv,
-				total,
-				totalDolares,
-				recibido,
-				cambio,
-				info.getAnotaciones()
-			);
+			d.llenarTicket();
 			d.printFactura();
 		} catch (Exception e) {
-
+			System.out.println(e);
 		}
 	}
 
@@ -745,6 +745,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			menu.txtCompradorFactura.setText("");
 			menu.cmbFormaPago.setSelectedItem("Efectivo");
 			menu.txtPagoConCordobas.setText("");
+			menu.txtPagoConDolares.setText("");
+			menu.txtPagoConDolaresVenta.setText("");
 			menu.txtCambio.setText("");
 			this.total = 0;
 			this.totalDolar = 0;
@@ -1448,7 +1450,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		String nombre = "", apellido = "";
 		//obtengo la fila seleccionda de la tabla reporte diario    obtengo el numero las filas de la tabla detalleFactura
 		int filaseleccionada = menu.tblReporte.getSelectedRow();
-		
+
 		int filas = menu.tblMostrarDetalleFactura.getRowCount();
 		//la variable modelo va a tomar el modelo de la tabla facturaModel
 		this.modelo = (DefaultTableModel) menu.tblFactura.getModel();

@@ -19,14 +19,13 @@ import javax.swing.JOptionPane;
  * @author CESAR DIAZ MARADIAGA
  */
 public class PrintReportes extends CtrlImprimir {
-
 	String nombreTienda;
 	/* ----------------------- Historial crediticio ---------------------*/
 	private String listaProductosCreditos;
 	private String nombreCliente;
-	private String totalCreditoDolar,totalCreditoCordobas;
-	private String totalPagosCordobas,totalPagosDolares;
-	private String saldoCordobas,saldoDolares;
+	private String totalCreditoDolar, totalCreditoCordobas;
+	private String totalPagosCordobas, totalPagosDolares;
+	private String saldoCordobas, saldoDolares;
 	/*------------------------ Reportes diario ----------------------*/
 	private String NombreTienda,
 		fecha,
@@ -81,6 +80,7 @@ public class PrintReportes extends CtrlImprimir {
 		+ "{{producto}}\n"
 		+ "\n\n\n\n\n";
 
+	
 	public String getNombreTienda() {
 		return nombreTienda;
 	}
@@ -236,7 +236,7 @@ public class PrintReportes extends CtrlImprimir {
 		this.totalCreditoCordobas = tatalCredito;
 	}
 
-	public void setTotalCreditoDolares(String totalCreditoDolares){
+	public void setTotalCreditoDolares(String totalCreditoDolares) {
 		this.totalCreditoDolar = totalCreditoDolares;
 	}
 
@@ -244,7 +244,7 @@ public class PrintReportes extends CtrlImprimir {
 		this.totalPagosCordobas = totalPagos;
 	}
 
-	public void setTotalPagosDolares(String totalPagosCreditos){
+	public void setTotalPagosDolares(String totalPagosDolares) {
 		this.totalPagosDolares = totalPagosDolares;
 	}
 
@@ -252,8 +252,7 @@ public class PrintReportes extends CtrlImprimir {
 		this.saldoCordobas = saldo;
 	}
 
-	public void setSaldoDolares(String saldoDolar)
-	{
+	public void setSaldoDolares(String saldoDolar) {
 		this.saldoDolares = saldoDolar;
 	}
 
@@ -307,6 +306,8 @@ public class PrintReportes extends CtrlImprimir {
 		// System.out.println(this.contentTicketGlobal);
 	}
 
+	
+
 	public void print(String TipoReport) {
 		try {
 
@@ -320,10 +321,11 @@ public class PrintReportes extends CtrlImprimir {
 						.feed(2).cut(EscPos.CutMode.FULL);
 				}
 				break;
-				case "DiarioDolares":{
+				case "DiarioDolares": {
 					escpos.writeLF(contentTicketDiarioDolar)
 						.feed(2).cut(EscPos.CutMode.FULL);
-				}break;
+				}
+				break;
 				case "TotalV": {
 					escpos.writeLF(ticketTotalV)
 						.feed(2).cut(EscPos.CutMode.FULL);
@@ -344,17 +346,17 @@ public class PrintReportes extends CtrlImprimir {
 						writeLF(boldCenter, "CORDOBAS")
 						.writeLF(
 							boldCenter,
-							"Crédito:" + this.totalCreditoCordobas 
-							+ " Pagos:" + this.totalPagosCordobas 
+							"Crédito:" + this.totalCreditoCordobas
+							+ " Pagos:" + this.totalPagosCordobas
 							+ " Saldo:" + this.saldoCordobas
 						).feed(1)
 						.writeLF(boldCenter, "DOLARES")
 						.writeLF(
 							boldCenter,
-							"Crédito $:"+this.totalCreditoDolar
-							+"Pagos $:" + this.totalPagosDolares
-							+"Saldo $:" + this.saldoDolares
-							).feed(2)
+							"Crédito $:" + this.totalCreditoDolar
+							+ " Pagos $:" + this.totalPagosDolares
+							+ " Saldo $:" + this.saldoDolares
+						).feed(2)
 						.write(this.listaProductosCreditos)
 						.feed(4).cut(EscPos.CutMode.FULL);
 				}

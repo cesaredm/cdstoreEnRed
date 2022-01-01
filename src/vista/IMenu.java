@@ -1821,8 +1821,8 @@ public class IMenu extends javax.swing.JFrame {
                 jdInfoCrediticia.setTitle("Información crediticia");
 
                 jpInformacionCrediticia.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 16))); // NOI18N
-                jpInformacionCrediticia.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+                tblAbonosCreditos.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
                 tblAbonosCreditos.setModel(new javax.swing.table.DefaultTableModel(
                         new Object [][] {
                                 {null, null, null, null},
@@ -1834,10 +1834,10 @@ public class IMenu extends javax.swing.JFrame {
                                 "Title 1", "Title 2", "Title 3", "Title 4"
                         }
                 ));
+                tblAbonosCreditos.setRowHeight(24);
                 jScrollPane8.setViewportView(tblAbonosCreditos);
 
-                jpInformacionCrediticia.add(jScrollPane8, new org.netbeans.lib.awtextra.AbsoluteConstraints(534, 45, 330, 270));
-
+                tblArticulosCredito.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
                 tblArticulosCredito.setModel(new javax.swing.table.DefaultTableModel(
                         new Object [][] {
                                 {null, null, null, null},
@@ -1849,11 +1849,10 @@ public class IMenu extends javax.swing.JFrame {
                                 "Title 1", "Title 2", "Title 3", "Title 4"
                         }
                 ));
+                tblArticulosCredito.setRowHeight(24);
                 jScrollPane14.setViewportView(tblArticulosCredito);
 
-                jpInformacionCrediticia.add(jScrollPane14, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 49, 494, 120));
-
-                jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Saldo", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 16))); // NOI18N
+                jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Saldo", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 16), new java.awt.Color(102, 255, 102))); // NOI18N
 
                 lblSaldoCordobas.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
                 lblSaldoCordobas.setForeground(new java.awt.Color(234, 190, 63));
@@ -1876,7 +1875,7 @@ public class IMenu extends javax.swing.JFrame {
                 jPanel12Layout.setHorizontalGroup(
                         jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel12Layout.createSequentialGroup()
-                                .addContainerGap(463, Short.MAX_VALUE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel179)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lblSaldoDolar, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1896,39 +1895,32 @@ public class IMenu extends javax.swing.JFrame {
                                                 .addComponent(jLabel179)
                                                 .addComponent(jLabel165))
                                         .addComponent(lblSaldoCordobas))
-                                .addContainerGap(16, Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
-
-                jpInformacionCrediticia.add(jPanel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 380, 840, -1));
 
                 jLabel166.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
                 jLabel166.setText("Total crédito Córdobas:");
-                jpInformacionCrediticia.add(jLabel166, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, -1, -1));
 
                 jLabel167.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
                 jLabel167.setText("Abonos córdobas");
-                jpInformacionCrediticia.add(jLabel167, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 320, -1, -1));
 
                 lblTodalCreditoCordobas.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
                 lblTodalCreditoCordobas.setForeground(new java.awt.Color(51, 153, 255));
                 lblTodalCreditoCordobas.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
                 lblTodalCreditoCordobas.setText("0.00");
-                jpInformacionCrediticia.add(lblTodalCreditoCordobas, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 350, 333, -1));
 
                 lblTotalAbonosCordobas.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
                 lblTotalAbonosCordobas.setForeground(new java.awt.Color(51, 153, 255));
                 lblTotalAbonosCordobas.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
                 lblTotalAbonosCordobas.setText("0.00");
-                jpInformacionCrediticia.add(lblTotalAbonosCordobas, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 320, 210, -1));
 
-                jLabel171.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+                jLabel171.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
                 jLabel171.setText("Lista de productos en dólares.");
-                jpInformacionCrediticia.add(jLabel171, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, -1, -1));
 
-                jLabel172.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+                jLabel172.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
                 jLabel172.setText("Abonos realizados.");
-                jpInformacionCrediticia.add(jLabel172, new org.netbeans.lib.awtextra.AbsoluteConstraints(538, 28, -1, -1));
 
+                tblArticulosCreditoCordobas.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
                 tblArticulosCreditoCordobas.setModel(new javax.swing.table.DefaultTableModel(
                         new Object [][] {
                                 {null, null, null, null},
@@ -1940,37 +1932,130 @@ public class IMenu extends javax.swing.JFrame {
                                 "Title 1", "Title 2", "Title 3", "Title 4"
                         }
                 ));
+                tblArticulosCreditoCordobas.setRowHeight(24);
                 jScrollPane31.setViewportView(tblArticulosCreditoCordobas);
 
-                jpInformacionCrediticia.add(jScrollPane31, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 215, 494, 130));
-
-                jLabel178.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+                jLabel178.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
                 jLabel178.setText("Lista de productos en córdobas.");
-                jpInformacionCrediticia.add(jLabel178, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 197, -1, -1));
 
                 btnImprimirHistorialCrediticio.setForeground(new java.awt.Color(234, 190, 63));
                 btnImprimirHistorialCrediticio.setText("Imprimir");
-                jpInformacionCrediticia.add(btnImprimirHistorialCrediticio, new org.netbeans.lib.awtextra.AbsoluteConstraints(785, 455, -1, -1));
 
                 jLabel176.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
                 jLabel176.setText("Total crédito Dolar:");
-                jpInformacionCrediticia.add(jLabel176, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, -1, -1));
 
                 lblTotalCreditoDolar.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
                 lblTotalCreditoDolar.setForeground(new java.awt.Color(51, 153, 255));
                 lblTotalCreditoDolar.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
                 lblTotalCreditoDolar.setText("0.00");
-                jpInformacionCrediticia.add(lblTotalCreditoDolar, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 170, 333, -1));
 
                 jLabel177.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
                 jLabel177.setText("Abonos Dolar");
-                jpInformacionCrediticia.add(jLabel177, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 350, -1, -1));
 
                 lblTotalAbonosDolar.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
                 lblTotalAbonosDolar.setForeground(new java.awt.Color(51, 153, 255));
                 lblTotalAbonosDolar.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
                 lblTotalAbonosDolar.setText("0.00");
-                jpInformacionCrediticia.add(lblTotalAbonosDolar, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 350, 210, -1));
+
+                javax.swing.GroupLayout jpInformacionCrediticiaLayout = new javax.swing.GroupLayout(jpInformacionCrediticia);
+                jpInformacionCrediticia.setLayout(jpInformacionCrediticiaLayout);
+                jpInformacionCrediticiaLayout.setHorizontalGroup(
+                        jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                .addGap(1139, 1139, 1139)
+                                                .addComponent(btnImprimirHistorialCrediticio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                .addGap(9, 9, 9)
+                                                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                .addGap(16, 16, 16)
+                                                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                                .addComponent(jScrollPane14)
+                                                                                .addGap(3, 3, 3))
+                                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                                .addGap(3, 3, 3)
+                                                                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addComponent(jLabel171)
+                                                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                        .addComponent(jLabel176)
+                                                                                                        .addComponent(jLabel178))
+                                                                                                .addGap(106, 106, 106)
+                                                                                                .addComponent(lblTotalCreditoDolar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                                                        .addComponent(jScrollPane31)))))
+                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                .addGap(19, 19, 19)
+                                                                .addComponent(jLabel166)
+                                                                .addGap(219, 219, 219)
+                                                                .addComponent(lblTodalCreditoCordobas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                                .addGap(10, 10, 10)
+                                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                .addGap(4, 4, 4)
+                                                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                                .addGap(4, 4, 4)
+                                                                                .addComponent(jLabel172, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                        .addComponent(jScrollPane8)))
+                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                                .addComponent(jLabel177)
+                                                                                .addGap(200, 200, 200)
+                                                                                .addComponent(lblTotalAbonosDolar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                                .addComponent(jLabel167)
+                                                                                .addGap(219, 219, 219)
+                                                                                .addComponent(lblTotalAbonosCordobas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                                                .addGap(4, 4, 4)))))
+                                .addGap(10, 10, 10))
+                );
+                jpInformacionCrediticiaLayout.setVerticalGroup(
+                        jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                .addGap(25, 25, 25)
+                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                .addGap(2, 2, 2)
+                                                .addComponent(jLabel171)
+                                                .addGap(1, 1, 1)
+                                                .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                                                .addGap(1, 1, 1)
+                                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel176)
+                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                .addGap(20, 20, 20)
+                                                                .addComponent(jLabel178))
+                                                        .addComponent(lblTotalCreditoDolar))
+                                                .addComponent(jScrollPane31, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
+                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel172)
+                                                        .addGroup(jpInformacionCrediticiaLayout.createSequentialGroup()
+                                                                .addGap(19, 19, 19)
+                                                                .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                                                .addGap(5, 5, 5)
+                                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel167)
+                                                        .addComponent(lblTotalAbonosCordobas))
+                                                .addGap(8, 8, 8)))
+                                .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel166)
+                                        .addGroup(jpInformacionCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(lblTodalCreditoCordobas)
+                                                .addComponent(jLabel177))
+                                        .addComponent(lblTotalAbonosDolar))
+                                .addGap(11, 11, 11)
+                                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(7, 7, 7)
+                                .addComponent(btnImprimirHistorialCrediticio)
+                                .addGap(8, 8, 8))
+                );
 
                 javax.swing.GroupLayout jdInfoCrediticiaLayout = new javax.swing.GroupLayout(jdInfoCrediticia.getContentPane());
                 jdInfoCrediticia.getContentPane().setLayout(jdInfoCrediticiaLayout);
@@ -1984,8 +2069,8 @@ public class IMenu extends javax.swing.JFrame {
                 jdInfoCrediticiaLayout.setVerticalGroup(
                         jdInfoCrediticiaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jdInfoCrediticiaLayout.createSequentialGroup()
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jpInformacionCrediticia, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap()
+                                .addComponent(jpInformacionCrediticia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addContainerGap())
                 );
 
@@ -5458,8 +5543,8 @@ public class IMenu extends javax.swing.JFrame {
                 pnlMenuLateral.add(btnTransacciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 360, 200, 47));
 
                 logoClothing.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
-                logoClothing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logoBlesskids.png"))); // NOI18N
-                pnlMenuLateral.add(logoClothing, new org.netbeans.lib.awtextra.AbsoluteConstraints(16, 7, -1, 80));
+                logoClothing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/blessIcon.png"))); // NOI18N
+                pnlMenuLateral.add(logoClothing, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, -1, 80));
 
                 btnInfoFactura.setBackground(new java.awt.Color(69, 76, 89));
                 btnInfoFactura.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));

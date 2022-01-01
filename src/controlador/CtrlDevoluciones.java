@@ -124,7 +124,7 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 					this.idFactura = Integer.parseInt(menu.tblReporte.getValueAt(filaseleccionadaR, 0).toString());
 					this.factura.obtenerTotalFacturaSeleccionada(idFactura);
 					this.total = this.factura.getTotalCordobas();
-					this.totalDolares = this.factura.getTotalCordobas();
+					this.totalDolares = this.factura.getTotalDolar();
 					this.factura.monedaVentaProducto(String.valueOf(idProducto));
 					//validar que lo que se va a devolver sea menor o igual que lo que compro
 					if (cantidadDevolver <= cantidadActual) {
@@ -132,15 +132,12 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 						//validar que moneda
 						if (this.factura.getMonedaVenta().equals("Dolar")) {
 							this.importe = (cantidadUpdate * precio);
-							/*this.restar = (cantidadDevolver * precio);
-							this.restarString = this.formato.format(restar);
-							this.restar = Float.parseFloat(restarString);*/
-							this.totalDolares = totalDolares - this.importe;
-							//validar que precioDolar sea numerico
+							this.totalDolares = this.importe;
 						} else {
 							this.importe = this.cantidadUpdate * this.precio;
-							this.total = this.total - this.importe;
+							this.total = this.importe;
 						}
+						//totalGlobal para calcular el impuesto
 						this.totalGlobalCordobas = this.total + (this.totalDolares * this.precioDolar);
 						//calcular el nuevo impuesto
 						this.ivaUpdate = ((this.totalGlobalCordobas / this.sacarImpuesto) * this.porcentajeImp) / 100;

@@ -39,7 +39,7 @@ public class CtrlImprimir {
 
     public CtrlImprimir() {
         try {
-            this.printService = PrinterOutputStream.getPrintServiceByName("EPSON TM-T20II Receipt");
+            this.printService = PrinterOutputStream.getPrintServiceByName("EPSON TM-T20III Receipt");
             this.printerOutputStream = new PrinterOutputStream(printService);
             this.escpos = new EscPos(printerOutputStream);
             this.boldCenter = new Style(escpos.getStyle())
@@ -49,7 +49,7 @@ public class CtrlImprimir {
             //centrar texto
             this.centrar = new Style().setJustification(EscPosConst.Justification.Center);
             this.algorithm = new BitonalThreshold(127);
-            this.githubBufferedImage = SamplesCommon.getImage(SamplesCommon.sampleImages.blessKids);
+            this.githubBufferedImage = SamplesCommon.getImage(SamplesCommon.sampleImages.bless);
             this.escposImage = new EscPosImage(new CoffeeImageImpl(githubBufferedImage), algorithm);
             this.imageWrapper = new RasterBitImageWrapper();
             this.imageWrapper.setJustification(EscPosConst.Justification.Center);
@@ -60,7 +60,7 @@ public class CtrlImprimir {
     
     public void reiniciar(){
         try {
-            this.printService = PrinterOutputStream.getPrintServiceByName("EPSON TM-T20II Receipt");
+            this.printService = PrinterOutputStream.getPrintServiceByName("EPSON TM-T20III Receipt");
             this.printerOutputStream = new PrinterOutputStream(printService);
             this.escpos = new EscPos(this.printerOutputStream);
         } catch (IOException ex) {

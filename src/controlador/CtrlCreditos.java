@@ -174,7 +174,7 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 						);
 						//MostrarHistorialCrediticio(id);
 						this.mostrarInfoCrediticiaActual(this.id);
-						menu.jdInfoCrediticia.setSize(910, 538);
+						menu.jdInfoCrediticia.setSize(1267, 600);
 						menu.jdInfoCrediticia.setVisible(true);
 						menu.jdInfoCrediticia.setLocationRelativeTo(null);
 					} else {

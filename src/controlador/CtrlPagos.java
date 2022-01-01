@@ -116,7 +116,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 			} else {
 				this.modelo = (DefaultTableModel) menu.tblPagos.getModel();
 				this.id = Integer.parseInt(this.modelo.getValueAt(filaseleccionada, 0).toString());
-				this.credito = Integer.parseInt(this.modelo.getValueAt(filaseleccionada, 2).toString());
+				this.credito = Integer.parseInt(this.modelo.getValueAt(filaseleccionada, 3).toString());
 				this.pagos.setId(this.id);
 				this.pagos.Eliminar();
 				MostrarPagos("");
@@ -142,6 +142,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 				menu.txtAreaAnotacionPago.setText(this.pagos.getAnotacion());
 				menu.cmbMonedaPago.setSelectedItem(this.pagos.getMoneda());
 				menu.txtCreditoPago.setText(String.valueOf(this.pagos.getCredito()));
+				menu.jsMontoPago.setValue(this.pagos.getMonto());
 				menu.btnGuardarPago.setEnabled(false);
 				menu.btnActualizarPago.setEnabled(true);
 			}
@@ -249,34 +250,43 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 					//agregar numero unico de forma ascendente
 					this.pagos.setVerificarCancelado("cancelado");
 				}
-				pagos.Guardar();
-				this.estadoCreditos.updateAabierto(this.credito);
-				//this.socketCliente.setIps(ips);
-				//this.socketCliente.socketInit(this.pagos);
-				this.creditos.saldoInicialCredito(this.credito);
-				this.creditos.saldoPorCredito(this.credito);
-				this.creditos.pagosPorCedito(this.credito);
-				this.saldoActualCordobas = this.creditos.getSaldoCordobas() - this.creditos.getPagosCordobas();
-				this.saldoActualDolares = this.creditos.getSaldoDolares() - this.creditos.getPagosDolar();
-				UltimoPago();
-				info.obtenerInfoFactura();
-				imprimir(
-					info.getNombre(),
-					numeroPago,
-					fechaString,
-					this.pagos.cliente(this.credito),
-					String.valueOf(this.credito),
-					this.formato.format(this.saldoCordobas),
-					this.formato.format(this.saldoDolar),
-					this.formato.format(this.monto),
-					this.moneda,
-					this.formato.format(this.saldoActualCordobas),
-					this.formato.format(this.saldoActualDolares));
-				MostrarPagos("");
-				LimpiarPago();
-				this.MostrarCreditos("");
-				menu.btnGuardarPago.setEnabled(true);
-				menu.btnActualizarPago.setEnabled(false);
+
+				if (this.moneda.equals("Córdobas")) {
+					this.saldoActualCordobas = this.saldoCordobas - this.monto;
+					this.saldoActualDolares = this.saldoDolar;
+				} else if(this.moneda.equals("Dolar")){
+					this.saldoActualDolares = this.saldoDolar - this.monto;
+					this.saldoActualCordobas = this.saldoCordobas;
+				}
+
+				if (this.saldoActualCordobas >= 0 && this.saldoActualDolares >= 0) {
+					pagos.Guardar();
+					this.estadoCreditos.updateAabierto(this.credito);
+					//this.socketCliente.setIps(ips);
+					//this.socketCliente.socketInit(this.pagos);
+					UltimoPago();
+					info.obtenerInfoFactura();
+					imprimir(
+						info.getNombre(),
+						numeroPago,
+						fechaString,
+						this.pagos.cliente(this.credito),
+						String.valueOf(this.credito),
+						this.formato.format(this.saldoCordobas),
+						this.formato.format(this.saldoDolar),
+						this.formato.format(this.monto),
+						this.moneda,
+						this.formato.format(this.saldoActualCordobas),
+						this.formato.format(this.saldoActualDolares));
+					MostrarPagos("");
+					LimpiarPago();
+					this.MostrarCreditos("");
+					menu.btnGuardarPago.setEnabled(true);
+					menu.btnActualizarPago.setEnabled(false);
+				} else {
+					JOptionPane.showMessageDialog(null, "El monto ingresado sobre pasa el saldo..");
+				}
+
 			} catch (Exception e) {
 
 			}
@@ -294,12 +304,14 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 		float saldoCordobas = creditoModel.getSaldoCordobas() - creditoModel.getPagosCordobas(),
 			saldoDolares = creditoModel.getSaldoDolares() - creditoModel.getPagosDolar();
 
+		/*-------------------- resta del saldo - el abono -----------------------*/
 		if (moneda.equals("Dolar")) {
 			saldoDolares -= abono;
 		} else {
 			saldoCordobas -= abono;
 		}
-		if (saldoCordobas <= 0 && saldoDolares <= 0) {
+		/*------------------- Validacion si con este pago se esta cancelando --------------------*/
+		if (saldoCordobas == 0 && saldoDolares == 0) {
 			verificar = true;
 		} else {
 			verificar = false;
@@ -334,7 +346,6 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 
 			reiniciar();
 			escpos.write(imageWrapper, escposImage).feed(1);
-
 			escpos.writeLF(boldCenter, tienda)
 				.feed(1)
 				.writeLF(boldCenter, "COMPROBANTE DE PAGO")
