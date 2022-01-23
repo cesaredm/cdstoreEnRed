@@ -28,6 +28,7 @@ public class Creditos extends Conexiondb {
 	DefaultTableModel modelo;
 	Connection cn;
 	String consulta;
+	String setLocalFormat = "SET lc_time_names = 'es_ES'";
 	String[] registros;
 	PagosCreditos pagos;
 	PreparedStatement pst;
@@ -386,29 +387,30 @@ public class Creditos extends Conexiondb {
 	//
 	public DefaultTableModel MostrarHistorialProductosCreditoDolar(int id) {
 		this.cn = Conexion();
-		String[] titulos = {"Fecha", "Nombre", "Cantidad", "Precio", "","Total $", "N. Fact"};
-		registros = new String[7];
+		String[] titulos = {"Cantidad", "Nombre", "Precio", "Total $", "N. Fact", "Fecha"};
+		registros = new String[6];
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
 			}
 		};
-		this.consulta = "SELECT f.fecha, p.nombre, df.cantidadProducto, precioProducto, totalVenta AS totalImporte, f.id AS factura FROM facturas"
+		this.consulta = "SELECT  df.cantidadProducto, p.nombre, df.precioProducto, totalVenta AS totalImporte, f.id AS factura, DATE_FORMAT(f.fecha,'%a, %d-%b-%Y') AS fecha FROM facturas"
 			+ " AS f INNER JOIN creditos AS c ON(f.credito=c.id) INNER JOIN detalleFactura AS df ON(f.id = df.factura)"
 			+ " INNER JOIN productos AS p ON(df.producto=p.id)"
 			+ " WHERE c.id = ? AND p.monedaVenta = 'Dolar' AND df.cantidadProducto > 0 ORDER BY f.id DESC";
 		try {
+			this.pst = this.cn.prepareStatement(this.setLocalFormat);
+			this.pst.execute();
 			this.pst = this.cn.prepareStatement(this.consulta);
 			pst.setInt(1, id);
 			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
-				registros[0] = rs.getString("fecha");
+				registros[0] = rs.getString("cantidadProducto");
 				registros[1] = rs.getString("nombre");
-				registros[2] = rs.getString("cantidadProducto");
-				registros[3] = rs.getString("precioProducto");
-				registros[4] = "$";
-				registros[5] = rs.getString("totalImporte");
-				registros[6] = rs.getString("factura");
+				registros[2] = rs.getString("precioProducto");
+				registros[3] = rs.getString("totalImporte");
+				registros[4] = rs.getString("factura");
+				registros[5] = rs.getString("fecha");
 				this.modelo.addRow(registros);
 			}
 			cn.close();
@@ -420,29 +422,30 @@ public class Creditos extends Conexiondb {
 
 	public DefaultTableModel MostrarHistorialProductosCreditoCordobas(int id) {
 		this.cn = Conexion();
-		String[] titulos = {"Fecha", "Nombre", "Cantidad", "Precio", "", "Total C$", "N. Fact"};
-		registros = new String[7];
+		String[] titulos = {"Cantidad", "Nombre", "Precio", "Total C$", "N. Fact", "Fecha"};
+		registros = new String[6];
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
 			}
 		};
-		this.consulta = "SELECT f.fecha, p.nombre, df.cantidadProducto, precioProducto, totalVenta AS totalImporte, f.id AS factura FROM facturas"
+		this.consulta = "SELECT df.cantidadProducto, p.nombre, df.precioProducto, df.totalVenta AS totalImporte, f.id AS factura,DATE_FORMAT(f.fecha,'%a, %d-%b-%Y') AS fecha FROM facturas"
 			+ " AS f INNER JOIN creditos AS c ON(f.credito=c.id) INNER JOIN detalleFactura AS df ON(f.id = df.factura)"
 			+ " INNER JOIN productos AS p ON(df.producto=p.id)"
 			+ " WHERE c.id = ? AND p.monedaVenta = 'Cordobas' AND df.cantidadProducto > 0 ORDER BY f.id DESC";
 		try {
+			this.pst = this.cn.prepareStatement(this.setLocalFormat);
+			this.pst.execute();
 			this.pst = this.cn.prepareStatement(this.consulta);
 			pst.setInt(1, id);
 			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
-				registros[0] = rs.getString("fecha");
+				registros[0] = rs.getString("cantidadProducto");
 				registros[1] = rs.getString("nombre");
-				registros[2] = rs.getString("cantidadProducto");
-				registros[3] = rs.getString("precioProducto");
-				registros[4] = "C$";
-				registros[5] = rs.getString("totalImporte");
-				registros[6] = rs.getString("factura");
+				registros[2] = rs.getString("precioProducto");
+				registros[3] = rs.getString("totalImporte");
+				registros[4] = rs.getString("factura");
+				registros[5] = rs.getString("fecha");
 				this.modelo.addRow(registros);
 			}
 			cn.close();
@@ -480,7 +483,7 @@ public class Creditos extends Conexiondb {
 		String[] titulos = {"Cantidad", "Producto", "Precio", "Importe", "Factura", "Fecha"};
 		this.cn = Conexion();
 		this.registros = new String[6];
-		String consultaSecundary = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,f.fecha"
+		String consultaSecundary = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,DATE_FORMAT(f.fecha,'%a, %d-%b-%Y') AS fecha"
 			+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
 			+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Dolar'"
 			+ " AND df.cantidadProducto > 0";
@@ -492,15 +495,19 @@ public class Creditos extends Conexiondb {
 		};
 		try {
 			if (this.isExistePagoCancelacion(credito)) {
-				this.consulta = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,f.fecha"
+				this.consulta = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,DATE_FORMAT(f.fecha,'%a, %d-%b-%Y') AS fecha"
 					+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
 					+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Dolar'"
 					+ " AND f.fecha > (SELECT fecha FROM pagoscreditos WHERE credito = ? AND pagoCancelacion = 'cancelado'"
 					+ " ORDER BY id DESC LIMIT 1) AND df.cantidadProducto > 0";
+				this.pst = this.cn.prepareStatement(this.setLocalFormat);
+				this.pst.execute();
 				this.pst = this.cn.prepareStatement(this.consulta);
 				this.pst.setInt(1, credito);
 				this.pst.setInt(2, credito);
 			} else {
+				this.pst = this.cn.prepareStatement(this.setLocalFormat);
+				this.pst.execute();
 				this.pst = this.cn.prepareStatement(consultaSecundary);
 				this.pst.setInt(1, credito);
 			}
@@ -532,7 +539,7 @@ public class Creditos extends Conexiondb {
 		this.cn = Conexion();
 		this.registros = new String[6];
 
-		String consultaSecundary = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,f.fecha"
+		String consultaSecundary = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,DATE_FORMAT(f.fecha,'%a, %d-%b-%Y') AS fecha"
 			+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
 			+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Córdobas'"
 			+ " AND df.cantidadProducto > 0";
@@ -544,15 +551,19 @@ public class Creditos extends Conexiondb {
 		};
 		try {
 			if (this.isExistePagoCancelacion(credito)) {
-				this.consulta = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,f.fecha"
+				this.consulta = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,DATE_FORMAT(f.fecha,'%a, %d-%b-%Y') AS fecha"
 					+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
 					+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta='Córdobas'"
 					+ " AND f.fecha > (SELECT fecha FROM pagoscreditos WHERE credito = ? AND pagoCancelacion = 'cancelado'"
 					+ " ORDER BY id DESC LIMIT 1) AND df.cantidadProducto > 0";
+				this.pst = this.cn.prepareStatement(this.setLocalFormat);
+				this.pst.execute();
 				this.pst = this.cn.prepareStatement(this.consulta);
 				this.pst.setInt(1, credito);
 				this.pst.setInt(2, credito);
 			} else {
+				this.pst = this.cn.prepareStatement(this.setLocalFormat);
+				this.pst.execute();
 				this.pst = this.cn.prepareStatement(consultaSecundary);
 				this.pst.setInt(1, credito);
 			}
@@ -751,7 +762,6 @@ public class Creditos extends Conexiondb {
 		this.cn = Conexion();
 		String[] titulos = {"Nombres", "Apellidos", "Telefono", "Dirección", "F. pago", "Monto ultimo pago", "N pago", "Saldo"};
 		this.registros = new String[8];
-		String setLocalFormat = "SET lc_time_names = 'es_ES'";
 		this.consulta = "SELECT p.id, p.credito, DATE_FORMAT(p.fecha,'%a, %d-%b-%Y') AS fechaFormat ,"
 			+ " p.monto,cl.nombres,apellidos,telefono,direccion FROM pagoscreditos AS p"
 			+ " INNER JOIN (SELECT credito, max(fecha) AS mfecha FROM pagoscreditos GROUP BY credito) AS ultimoPago ON"

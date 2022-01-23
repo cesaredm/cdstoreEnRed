@@ -14,6 +14,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,6 +59,7 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 	Date fecha;
 	DefaultTableModel modelo;
 	int permiso;
+	DecimalFormat formato;
 
 	public CtrlProducto(Productos p, IMenu menu, int permiso) {
 		this.permiso = permiso;
@@ -66,6 +68,7 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 		this.c = new Categorias();
 		this.L = new Marca();
 		this.fecha = new Date();
+		this.formato = new DecimalFormat("#,###,###,###,#00.00");
 		this.menu.btnGuardarProducto.addActionListener(this);
 		this.menu.btnActualizarProducto.addActionListener(this);
 		this.menu.btnNuevoProducto.addActionListener(this);
@@ -439,11 +442,17 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 //este metodo iversion es el mismo metodo que esta en reportes lo repite para no crear una nueva instancia de la clase reportes
 
 	public void inversion() {
-		float cordobas = this.productos.inversionCordobas(),
-			dolar = this.productos.inversionDolar(),
-			precioDolar = Float.parseFloat(menu.txtPrecioDolarVenta.getText()),
-			total = cordobas + (dolar * precioDolar);
-		menu.lblProyeccion.setText("" + total);
+		this.productos.inversionCordobas();
+		this.productos.inversionDolar();
+		this.menu.lblInversionDolar.setText(this.formato.format(this.productos.getInversionDolares()));
+		this.menu.lblInversionCordobas.setText(this.formato.format(this.productos.getInversionCordobas()));
+	}
+
+	public void proyeccionVentas(){
+		float precioDolar = Float.parseFloat(this.menu.txtPrecioDolarVenta.getText()),proyeccion = 0;
+		this.productos.proyeccionVentas();
+		proyeccion = this.productos.getInversionCordobas() + (this.productos.getInversionDolares() * precioDolar);
+		this.menu.lblProyeccion.setText(this.formato.format(proyeccion));
 	}
 
 	public void StockMinimoP(String categoria, float cantidad)//llenar tabla de productos bajos de estock
@@ -583,6 +592,7 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 			guardarKardex(stock);
 			LimpiarProducto();
 			inversion();
+			this.proyeccionVentas();
 			menu.btnGuardarProducto.setEnabled(true);
 			menu.btnActualizarProducto.setEnabled(false);
 			menu.txtCodBarraProducto.requestFocus();
@@ -620,6 +630,7 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 			guardarKardex(stock);
 			LimpiarProducto();
 			inversion();
+			this.proyeccionVentas();
 			menu.btnGuardarProducto.setEnabled(true);
 			menu.btnActualizarProducto.setEnabled(false);
 			menu.txtCodBarraProducto.requestFocus();
@@ -691,7 +702,7 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 					modelo = (DefaultTableModel) menu.tblProductos.getModel();
 					id = (String) modelo.getValueAt(filaseleccionada, 0);
 					this.productos.setId(id);
-					productos.Eliminar();
+					productos.eliminar();
 					MostrarProductos("");
 					inversion();
 				}

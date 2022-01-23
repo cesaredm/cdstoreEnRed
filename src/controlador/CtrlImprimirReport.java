@@ -11,8 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.table.DefaultTableModel;
 import vista.IMenu;
-import modelo.InfoFactura;
+import modelo.Configuraciones;
 import modelo.Creditos;
+import modelo.PagosCreditos;
 
 /**
  *
@@ -21,14 +22,17 @@ import modelo.Creditos;
 public class CtrlImprimirReport extends PrintReportes implements ActionListener {
 
 	IMenu menu;
-	InfoFactura info;
-	Creditos credito;
+	Configuraciones info;
+	Creditos creditosModel;
+	static int nCredito;
+	String cliente;
+
 	DefaultTableModel modelo;
 
-	public CtrlImprimirReport(IMenu menu, InfoFactura info) {
+	public CtrlImprimirReport(IMenu menu, Configuraciones info) {
 		this.menu = menu;
 		this.info = info;
-		this.credito = new Creditos();
+		this.creditosModel = new Creditos();
 		this.modelo = new DefaultTableModel();
 		this.menu.btnMostrarInversion.addActionListener(this);
 		this.menu.btnImprimirReporteDiario.addActionListener(this);
@@ -38,7 +42,7 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 		this.menu.btnReImprimirFactura.addActionListener(this);
 		this.menu.btnImprimirHistorialCrediticio.addActionListener(this);
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == menu.btnImprimirReporteGlobal) {
@@ -181,7 +185,7 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 	}
 
 	public void ReImprimirFactura() {
-		InfoFactura info = new InfoFactura();
+		Configuraciones info = new Configuraciones();
 		info.obtenerInfoFactura();
 		int filaseleccionada = menu.tblReporte.getSelectedRow();
 		int filas = menu.tblMostrarDetalleFactura.getRowCount();
@@ -231,7 +235,7 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 				cliente = "";
 			} else {
 				tipoVenta = "Credito";
-				cliente = this.credito.NombreCliente(Integer.parseInt(creditoId));
+				cliente = this.creditosModel.NombreCliente(Integer.parseInt(creditoId));
 			}
 			Ticket d = new Ticket();
 			d.nameLocal = info.getNombre();
@@ -264,11 +268,11 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 
 	public void ImprimirInfoCrediticia() {
 		try {
+			/* TODO agrgar el nombre del cliente al historial */
 			int filasDolar = this.menu.tblArticulosCredito.getRowCount();
 			int filasCordobas = this.menu.tblArticulosCreditoCordobas.getRowCount();
-			int filaseleccionada = this.menu.tblCreditos.getSelectedRow();
-			String cliente = this.menu.tblCreditos.getValueAt(filaseleccionada, 4).toString()
-				+ " " + this.menu.tblCreditos.getValueAt(filaseleccionada, 5).toString();
+			this.cliente = this.creditosModel.NombreCliente(nCredito);
+			System.out.println(this.cliente);	
 			String totalC = this.menu.lblTodalCreditoCordobas.getText(),
 				totalD = this.menu.lblTotalCreditoDolar.getText(),
 				totalPagosCordobas = this.menu.lblTotalAbonosCordobas.getText(),
@@ -278,15 +282,19 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 			String listado = "PRODUCTOS EN DOLAR \n";
 
 			for (int i = 0; i < filasDolar; i++) {
-				listado += this.menu.tblArticulosCredito.getValueAt(i, 2).toString()
+				listado += this.menu.tblArticulosCredito.getValueAt(i, 0).toString()
 					+ " " + this.menu.tblArticulosCredito.getValueAt(i, 1).toString()
-					+ " " + this.menu.tblArticulosCredito.getValueAt(i, 3).toString() + "$\n";
+					+ " " + this.menu.tblArticulosCredito.getValueAt(i, 2).toString()
+					+ " " + this.menu.tblArticulosCredito.getValueAt(i, 3).toString() + "$"
+					+ " " + this.menu.tblArticulosCredito.getValueAt(i, 5).toString() + "\n";
 			}
 			listado += "\nPRODUCTOS EN CORDOBAS \n";
 			for (int i = 0; i < filasCordobas; i++) {
-				listado += this.menu.tblArticulosCreditoCordobas.getValueAt(i, 2).toString()
+				listado += this.menu.tblArticulosCreditoCordobas.getValueAt(i, 0).toString()
 					+ " " + this.menu.tblArticulosCreditoCordobas.getValueAt(i, 1).toString()
-					+ " " + this.menu.tblArticulosCreditoCordobas.getValueAt(i, 3).toString() + " C$\n";
+					+ " " + this.menu.tblArticulosCreditoCordobas.getValueAt(i, 2).toString()
+					+ " " + this.menu.tblArticulosCreditoCordobas.getValueAt(i, 3).toString() + " C$"
+					+ " " + this.menu.tblArticulosCreditoCordobas.getValueAt(i, 5).toString() + "\n";
 			}
 			setTotalCreditoCordobas(totalC);
 			setTotalCreditoDolares(totalD);
@@ -295,7 +303,7 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 			setSaldoCordobas(saldoCordobas);
 			setSaldoDolares(saldoDolares);
 			setListaProductosCreditos(listado);
-			setNombreCliente(cliente);
+			setNombreCliente(this.cliente);
 			print("ListaCredito");
 		} catch (Exception e) {
 

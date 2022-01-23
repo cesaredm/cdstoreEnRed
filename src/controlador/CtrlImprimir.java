@@ -19,62 +19,68 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.print.PrintService;
+import modelo.Configuraciones;
 import samplesCommon.SamplesCommon;
 
-/**nit
+/**
+ * nit
+ *
  * @author CESAR DIAZ MARADIAGA
  */
 public class CtrlImprimir {
 
-    PrintService printService;
-    PrinterOutputStream printerOutputStream;
-    EscPos escpos;
-    Style boldCenter,bold,centrar;
-    Bitonal algorithm;
-    // creating the EscPosImage, need buffered image and algorithm.
-    BufferedImage githubBufferedImage;
-    EscPosImage escposImage;
-    // this wrapper uses esc/pos sequence: "GS 'v' '0'"
-    RasterBitImageWrapper imageWrapper;
+	PrintService printService;
+	PrinterOutputStream printerOutputStream;
+	EscPos escpos;
+	Style boldCenter, bold, centrar;
+	Bitonal algorithm;
+	// creating the EscPosImage, need buffered image and algorithm.
+	BufferedImage githubBufferedImage;
+	EscPosImage escposImage;
+	// this wrapper uses esc/pos sequence: "GS 'v' '0'"
+	RasterBitImageWrapper imageWrapper;
+	
+	public CtrlImprimir() {
+		try {
+			if (Configuraciones.impresora.equals("Ninguna")) {
+				this.printService = PrinterOutputStream.getPrintServiceByName("");
+			}else{
+				this.printService = PrinterOutputStream.getPrintServiceByName(Configuraciones.impresora);
+			}
+			this.printerOutputStream = new PrinterOutputStream(printService);
+			this.escpos = new EscPos(printerOutputStream);
+			this.boldCenter = new Style(escpos.getStyle())
+				.setBold(true).setJustification(EscPosConst.Justification.Center);
+			//estilo negrita sin centrar
+			this.bold = new Style(escpos.getStyle()).setBold(true);
+			//centrar texto
+			this.centrar = new Style().setJustification(EscPosConst.Justification.Center);
+			this.algorithm = new BitonalThreshold(127);
+			this.githubBufferedImage = SamplesCommon.getImage(SamplesCommon.sampleImages.bless);
+			this.escposImage = new EscPosImage(new CoffeeImageImpl(githubBufferedImage), algorithm);
+			this.imageWrapper = new RasterBitImageWrapper();
+			this.imageWrapper.setJustification(EscPosConst.Justification.Center);
+		} catch (IOException ex) {
+			Logger.getLogger(CtrlImprimir.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
-    public CtrlImprimir() {
-        try {
-            this.printService = PrinterOutputStream.getPrintServiceByName("EPSON TM-T20III Receipt");
-            this.printerOutputStream = new PrinterOutputStream(printService);
-            this.escpos = new EscPos(printerOutputStream);
-            this.boldCenter = new Style(escpos.getStyle())
-                    .setBold(true).setJustification(EscPosConst.Justification.Center);
-            //estilo negrita sin centrar
-            this.bold = new Style(escpos.getStyle()).setBold(true);
-            //centrar texto
-            this.centrar = new Style().setJustification(EscPosConst.Justification.Center);
-            this.algorithm = new BitonalThreshold(127);
-            this.githubBufferedImage = SamplesCommon.getImage(SamplesCommon.sampleImages.bless);
-            this.escposImage = new EscPosImage(new CoffeeImageImpl(githubBufferedImage), algorithm);
-            this.imageWrapper = new RasterBitImageWrapper();
-            this.imageWrapper.setJustification(EscPosConst.Justification.Center);
-        } catch (IOException ex) {
-            Logger.getLogger(CtrlImprimir.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void reiniciar(){
-        try {
-            this.printService = PrinterOutputStream.getPrintServiceByName("EPSON TM-T20III Receipt");
-            this.printerOutputStream = new PrinterOutputStream(printService);
-            this.escpos = new EscPos(this.printerOutputStream);
-        } catch (IOException ex) {
-            Logger.getLogger(CtrlImprimir.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void close(){
-        try {
-            this.escpos.close();
-        } catch (IOException ex) {
-            Logger.getLogger(CtrlImprimir.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    
+	public void reiniciar() {
+		try {
+			this.printService = PrinterOutputStream.getPrintServiceByName("EPSON TM-T20III Receipt");
+			this.printerOutputStream = new PrinterOutputStream(printService);
+			this.escpos = new EscPos(this.printerOutputStream);
+		} catch (IOException ex) {
+			Logger.getLogger(CtrlImprimir.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	public void close() {
+		try {
+			this.escpos.close();
+		} catch (IOException ex) {
+			Logger.getLogger(CtrlImprimir.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
 }

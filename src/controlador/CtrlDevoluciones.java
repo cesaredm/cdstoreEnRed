@@ -33,7 +33,7 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 		total = 0,
 		totalDolares,
 		totalUpdate = 0,
-		totalGlobalCordobas=0,
+		totalGlobalCordobas = 0,
 		ivaUpdate = 0,
 		subTotalUpdate = 0,
 		cantidadUpdate = 0,
@@ -48,12 +48,14 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 		filaseleccionadaR = 0,
 		idDetalle = 0,
 		idFactura = 0,
-		filas;
+		filas,
+		credito = 0;
 	String restarString = "";
 	IMenu menu;
 	Reportes reportes;
 	Facturacion factura;
 	Productos producto;
+	EstadoCreditos estadoCredito;
 	DefaultTableModel modelo;
 	JSpinner spiner;
 	SpinnerNumberModel sModel;
@@ -66,6 +68,7 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 		formato = new DecimalFormat("#############.##");
 		this.factura = new Facturacion();
 		this.producto = new Productos();
+		this.estadoCredito = new CambioEstadoCreditoPagos();
 		this.modelo = new DefaultTableModel();
 		menu.btnDevolverProducto.addActionListener(this);
 		this.menu.vistaDetalleFacturas.addWindowListener(this);
@@ -84,7 +87,7 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 		}
 	}
 
-	public boolean isNumeric(String dato){
+	public boolean isNumeric(String dato) {
 		try {
 			Float.parseFloat(dato);
 			return true;
@@ -92,11 +95,11 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 			return false;
 		}
 	}
-	
+
 	//funcion para devolver productos
 	public void DevolverProducto() {
 		this.fecha = menu.jcFacturasEmitidas.getDate();
-
+		String credito;
 		this.precioDolar = (!isNumeric(menu.txtPrecioDolarVenta.getText())) ? 1 : Float.parseFloat(menu.txtPrecioDolarVenta.getText());
 
 		this.modelo = (DefaultTableModel) menu.tblMostrarDetalleFactura.getModel();
@@ -122,6 +125,8 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 					this.precio = Float.parseFloat(this.modelo.getValueAt(filaseleccionada, 5).toString());
 					this.cantidadActual = Float.parseFloat(this.modelo.getValueAt(filaseleccionada, 4).toString());
 					this.idFactura = Integer.parseInt(menu.tblReporte.getValueAt(filaseleccionadaR, 0).toString());
+					credito = (String) menu.tblReporte.getValueAt(filaseleccionadaR, 7);
+					this.credito = (credito != null) ? Integer.parseInt(credito): 0;
 					this.factura.obtenerTotalFacturaSeleccionada(idFactura);
 					this.total = this.factura.getTotalCordobas();
 					this.totalDolares = this.factura.getTotalDolar();
@@ -165,6 +170,10 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 							MostrarDetalleFactura(this.idFactura);
 							MostrarProductos("");
 							MostrarProductosVender("");
+							if (this.credito != 0) {
+								this.estadoCredito.updateApendiente(this.credito);
+								this.estadoCredito.updateAabierto(this.credito);
+							}
 						} catch (Exception e) {
 							JOptionPane.showMessageDialog(
 								null,
@@ -173,14 +182,13 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 						}
 
 					}
-				} else {
-
 				}
 			} else {
 
 			}
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(null, ex + " en la funcion DevolverProducto en ctrlReportes");
+			JOptionPane.showMessageDialog(null, ex.getMessage() + " en la funcion DevolverProducto en ctrlDevoluciones");
+			ex.printStackTrace();
 		}
 	}
 

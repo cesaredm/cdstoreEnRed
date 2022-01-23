@@ -245,7 +245,10 @@ public class Facturacion extends Conexiondb implements Serializable {
 //metodo para busqueda general y por nombre y cod. barra de producto
 	public DefaultTableModel BusquedaGeneralProductoVender(String buscar) {
 		cn = Conexion();
-		this.consulta = "SELECT productos.id, productos.codigoBarra, productos.nombre AS nombreProducto, precioVenta, monedaVenta, fechaVencimiento, stock, ubicacion, productos.descripcion, categorias.nombre AS nombreCategoria, marca.nombre as nombreMarca FROM productos LEFT JOIN categorias ON(productos.categoria=categorias.id) LEFT JOIN marca ON(productos.marca=marca.id) WHERE CONCAT(productos.codigoBarra, productos.nombre) LIKE '%" + buscar + "%'";
+		this.consulta = "SELECT p.id, p.codigoBarra, p.nombre AS nombreProducto, precioVenta, monedaVenta, fechaVencimiento, stock,"
+			+ " ubicacion, p.descripcion, c.nombre AS nombreCategoria, m.nombre as nombreMarca FROM productos AS p LEFT JOIN "
+			+ "categorias AS c ON(p.categoria=c.id) LEFT JOIN marca AS m ON(p.marca=m.id) WHERE "
+			+ "CONCAT(p.codigoBarra, p.nombre) LIKE '%" + buscar + "%' AND p.estado = 1";
 		String[] registros = new String[11];
 		String[] titulos = {"Id", "Codigo Barra", "Nombre", "precioVenta", "Moneda", "Fecha Vencimiento", "Stock", "Categoria", "marca", "Ubicacion", "Descripcion"};
 		modelo = new DefaultTableModel(null, titulos) {
@@ -282,7 +285,10 @@ public class Facturacion extends Conexiondb implements Serializable {
 
 	public DefaultTableModel BuscarPorCategoria(String categoria) {
 		cn = Conexion();
-		this.consulta = "SELECT productos.id, productos.codigoBarra, productos.nombre AS nombreProducto, precioVenta, monedaVenta, fechaVencimiento, stock, ubicacion, productos.descripcion, categorias.nombre AS nombreCategoria, marca.nombre as nombreMarca FROM productos INNER JOIN categorias ON(productos.categoria=categorias.id) INNER JOIN marca ON(productos.marca=marca.id) WHERE CONCAT(categorias.nombre) LIKE '%" + categoria + "%'";
+		this.consulta = "SELECT p.id, p.codigoBarra, p.nombre AS nombreProducto, precioVenta, monedaVenta, fechaVencimiento, stock,"
+			+ " ubicacion, p.descripcion, c.nombre AS nombreCategoria, m.nombre as nombreMarca FROM productos AS p INNER JOIN"
+			+ " categorias AS c ON(p.categoria=c.id) INNER JOIN marca AS m ON(p.marca=m.id)"
+			+ " WHERE CONCAT(c.nombre) LIKE '%" + categoria + "%' AND p.estado = 1";
 		String[] registros = new String[11];
 		String[] titulos = {"Id", "Codigo Barra", "Nombre", "precioVenta", "Moneda", "Fecha Vencimiento", "Stock", "Categoria", "marca", "Descuento", "Ubicacion", "Descripcion"};
 		modelo = new DefaultTableModel(null, titulos) {
@@ -319,7 +325,10 @@ public class Facturacion extends Conexiondb implements Serializable {
 
 	public DefaultTableModel BuscarPorMarca(String marca) {
 		cn = Conexion();
-		this.consulta = "SELECT productos.id, productos.codigoBarra, productos.nombre AS nombreProducto, precioVenta, monedaVenta, fechaVencimiento, stock, ubicacion, productos.descripcion, categorias.nombre AS nombreCategoria, marca.nombre as nombreMarca FROM productos INNER JOIN categorias ON(productos.categoria=categorias.id) INNER JOIN marca ON(productos.marca=marca.id) WHERE CONCAT(marca.nombre) LIKE '%" + marca + "%'";
+		this.consulta = "SELECT p.id, p.codigoBarra, p.nombre AS nombreProducto, precioVenta, monedaVenta, fechaVencimiento, stock,"
+			+ " ubicacion, p.descripcion, c.nombre AS nombreCategoria, m.nombre as nombreMarca FROM productos AS p INNER JOIN"
+			+ " categorias AS c ON(p.categoria=c.id) INNER JOIN marca AS m ON(p.marca=m.id) WHERE CONCAT(marca.nombre)"
+			+ " LIKE '%" + marca + "%' AND p.estado = 1";
 		String[] registros = new String[11];
 		String[] titulos = {"Id", "Codigo Barra", "Nombre", "precioVenta", "Moneda", "Fecha Vencimiento", "Stock", "Categoria", "marca", "Descuento", "Ubicacion", "Descripcion"};
 		modelo = new DefaultTableModel(null, titulos) {

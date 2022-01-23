@@ -48,7 +48,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 	Reportes reportes;
 	EstadoCreditos estadoCreditos;
 	PrintReportes print;
-	InfoFactura info;
+	Configuraciones info;
 	DefaultTableModel modelo;
 	Date fecha;
 	DecimalFormat formato;
@@ -62,7 +62,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 		this.estadoCreditos = new CambioEstadoCreditoPagos();
 		this.modelo = new DefaultTableModel();
 		this.print = new PrintReportes();
-		this.info = new InfoFactura();
+		this.info = new Configuraciones();
 		this.socketCliente = new SockectCliente();
 		this.fecha = new Date();
 		this.menu.cmbFormaPagoCredito.setModel(pagos.FormasPago());
@@ -262,8 +262,8 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 				if (this.saldoActualCordobas >= 0 && this.saldoActualDolares >= 0) {
 					pagos.Guardar();
 					this.estadoCreditos.updateAabierto(this.credito);
-					//this.socketCliente.setIps(ips);
-					//this.socketCliente.socketInit(this.pagos);
+					this.socketCliente.setIps(ips);
+					this.socketCliente.socketInit(this.pagos);
 					UltimoPago();
 					info.obtenerInfoFactura();
 					imprimir(

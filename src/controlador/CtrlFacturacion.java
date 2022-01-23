@@ -109,7 +109,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		this.menu.btnLimpiarCliente.addActionListener(this);
 		this.menu.btnAgregar.addActionListener(this);
 		this.menu.btnAgregar.addKeyListener(this);
-		this.menu.btnDividirPago.addActionListener(this);
+//		this.menu.btnDividirPago.addActionListener(this);
 		this.menu.btnGuardarMonedasRecibidas.addActionListener(this);
 		this.menu.txtCodBarraFactura.addKeyListener(this);
 		this.menu.btnAgregarProductoFactura.addKeyListener(this);
@@ -124,6 +124,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		this.menu.txtPagoConCordobas.addKeyListener(this);
 		this.menu.txtPagoConDolares.addCaretListener(this);
 		this.menu.txtPagoConDolares.addKeyListener(this);
+		this.menu.txtPagoConDolaresVenta.addCaretListener(this);
+		this.menu.txtPagoConDolaresVenta.addKeyListener(this);
 		this.menu.txtCambio.addCaretListener(this);
 		this.menu.txtTotalCordobas.addCaretListener(this);
 		this.menu.cmbFormaPago.addActionListener(this);
@@ -174,7 +176,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 					);
 					menu.btnGuardarFactura.setEnabled(false);
 				} else {
-					guardarFactura();
+					this.guardarFactura();
 				}
 			} else {
 				guardarFactura();
@@ -227,17 +229,17 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		if (e.getSource() == menu.addMasProducto) {
 			addMasProducto();
 		}
-		if (e.getSource() == menu.btnDividirPago) {
-			this.menu.jdMonedasRecibidas.setSize(325, 260);
-			this.menu.jdMonedasRecibidas.setLocationRelativeTo(null);
-			this.menu.jdMonedasRecibidas.setVisible(true);
-			this.menu.chexIngresoMonedasFactura.setSelected(true);
-			this.menu.chexIngresoMonedasFactura.setEnabled(false);
-			this.menu.chexIngresoMonedasPago.setSelected(false);
-			this.menu.chexIngresoMonedasPago.setEnabled(false);
-			this.menu.chexIngresoCompraDolar.setSelected(false);
-			this.menu.jsFacturaPago.setValue(Integer.parseInt(menu.txtNumeroFactura.getText()));
-		}
+//		if (e.getSource() == menu.btnDividirPago) {
+//			this.menu.jdMonedasRecibidas.setSize(325, 260);
+//			this.menu.jdMonedasRecibidas.setLocationRelativeTo(null);
+//			this.menu.jdMonedasRecibidas.setVisible(true);
+//			this.menu.chexIngresoMonedasFactura.setSelected(true);
+//			this.menu.chexIngresoMonedasFactura.setEnabled(false);
+//			this.menu.chexIngresoMonedasPago.setSelected(false);
+//			this.menu.chexIngresoMonedasPago.setEnabled(false);
+//			this.menu.chexIngresoCompraDolar.setSelected(false);
+//			this.menu.jsFacturaPago.setValue(Integer.parseInt(menu.txtNumeroFactura.getText()));
+//		}
 		if (e.getSource() == menu.btnSalidaMonedas) {
 			this.menu.jdSalidaMonedas.setSize(325, 260);
 			this.menu.jdSalidaMonedas.setLocationRelativeTo(null);
@@ -433,7 +435,6 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			this.validar();
 			this.modelo = (DefaultTableModel) menu.tblFactura.getModel();
 			int filas = this.modelo.getRowCount();//Cuento las filas de la tabla Factura
-			String[] ips = {"127.0.0.1"};
 			if (menu.btnGuardarFactura.isEnabled()) {
 				String[] ArregloImprimir = new String[filas];
 				this.facturaModel.setCaja(1);
@@ -472,8 +473,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 					ArregloImprimir[cont] = nombreProduct + " " + cantidad + "   " + precio + "  " + totalDetalle + "\n";
 				}
 				menu.txtNumeroFactura.setText(this.facturaModel.ObtenerIdFactura());
-//				this.socketCliente.setIps(ips);
-//				this.socketCliente.socketInit(this.facturaModel);
+				this.multiconexion();
 				menu.txtCodBarraFactura.setText("");
 				menu.txtCodBarraFactura.requestFocus();
 				//limpio la facturaModel
@@ -498,8 +498,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 					String.valueOf(total),
 					String.valueOf(this.totalDolar),
 					fechaFactura.toString(),
-					String.valueOf(pagoCon),
-					String.valueOf(cambio),
+					/*String.valueOf(pagoCon)*/ "",
+					/*String.valueOf(cambio)*/ "",
 					this.usuario
 				);
 				LimpiarTablaFactura();
@@ -516,7 +516,6 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			this.validar();
 			this.modelo = (DefaultTableModel) menu.tblFactura.getModel();
 			int filas = this.modelo.getRowCount();//Cuento las filas de la tabla Factura
-			String[] ips = {"127.0.0.1"};
 			if (menu.btnGuardarFactura.isEnabled()) {
 				String[] ArregloImprimir = new String[filas];
 				this.facturaModel.setCaja(1);
@@ -553,8 +552,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 					ArregloImprimir[cont] = nombreProduct + " " + cantidad + "   " + precio + "  " + totalDetalle + "\n";
 				}
 				menu.txtNumeroFactura.setText(this.facturaModel.ObtenerIdFactura());
-//				this.socketCliente.setIps(ips);
-//				this.socketCliente.socketInit(this.facturaModel);
+				this.multiconexion();
 				menu.txtCodBarraFactura.setText("");
 				menu.txtCodBarraFactura.requestFocus();
 				//limpio la facturaModel
@@ -575,6 +573,15 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			//JOptionPane.showMessageDialog(null, err);
 		}
 
+	}
+
+	public void multiconexion() {
+		if (Configuraciones.multiconexion) {
+			this.socketCliente.setIps(Configuraciones.listIpsCliente);
+			this.socketCliente.socketInit(this.facturaModel);
+		}else{
+
+		}
 	}
 
 	public void mostrarVentanaProductos() {
@@ -690,7 +697,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		String cambio,
 		String usuario
 	) {
-		InfoFactura info = new InfoFactura();
+		Configuraciones info = new Configuraciones();
 		info.obtenerInfoFactura();
 		Ticket d = new Ticket();
 		d.nameLocal = info.getNombre();
@@ -718,7 +725,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			d.llenarTicket();
 			d.printFactura();
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 
@@ -1629,7 +1636,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		menu.tblAddProductoFactura.getTableHeader().setPreferredSize(new java.awt.Dimension(0, 35));
 	}
 
-//metodo para mostrar los productos a vender por filtro de Marca
+	//metodo para mostrar los productos a vender por filtro de Marca
 	public void MostrarPorMarca(String laboratorio) {
 		menu.tblAddProductoFactura.setModel(facturaModel.BuscarPorMarca(laboratorio));
 	}

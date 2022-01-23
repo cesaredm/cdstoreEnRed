@@ -156,6 +156,9 @@ public class IMenu extends javax.swing.JFrame {
                 addDescuentoPorcentaje = new javax.swing.JMenuItem();
                 mnRegistroMonedas = new javax.swing.JPopupMenu();
                 editarRegistroMonedas = new javax.swing.JMenuItem();
+                mnIps = new javax.swing.JPopupMenu();
+                editarIp = new javax.swing.JMenuItem();
+                eliminarIp = new javax.swing.JMenuItem();
                 ventanaCategoria = new javax.swing.JDialog();
                 jPanel3 = new javax.swing.JPanel();
                 jLabel22 = new javax.swing.JLabel();
@@ -253,7 +256,6 @@ public class IMenu extends javax.swing.JFrame {
                 txtBuscarPago = new javax.swing.JTextField();
                 jLabel41 = new javax.swing.JLabel();
                 cmbFormaPagoCredito = new javax.swing.JComboBox<>();
-                btnMonedasRecibidasPagoCreditos = new javax.swing.JButton();
                 jLabel175 = new javax.swing.JLabel();
                 lblNumeroPago = new javax.swing.JLabel();
                 jLabel65 = new javax.swing.JLabel();
@@ -484,7 +486,6 @@ public class IMenu extends javax.swing.JFrame {
                 txtCambio = new javax.swing.JTextField();
                 jLabel28 = new javax.swing.JLabel();
                 jLabel29 = new javax.swing.JLabel();
-                btnDividirPago = new javax.swing.JButton();
                 txtTotalDolar = new javax.swing.JTextField();
                 jLabel192 = new javax.swing.JLabel();
                 jLabel193 = new javax.swing.JLabel();
@@ -512,9 +513,7 @@ public class IMenu extends javax.swing.JFrame {
                 jPanel26 = new javax.swing.JPanel();
                 btnAperturaCaja = new javax.swing.JButton();
                 btnRespaldo = new javax.swing.JButton();
-                btnMasReportes = new javax.swing.JButton();
                 btnProductosMasVendidos = new javax.swing.JButton();
-                btnEnviarRD = new javax.swing.JButton();
                 pnlInversion = new javax.swing.JPanel();
                 lblProyeccion = new javax.swing.JLabel();
                 jLabel55 = new javax.swing.JLabel();
@@ -685,6 +684,10 @@ public class IMenu extends javax.swing.JFrame {
                 cmbMonedaTransaccion = new javax.swing.JComboBox<>();
                 pnlBlanco = new javax.swing.JPanel();
                 pnlInfoFactura = new javax.swing.JPanel();
+                jdesktopConfiguraciones = new javax.swing.JDesktopPane();
+                jifConfigFactura = new javax.swing.JInternalFrame();
+                jScrollPane28 = new javax.swing.JScrollPane();
+                txtInfoActual = new javax.swing.JTextArea();
                 jPanel24 = new javax.swing.JPanel();
                 jLabel38 = new javax.swing.JLabel();
                 txtNombreTienda = new javax.swing.JTextField();
@@ -702,8 +705,25 @@ public class IMenu extends javax.swing.JFrame {
                 jLabel60 = new javax.swing.JLabel();
                 jScrollPane40 = new javax.swing.JScrollPane();
                 txtAreaAnotacionesInfoFactura = new javax.swing.JTextArea();
-                jScrollPane28 = new javax.swing.JScrollPane();
-                txtInfoActual = new javax.swing.JTextArea();
+                jifconfigImpresoras = new javax.swing.JInternalFrame();
+                jLabel63 = new javax.swing.JLabel();
+                lblImpresoraEstablecida = new javax.swing.JLabel();
+                jLabel78 = new javax.swing.JLabel();
+                cmbElegirImpresora = new javax.swing.JComboBox<>();
+                btnEstablecerImpresora = new javax.swing.JButton();
+                jifRedes = new javax.swing.JInternalFrame();
+                jLabel82 = new javax.swing.JLabel();
+                cmbTipoOrdenador = new javax.swing.JComboBox<>();
+                jLabel86 = new javax.swing.JLabel();
+                txtIpOrdenador = new javax.swing.JTextField();
+                btnGuardarIps = new javax.swing.JButton();
+                jScrollPane30 = new javax.swing.JScrollPane();
+                tblIps = new javax.swing.JTable();
+                btnActualizarIp = new javax.swing.JButton();
+                cbxMulticonexion = new javax.swing.JCheckBox();
+                btnConfigFactura = new javax.swing.JButton();
+                btnImpresoras = new javax.swing.JButton();
+                btnConfigRedes = new javax.swing.JButton();
                 pnlMenuLateral = new javax.swing.JPanel();
                 btnVentas = new javax.swing.JPanel();
                 lblIconVentas = new javax.swing.JLabel();
@@ -762,7 +782,6 @@ public class IMenu extends javax.swing.JFrame {
                 Productos.add(EditarProducto);
 
                 BorrarProducto.setText("Borrar");
-                BorrarProducto.setEnabled(false);
                 Productos.add(BorrarProducto);
 
                 AddProductoStock.setText("Agregar");
@@ -823,6 +842,12 @@ public class IMenu extends javax.swing.JFrame {
 
                 editarRegistroMonedas.setText("Editar registro");
                 mnRegistroMonedas.add(editarRegistroMonedas);
+
+                editarIp.setText("Editar");
+                mnIps.add(editarIp);
+
+                eliminarIp.setText("Eliminar");
+                mnIps.add(eliminarIp);
 
                 ventanaCategoria.setTitle("Crear Categoria");
 
@@ -1673,10 +1698,6 @@ public class IMenu extends javax.swing.JFrame {
 
                 cmbFormaPagoCredito.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
 
-                btnMonedasRecibidasPagoCreditos.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-                btnMonedasRecibidasPagoCreditos.setForeground(new java.awt.Color(234, 190, 63));
-                btnMonedasRecibidasPagoCreditos.setText("Monedas Recibidas");
-
                 jLabel175.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
                 jLabel175.setText("N° Pago:");
 
@@ -1752,8 +1773,7 @@ public class IMenu extends javax.swing.JFrame {
                                         .addGroup(jPanel20Layout.createSequentialGroup()
                                                 .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(btnGuardarPago, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(btnActualizarPago, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(btnMonedasRecibidasPagoCreditos))
+                                                        .addComponent(btnActualizarPago, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                         .addGroup(jPanel20Layout.createSequentialGroup()
                                 .addContainerGap()
@@ -1776,9 +1796,7 @@ public class IMenu extends javax.swing.JFrame {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(btnGuardarPago)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(btnActualizarPago)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(btnMonedasRecibidasPagoCreditos, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(btnActualizarPago))
                                         .addGroup(jPanel20Layout.createSequentialGroup()
                                                 .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                         .addComponent(jLabel81)
@@ -1804,7 +1822,7 @@ public class IMenu extends javax.swing.JFrame {
                                         .addComponent(jLabel34)
                                         .addComponent(txtBuscarPago, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane24, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
+                                .addComponent(jScrollPane24, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))
                 );
 
                 javax.swing.GroupLayout pagosAcreditosLayout = new javax.swing.GroupLayout(pagosAcreditos.getContentPane());
@@ -3034,7 +3052,7 @@ public class IMenu extends javax.swing.JFrame {
                 );
 
                 setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-                setTitle("CDstore");
+                setTitle("CDstore Servidor");
                 setMinimumSize(new java.awt.Dimension(1310, 610));
                 setSize(new java.awt.Dimension(1310, 610));
                 addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -3388,9 +3406,6 @@ public class IMenu extends javax.swing.JFrame {
                 jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
                 jLabel29.setText("Pago con");
 
-                btnDividirPago.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-                btnDividirPago.setText("Ingresar monedas");
-
                 txtTotalDolar.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
                 txtTotalDolar.setForeground(new java.awt.Color(255, 215, 0));
                 txtTotalDolar.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -3542,14 +3557,11 @@ public class IMenu extends javax.swing.JFrame {
                                                         .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                         .addComponent(txtTotalCordobas, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(jLabel195)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel29Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel29Layout.createSequentialGroup()
-                                                .addComponent(jLabel195)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel29Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jLabel200, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(txtTotalGlobalCordobas, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)))
-                                        .addComponent(btnDividirPago, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jLabel200, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txtTotalGlobalCordobas, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))
                                 .addGap(115, 115, 115))
                 );
                 jPanel29Layout.setVerticalGroup(
@@ -3586,9 +3598,7 @@ public class IMenu extends javax.swing.JFrame {
                                                         .addGroup(jPanel29Layout.createSequentialGroup()
                                                                 .addComponent(lblImpuestoFactura)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addGroup(jPanel29Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                        .addComponent(txtImpuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                        .addComponent(btnDividirPago, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                .addComponent(txtImpuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                         .addGroup(jPanel29Layout.createSequentialGroup()
                                                                 .addGroup(jPanel29Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                                         .addComponent(jLabel29)
@@ -3684,6 +3694,8 @@ public class IMenu extends javax.swing.JFrame {
                 jLabel39.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
                 jLabel39.setText("Fecha:");
 
+                jcFechaReporteDario.setForeground(new java.awt.Color(255, 255, 255));
+
                 btnReporteDiario.setBackground(new java.awt.Color(37, 186, 46));
                 btnReporteDiario.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
                 btnReporteDiario.setForeground(new java.awt.Color(255, 255, 255));
@@ -3720,16 +3732,7 @@ public class IMenu extends javax.swing.JFrame {
                 btnRespaldo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                 btnRespaldo.setFocusPainted(false);
                 btnRespaldo.setFocusable(false);
-                jPanel26.add(btnRespaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 133, 160, 35));
-
-                btnMasReportes.setBackground(new java.awt.Color(0, 166, 192));
-                btnMasReportes.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-                btnMasReportes.setForeground(new java.awt.Color(255, 255, 255));
-                btnMasReportes.setText("Más Reportes");
-                btnMasReportes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-                btnMasReportes.setFocusPainted(false);
-                btnMasReportes.setFocusable(false);
-                jPanel26.add(btnMasReportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 55, 160, 35));
+                jPanel26.add(btnRespaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 94, 160, 35));
 
                 btnProductosMasVendidos.setBackground(new java.awt.Color(0, 205, 172));
                 btnProductosMasVendidos.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
@@ -3738,17 +3741,7 @@ public class IMenu extends javax.swing.JFrame {
                 btnProductosMasVendidos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                 btnProductosMasVendidos.setFocusPainted(false);
                 btnProductosMasVendidos.setFocusable(false);
-                jPanel26.add(btnProductosMasVendidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 94, 160, 35));
-
-                btnEnviarRD.setBackground(new java.awt.Color(102, 102, 255));
-                btnEnviarRD.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-                btnEnviarRD.setForeground(new java.awt.Color(255, 255, 255));
-                btnEnviarRD.setText("Enviar por correo");
-                btnEnviarRD.setBorder(null);
-                btnEnviarRD.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-                btnEnviarRD.setFocusPainted(false);
-                btnEnviarRD.setFocusable(false);
-                jPanel26.add(btnEnviarRD, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 172, 160, 35));
+                jPanel26.add(btnProductosMasVendidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 55, 160, 35));
 
                 pnlInversion.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)), "Inversión"));
                 pnlInversion.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -3914,10 +3907,10 @@ public class IMenu extends javax.swing.JFrame {
                                                         .addComponent(jScrollPane37, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
                                                         .addComponent(jScrollPane38, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                                         .addGroup(jPanel13Layout.createSequentialGroup()
-                                                .addComponent(jPanel26, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jPanel26, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(pnlInversion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(88, Short.MAX_VALUE))
+                                .addContainerGap(104, Short.MAX_VALUE))
                 );
 
                 jTabbedPane1.addTab("Reporte Diario", jPanel13);
@@ -5257,6 +5250,23 @@ public class IMenu extends javax.swing.JFrame {
 
                 pnlPrincipal.add(pnlBlanco, "card10");
 
+                jifConfigFactura.setClosable(true);
+                jifConfigFactura.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+                jifConfigFactura.setMaximizable(true);
+                jifConfigFactura.setResizable(true);
+                jifConfigFactura.setTitle("Configuracion de factura");
+                jifConfigFactura.setVisible(false);
+
+                txtInfoActual.setEditable(false);
+                txtInfoActual.setColumns(20);
+                txtInfoActual.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                txtInfoActual.setForeground(new java.awt.Color(255, 255, 255));
+                txtInfoActual.setLineWrap(true);
+                txtInfoActual.setRows(5);
+                txtInfoActual.setToolTipText("");
+                txtInfoActual.setOpaque(false);
+                jScrollPane28.setViewportView(txtInfoActual);
+
                 jLabel38.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
                 jLabel38.setText("Nombre de tienda:");
 
@@ -5314,7 +5324,7 @@ public class IMenu extends javax.swing.JFrame {
                                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addComponent(jLabel60))
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel24Layout.createSequentialGroup()
-                                                .addGap(0, 5, Short.MAX_VALUE)
+                                                .addGap(0, 0, Short.MAX_VALUE)
                                                 .addGroup(jPanel24Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jLabel38, javax.swing.GroupLayout.Alignment.TRAILING)
                                                         .addComponent(jLabel56, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -5332,7 +5342,7 @@ public class IMenu extends javax.swing.JFrame {
                                         .addComponent(txtRFCTienda, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jScrollPane27, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(txtNombreTienda, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(94, Short.MAX_VALUE))
+                                .addContainerGap(80, Short.MAX_VALUE))
                         .addGroup(jPanel24Layout.createSequentialGroup()
                                 .addGap(252, 252, 252)
                                 .addComponent(btnActualizarInfoFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -5369,19 +5379,222 @@ public class IMenu extends javax.swing.JFrame {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addComponent(btnActualizarInfoFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(jLabel49))
-                                .addContainerGap(16, Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
 
-                txtInfoActual.setEditable(false);
-                txtInfoActual.setColumns(20);
-                txtInfoActual.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-                txtInfoActual.setForeground(new java.awt.Color(102, 102, 102));
-                txtInfoActual.setLineWrap(true);
-                txtInfoActual.setRows(5);
-                txtInfoActual.setToolTipText("");
-                txtInfoActual.setOpaque(false);
-                jScrollPane28.setViewportView(txtInfoActual);
-                txtInfoActual.getAccessibleContext().setAccessibleName("");
+                javax.swing.GroupLayout jifConfigFacturaLayout = new javax.swing.GroupLayout(jifConfigFactura.getContentPane());
+                jifConfigFactura.getContentPane().setLayout(jifConfigFacturaLayout);
+                jifConfigFacturaLayout.setHorizontalGroup(
+                        jifConfigFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jifConfigFacturaLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jPanel24, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jScrollPane28, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
+                );
+                jifConfigFacturaLayout.setVerticalGroup(
+                        jifConfigFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jifConfigFacturaLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jifConfigFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jPanel24, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jifConfigFacturaLayout.createSequentialGroup()
+                                                .addComponent(jScrollPane28)
+                                                .addGap(43, 43, 43)))
+                                .addContainerGap())
+                );
+
+                jifconfigImpresoras.setClosable(true);
+                jifconfigImpresoras.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+                jifconfigImpresoras.setMaximizable(true);
+                jifconfigImpresoras.setResizable(true);
+                jifconfigImpresoras.setTitle("Impresoras");
+                jifconfigImpresoras.setVisible(false);
+
+                jLabel63.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+                jLabel63.setText("Impresora Seleccionada : ");
+
+                lblImpresoraEstablecida.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                lblImpresoraEstablecida.setText("Ninguna");
+
+                jLabel78.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                jLabel78.setText("Seleccionar impresora:");
+
+                cmbElegirImpresora.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                cmbElegirImpresora.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ninguna" }));
+
+                btnEstablecerImpresora.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                btnEstablecerImpresora.setText("Establecer");
+
+                javax.swing.GroupLayout jifconfigImpresorasLayout = new javax.swing.GroupLayout(jifconfigImpresoras.getContentPane());
+                jifconfigImpresoras.getContentPane().setLayout(jifconfigImpresorasLayout);
+                jifconfigImpresorasLayout.setHorizontalGroup(
+                        jifconfigImpresorasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jifconfigImpresorasLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jifconfigImpresorasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jifconfigImpresorasLayout.createSequentialGroup()
+                                                .addComponent(jLabel63)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(lblImpresoraEstablecida, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jifconfigImpresorasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addComponent(btnEstablecerImpresora)
+                                                .addGroup(jifconfigImpresorasLayout.createSequentialGroup()
+                                                        .addComponent(jLabel78, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(cmbElegirImpresora, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                );
+                jifconfigImpresorasLayout.setVerticalGroup(
+                        jifconfigImpresorasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jifconfigImpresorasLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jifconfigImpresorasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel63)
+                                        .addComponent(lblImpresoraEstablecida))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jifconfigImpresorasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel78)
+                                        .addComponent(cmbElegirImpresora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnEstablecerImpresora)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                );
+
+                jifRedes.setClosable(true);
+                jifRedes.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+                jifRedes.setMaximizable(true);
+                jifRedes.setResizable(true);
+                jifRedes.setTitle("Ingreso de ips de ordenadores");
+                jifRedes.setVisible(false);
+
+                jLabel82.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                jLabel82.setText("Tipo Ordenador : ");
+
+                cmbTipoOrdenador.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                cmbTipoOrdenador.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Cliente", "Servidor", "Impresora" }));
+
+                jLabel86.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                jLabel86.setText("Dirección ip: ");
+
+                txtIpOrdenador.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+
+                btnGuardarIps.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                btnGuardarIps.setText("Guadar");
+
+                tblIps.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                tblIps.setModel(new javax.swing.table.DefaultTableModel(
+                        new Object [][] {
+                                {null, null, null, null},
+                                {null, null, null, null},
+                                {null, null, null, null},
+                                {null, null, null, null}
+                        },
+                        new String [] {
+                                "Title 1", "Title 2", "Title 3", "Title 4"
+                        }
+                ));
+                tblIps.setComponentPopupMenu(mnIps);
+                tblIps.setRowHeight(24);
+                jScrollPane30.setViewportView(tblIps);
+
+                btnActualizarIp.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                btnActualizarIp.setText("Actualizar");
+
+                cbxMulticonexion.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                cbxMulticonexion.setText("Multiconexion");
+
+                javax.swing.GroupLayout jifRedesLayout = new javax.swing.GroupLayout(jifRedes.getContentPane());
+                jifRedes.getContentPane().setLayout(jifRedesLayout);
+                jifRedesLayout.setHorizontalGroup(
+                        jifRedesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane30, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addGroup(jifRedesLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jifRedesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jifRedesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addGroup(jifRedesLayout.createSequentialGroup()
+                                                        .addComponent(btnActualizarIp)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(btnGuardarIps))
+                                                .addGroup(jifRedesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(jifRedesLayout.createSequentialGroup()
+                                                                .addComponent(jLabel82)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(cmbTipoOrdenador, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addGroup(jifRedesLayout.createSequentialGroup()
+                                                                .addComponent(jLabel86)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(txtIpOrdenador, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addComponent(cbxMulticonexion))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                );
+                jifRedesLayout.setVerticalGroup(
+                        jifRedesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jifRedesLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(cbxMulticonexion)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jifRedesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel82)
+                                        .addComponent(cmbTipoOrdenador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jifRedesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel86)
+                                        .addComponent(txtIpOrdenador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jifRedesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(btnGuardarIps)
+                                        .addComponent(btnActualizarIp))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane30, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                );
+
+                jdesktopConfiguraciones.setLayer(jifConfigFactura, javax.swing.JLayeredPane.DEFAULT_LAYER);
+                jdesktopConfiguraciones.setLayer(jifconfigImpresoras, javax.swing.JLayeredPane.DEFAULT_LAYER);
+                jdesktopConfiguraciones.setLayer(jifRedes, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+                javax.swing.GroupLayout jdesktopConfiguracionesLayout = new javax.swing.GroupLayout(jdesktopConfiguraciones);
+                jdesktopConfiguraciones.setLayout(jdesktopConfiguracionesLayout);
+                jdesktopConfiguracionesLayout.setHorizontalGroup(
+                        jdesktopConfiguracionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jdesktopConfiguracionesLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jdesktopConfiguracionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jdesktopConfiguracionesLayout.createSequentialGroup()
+                                                .addComponent(jifRedes, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                                .addGap(528, 528, 528))
+                                        .addGroup(jdesktopConfiguracionesLayout.createSequentialGroup()
+                                                .addComponent(jifConfigFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                                .addGap(24, 24, 24))
+                                        .addGroup(jdesktopConfiguracionesLayout.createSequentialGroup()
+                                                .addComponent(jifconfigImpresoras, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                                .addGap(451, 451, 451))))
+                );
+                jdesktopConfiguracionesLayout.setVerticalGroup(
+                        jdesktopConfiguracionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jdesktopConfiguracionesLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jdesktopConfiguracionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jifconfigImpresoras, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                        .addComponent(jifRedes, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                .addGap(0, 0, 0)
+                                .addComponent(jifConfigFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addGap(78, 78, 78))
+                );
+
+                btnConfigFactura.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+                btnConfigFactura.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/editar-archivo.png"))); // NOI18N
+                btnConfigFactura.setText("Factura");
+
+                btnImpresoras.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+                btnImpresoras.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/impresora.png"))); // NOI18N
+                btnImpresoras.setText("Impresoras");
+
+                btnConfigRedes.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+                btnConfigRedes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/red-de-area-local.png"))); // NOI18N
+                btnConfigRedes.setText("Red");
 
                 javax.swing.GroupLayout pnlInfoFacturaLayout = new javax.swing.GroupLayout(pnlInfoFactura);
                 pnlInfoFactura.setLayout(pnlInfoFacturaLayout);
@@ -5389,19 +5602,28 @@ public class IMenu extends javax.swing.JFrame {
                         pnlInfoFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(pnlInfoFacturaLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jPanel24, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane28, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
-                                .addGap(52, 52, 52))
+                                .addGroup(pnlInfoFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jdesktopConfiguraciones)
+                                        .addGroup(pnlInfoFacturaLayout.createSequentialGroup()
+                                                .addComponent(btnConfigFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btnImpresoras, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btnConfigRedes, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap())
                 );
                 pnlInfoFacturaLayout.setVerticalGroup(
                         pnlInfoFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(pnlInfoFacturaLayout.createSequentialGroup()
-                                .addGap(39, 39, 39)
-                                .addGroup(pnlInfoFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jPanel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jScrollPane28))
-                                .addContainerGap(93, Short.MAX_VALUE))
+                                .addContainerGap()
+                                .addGroup(pnlInfoFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnConfigFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnImpresoras, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnConfigRedes, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jdesktopConfiguraciones)
+                                .addContainerGap())
                 );
 
                 pnlPrincipal.add(pnlInfoFactura, "card10");
@@ -5553,10 +5775,10 @@ public class IMenu extends javax.swing.JFrame {
 
                 lblEditarInfoFactura.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
                 lblEditarInfoFactura.setForeground(new java.awt.Color(255, 255, 255));
-                lblEditarInfoFactura.setText("Edición Factura");
+                lblEditarInfoFactura.setText("Ajustes");
                 btnInfoFactura.add(lblEditarInfoFactura, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 11, -1, -1));
 
-                jLabel103.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/editar.png"))); // NOI18N
+                jLabel103.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/ajustamiento.png"))); // NOI18N
                 btnInfoFactura.add(jLabel103, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 2, -1, 40));
 
                 pnlMenuLateral.add(btnInfoFactura, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 460, 200, 47));
@@ -5734,6 +5956,7 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JButton btnActualizarGasto;
         public javax.swing.JButton btnActualizarInfoFactura;
         public javax.swing.JButton btnActualizarIngresoMoneda;
+        public javax.swing.JButton btnActualizarIp;
         public javax.swing.JButton btnActualizarLaboratorio;
         public javax.swing.JButton btnActualizarMorosos;
         public javax.swing.JButton btnActualizarPago;
@@ -5754,15 +5977,16 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JButton btnCancel;
         public javax.swing.JPanel btnCerrarSesion;
         public javax.swing.JPanel btnClientes;
+        public javax.swing.JButton btnConfigFactura;
+        public javax.swing.JButton btnConfigRedes;
         public javax.swing.JButton btnCrearCredito;
         public javax.swing.JButton btnCreditoFactura;
         public javax.swing.JButton btnDevolverProducto;
-        public javax.swing.JButton btnDividirPago;
         public javax.swing.JButton btnEditarFactura;
         public javax.swing.JButton btnEditarImpuesto;
         public javax.swing.JButton btnEliminarFilaFactura;
         public javax.swing.JButton btnEnviarCorreo;
-        public javax.swing.JButton btnEnviarRD;
+        public javax.swing.JButton btnEstablecerImpresora;
         public javax.swing.JButton btnGenerarCodBarra;
         public javax.swing.JButton btnGenerarCodeBarraAleatorio;
         public javax.swing.JButton btnGenerarReporteStock;
@@ -5772,12 +5996,14 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JButton btnGuardarCliente;
         public javax.swing.JButton btnGuardarFactura;
         public javax.swing.JButton btnGuardarGasto;
+        public javax.swing.JButton btnGuardarIps;
         public javax.swing.JButton btnGuardarLaborotorio;
         public javax.swing.JButton btnGuardarMonedasRecibidas;
         public javax.swing.JButton btnGuardarPago;
         public javax.swing.JButton btnGuardarProducto;
         public javax.swing.JButton btnGuardarSalidaMoneda;
         public javax.swing.JButton btnGuardarUsuario;
+        public javax.swing.JButton btnImpresoras;
         public javax.swing.JButton btnImprimirCodeBarra;
         public javax.swing.JButton btnImprimirHistorialCrediticio;
         public javax.swing.JButton btnImprimirMinStock;
@@ -5788,8 +6014,6 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JPanel btnInfoFactura;
         public javax.swing.JPanel btnInventario;
         public javax.swing.JButton btnLimpiarCliente;
-        public javax.swing.JButton btnMasReportes;
-        public javax.swing.JButton btnMonedasRecibidasPagoCreditos;
         public javax.swing.JButton btnMostraTotalFacturado;
         public javax.swing.JButton btnMostrarFacturasEmitidas;
         public javax.swing.JButton btnMostrarInversion;
@@ -5817,6 +6041,7 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JPanel btnVentas;
         public javax.swing.JButton btnVerificarVencimientos;
         public javax.swing.JButton btnYes;
+        public javax.swing.JCheckBox cbxMulticonexion;
         public javax.swing.JCheckBox chexEgresoMonedasFactura;
         public javax.swing.JCheckBox chexEgresoMonedasPago;
         public javax.swing.JCheckBox chexIngresoCompraDolar;
@@ -5824,6 +6049,7 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JCheckBox chexIngresoMonedasPago;
         public javax.swing.JComboBox<String> cmbCajaTransaccion;
         public javax.swing.JComboBox<String> cmbCajasApertura;
+        public javax.swing.JComboBox<String> cmbElegirImpresora;
         public javax.swing.JComboBox<String> cmbEstadoCredito;
         public javax.swing.JComboBox<String> cmbFormaPago;
         public javax.swing.JComboBox<String> cmbFormaPagoCredito;
@@ -5832,8 +6058,11 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JComboBox<String> cmbMonedaTransaccion;
         public javax.swing.JComboBox<String> cmbMonedaVentaProducto;
         public javax.swing.JComboBox<String> cmbPermisoUsuario;
+        public javax.swing.JComboBox<String> cmbTipoOrdenador;
         public javax.swing.JComboBox<String> cmbTipoTransaccion;
+        public javax.swing.JMenuItem editarIp;
         public javax.swing.JMenuItem editarRegistroMonedas;
+        public javax.swing.JMenuItem eliminarIp;
         private com.toedter.calendar.JDateChooser jDateChooser1;
         private javax.swing.JLabel jLabel1;
         private javax.swing.JLabel jLabel10;
@@ -5960,6 +6189,7 @@ public class IMenu extends javax.swing.JFrame {
         private javax.swing.JLabel jLabel60;
         private javax.swing.JLabel jLabel61;
         private javax.swing.JLabel jLabel62;
+        private javax.swing.JLabel jLabel63;
         private javax.swing.JLabel jLabel65;
         private javax.swing.JLabel jLabel66;
         private javax.swing.JLabel jLabel67;
@@ -5974,13 +6204,16 @@ public class IMenu extends javax.swing.JFrame {
         private javax.swing.JLabel jLabel75;
         private javax.swing.JLabel jLabel76;
         private javax.swing.JLabel jLabel77;
+        private javax.swing.JLabel jLabel78;
         private javax.swing.JLabel jLabel79;
         private javax.swing.JLabel jLabel8;
         private javax.swing.JLabel jLabel80;
         private javax.swing.JLabel jLabel81;
+        private javax.swing.JLabel jLabel82;
         private javax.swing.JLabel jLabel83;
         private javax.swing.JLabel jLabel84;
         private javax.swing.JLabel jLabel85;
+        private javax.swing.JLabel jLabel86;
         private javax.swing.JLabel jLabel88;
         private javax.swing.JLabel jLabel89;
         private javax.swing.JLabel jLabel9;
@@ -6053,6 +6286,7 @@ public class IMenu extends javax.swing.JFrame {
         private javax.swing.JScrollPane jScrollPane28;
         private javax.swing.JScrollPane jScrollPane29;
         private javax.swing.JScrollPane jScrollPane3;
+        private javax.swing.JScrollPane jScrollPane30;
         private javax.swing.JScrollPane jScrollPane31;
         private javax.swing.JScrollPane jScrollPane32;
         private javax.swing.JScrollPane jScrollPane33;
@@ -6096,6 +6330,10 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JDialog jdKardex;
         public javax.swing.JDialog jdMonedasRecibidas;
         public javax.swing.JDialog jdSalidaMonedas;
+        public javax.swing.JDesktopPane jdesktopConfiguraciones;
+        public javax.swing.JInternalFrame jifConfigFactura;
+        public javax.swing.JInternalFrame jifRedes;
+        public javax.swing.JInternalFrame jifconfigImpresoras;
         public javax.swing.JList<String> jlListaNotificaciones;
         public javax.swing.JPanel jpInformacionCrediticia;
         public javax.swing.JSpinner jsCantidadDolar;
@@ -6126,6 +6364,7 @@ public class IMenu extends javax.swing.JFrame {
         private javax.swing.JLabel lblIconReportes;
         private javax.swing.JLabel lblIconUsuario;
         private javax.swing.JLabel lblIconVentas;
+        public javax.swing.JLabel lblImpresoraEstablecida;
         public javax.swing.JLabel lblImpuestoFactura;
         public javax.swing.JLabel lblImpuestoISV;
         public javax.swing.JLabel lblIngresoEfectivoGlobal;
@@ -6166,6 +6405,7 @@ public class IMenu extends javax.swing.JFrame {
         private javax.swing.JPopupMenu mnCreditos;
         public javax.swing.JMenuItem mnEditarUsuarios;
         private javax.swing.JPopupMenu mnGastos;
+        public javax.swing.JPopupMenu mnIps;
         private javax.swing.JPopupMenu mnRegistroMonedas;
         public javax.swing.JPopupMenu mnTablaFactura;
         public javax.swing.JDialog pagosAcreditos;
@@ -6204,6 +6444,7 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JTable tblCreditosCreados;
         public javax.swing.JTable tblFactura;
         public javax.swing.JTable tblGastos;
+        public javax.swing.JTable tblIps;
         public javax.swing.JTable tblKardexE;
         public javax.swing.JTable tblKardexS;
         public javax.swing.JTable tblLaboratorio;
@@ -6274,6 +6515,7 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JTextArea txtInfoActual;
         public javax.swing.JTextField txtIngresoEfectivoCierre;
         public javax.swing.JTextField txtInicioRango;
+        public javax.swing.JTextField txtIpOrdenador;
         public javax.swing.JTextField txtLaboratorioAdd;
         public javax.swing.JTextField txtLaboratorioProducto;
         public javax.swing.JTextField txtMargenGanancia;

@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import modelo.Creditos;
 import modelo.PagosCreditos;
 import modelo.Reportes;
-import modelo.InfoFactura;
+import modelo.Configuraciones;
 import samplesCommon.SamplesCommon;
 import vista.IMenu;
 
@@ -38,7 +38,7 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 	Reportes report;
 	CtrlReportes ctrlReport;
 	DefaultTableModel modelo;
-	InfoFactura info;
+	Configuraciones info;
 	DecimalFormat formato;
 
 	public CtrlCreditos(IMenu menu, Creditos creditos) {
@@ -50,7 +50,7 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		this.modelo = new DefaultTableModel();
 		this.fecha = new Date();
 		this.formato = new DecimalFormat("###,###,###,#00.00");
-		info = new InfoFactura();
+		info = new Configuraciones();
 		this.menu.btnCrearCredito.addActionListener(this);
 		this.menu.btnNuevoCredito.addActionListener(this);
 		this.menu.btnActualizarCredito.addActionListener(this);
@@ -66,7 +66,7 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		this.menu.tblCreditosCreados.addMouseListener(this);
 		this.menu.btnYes.addActionListener(this);
 		this.menu.btnCancel.addActionListener(this);
-		this.menu.btnMonedasRecibidasPagoCreditos.addActionListener(this);
+//		this.menu.btnMonedasRecibidasPagoCreditos.addActionListener(this);
 		this.menu.btnActualizarMorosos.addActionListener(this);
 		this.menu.tblAbonosCreditos.addMouseListener(this);
 		iniciar();
@@ -110,18 +110,18 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 		if (e.getSource() == menu.GenerarPago) {
 			generarPago();
 		}
-		if (e.getSource() == menu.btnMonedasRecibidasPagoCreditos) {
-			int numeroFacturaPago = Integer.parseInt(this.menu.lblNumeroPago.getText());
-			this.menu.jdMonedasRecibidas.setSize(860, 493);
-			this.menu.jdMonedasRecibidas.setLocationRelativeTo(null);
-			this.menu.jdMonedasRecibidas.setVisible(true);
-			this.menu.chexIngresoMonedasPago.setSelected(true);
-			this.menu.chexIngresoMonedasPago.setEnabled(false);
-			this.menu.chexIngresoMonedasFactura.setSelected(false);
-			this.menu.chexIngresoMonedasFactura.setEnabled(false);
-			this.menu.jsFacturaPago.setValue(numeroFacturaPago);
-
-		}
+//		if (e.getSource() == menu.btnMonedasRecibidasPagoCreditos) {
+//			int numeroFacturaPago = Integer.parseInt(this.menu.lblNumeroPago.getText());
+//			this.menu.jdMonedasRecibidas.setSize(860, 493);
+//			this.menu.jdMonedasRecibidas.setLocationRelativeTo(null);
+//			this.menu.jdMonedasRecibidas.setVisible(true);
+//			this.menu.chexIngresoMonedasPago.setSelected(true);
+//			this.menu.chexIngresoMonedasPago.setEnabled(false);
+//			this.menu.chexIngresoMonedasFactura.setSelected(false);
+//			this.menu.chexIngresoMonedasFactura.setEnabled(false);
+//			this.menu.jsFacturaPago.setValue(numeroFacturaPago);
+//
+//		}
 		if (e.getSource() == menu.btnActualizarMorosos) {
 			fechaLimiteMorosos();
 		}
@@ -172,7 +172,7 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 							this.modelo.getValueAt(filaseleccionada, 0)
 								.toString()
 						);
-						//MostrarHistorialCrediticio(id);
+						CtrlImprimirReport.nCredito = id;
 						this.mostrarInfoCrediticiaActual(this.id);
 						menu.jdInfoCrediticia.setSize(1267, 600);
 						menu.jdInfoCrediticia.setVisible(true);
@@ -198,8 +198,9 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 							this.modelo.getValueAt(filaseleccionada, 0)
 								.toString()
 						);
+						CtrlImprimirReport.nCredito = id;
 						MostrarHistorialCrediticio(id);
-						menu.jdInfoCrediticia.setSize(910, 538);
+						menu.jdInfoCrediticia.setSize(1267, 600);
 						menu.jdInfoCrediticia.setVisible(true);
 						menu.jdInfoCrediticia.setLocationRelativeTo(null);
 

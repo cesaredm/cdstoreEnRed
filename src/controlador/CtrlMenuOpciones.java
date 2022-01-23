@@ -49,8 +49,8 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
     CtrlTransacciones ctrlGastos;
     CtrlPagos ctrlPagos;
     CtrlImprimirReport print;
-    CtrlInfoFactura CTRLinfo;
-    InfoFactura info;
+    CtrlConfiguraciones CTRLinfo;
+    Configuraciones info;
     CtrlDevoluciones devoluciones;
     CtrlGenCodBarra codBarra;
     CtrlRegistroMonedas ctrlRegistroMonedas;
@@ -83,9 +83,9 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         this.usuarios = new Usuarios();
         this.gastos = new Transacciones();
         this.pagos = new PagosCreditos();
-        this.info = new InfoFactura();
+        this.info = new Configuraciones();
         this.registroMonedas = new RegistroMonedas();
-        this.CTRLinfo = new CtrlInfoFactura(menu, info);
+        this.CTRLinfo = new CtrlConfiguraciones(menu, info);
         ctrlClient = new CtrlClientes(menu, c);
         ctrlP = new CtrlProducto(p, menu, permiso);
         Notificacion();
@@ -315,7 +315,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
                 menu.pnlUsuarios.setVisible(false);
                 menu.pnlNotificaciones.setVisible(false);
                 menu.pnlTransacciones.setVisible(false);
-                //ocultar inversion
+                //ocultar proyeccionVentas
                 menu.pnlInversion.setVisible(false);
 //                menu.lblTituloDeVentanas.setText("");
                 menu.pnlBlanco.setVisible(false);
@@ -645,7 +645,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         if (e.getSource() == menu.btnVerificarVencimientos) {
             Notificacion();
-            //this.ctrlRepo.inversion();
+            //this.ctrlRepo.proyeccionVentas();
         }
     }
     //devolver productos que estan dentro de la tabla factura cuando se presiona el boton de cerrar sesion

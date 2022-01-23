@@ -37,7 +37,9 @@ public class Productos extends Conexiondb {
 		precioCompra,
 		precioVenta,
 		precioMinimoVenta,
-		stock;
+		stock,
+		inversionDolares,
+		inversionCordobas;
 
 	DefaultTableModel modelo;
 	DefaultComboBoxModel combo;
@@ -186,6 +188,16 @@ public class Productos extends Conexiondb {
 		this.fechaVencimiento = fechaVencimiento;
 	}
 
+	public float getInversionDolares() {
+		return inversionDolares;
+	}
+
+
+	public float getInversionCordobas() {
+		return inversionCordobas;
+	}
+
+
 	public void Guardar() {
 		cn = Conexion();
 		this.consulta = "INSERT INTO productos(codigoBarra, nombre, precioCompra, monedaCompra, precioVenta, precioMinimo, monedaVenta,"
@@ -302,29 +314,13 @@ public class Productos extends Conexiondb {
 		}
 	}
 
-	public void Eliminar() {
-		cn = Conexion();
-		this.consulta = "DELETE FROM productos WHERE id=?";
-		try {
-			pst = this.cn.prepareStatement(consulta);
-			pst.setString(1, this.id);
-			this.banderin = pst.executeUpdate();
-			if (banderin > 0) {
-				JOptionPane.showMessageDialog(null, "Dato borrado exitosamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
-			}
-			cn.close();
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e);
-		}
-	}
-
 	public DefaultTableModel Consulta(String buscar) {
 		cn = Conexion();
-		this.consulta = "SELECT productos.id, productos.codigoBarra, productos.nombre AS nombreProducto, precioCompra, monedaCompra,"
-			+ " precioVenta, monedaVenta, precioMinimo,fechaVencimiento, stock, ubicacion, productos.descripcion,"
-			+ " categorias.nombre AS nombreCategoria, marca.nombre as nombreMarca, productos.utilidad FROM productos LEFT JOIN categorias"
-			+ " ON(productos.categoria=categorias.id) LEFT JOIN marca ON(productos.marca=marca.id) WHERE CONCAT(productos.codigoBarra,"
-			+ " productos.nombre, categorias.nombre, marca.nombre) LIKE '%" + buscar + "%' ORDER BY productos.id DESC";
+		this.consulta = "SELECT p.id, p.codigoBarra, p.nombre AS nombreProducto, precioCompra, monedaCompra,"
+			+ " precioVenta, monedaVenta, precioMinimo,fechaVencimiento, stock, ubicacion, p.descripcion,"
+			+ " c.nombre AS nombreCategoria, m.nombre as nombreMarca, p.utilidad FROM productos AS p LEFT JOIN categorias AS c"
+			+ " ON(p.categoria=c.id) LEFT JOIN marca AS m ON(p.marca=m.id) WHERE CONCAT(p.codigoBarra,"
+			+ " p.nombre, c.nombre, m.nombre) LIKE '%" + buscar + "%' AND p.estado = 1 ORDER BY p.id DESC";
 		String[] registros = new String[15];
 		String[] titulos = {
 			"Id",
@@ -460,8 +456,23 @@ public class Productos extends Conexiondb {
 	public DefaultTableModel MinimoStock(String categoria, float cantidad) {
 		cn = Conexion();
 		//Agregar precioVenta y MonedaVenta a la consulta y al titulo de la tabla
-		this.consulta = "SELECT productos.id, productos.codigoBarra, productos.nombre AS nombreProducto, precioVenta, monedaVenta, fechaVencimiento,stock, ubicacion, productos.descripcion, categorias.nombre AS nombreCategoria, marca.nombre as nombreMarca FROM productos INNER JOIN categorias ON(productos.categoria=categorias.id) INNER JOIN marca ON(productos.marca=marca.id) WHERE productos.stock < " + cantidad + " AND categorias.nombre LIKE '%" + categoria + "%' ORDER BY productos.stock";
-		String[] titulos = {"Id", "Codigo Barra", "Nombre", "precioVenta", "Moneda", "Fecha Vencimiento", "Stock", "Categoria", "Marca", "Ubicacion", "Descripcion"};
+		this.consulta = "SELECT p.id, p.codigoBarra, p.nombre AS nombreProducto, precioVenta, monedaVenta,"
+			+ " fechaVencimiento,stock, ubicacion, p.descripcion, c.nombre AS nombreCategoria, m.nombre as nombreMarca"
+			+ " FROM productos AS p INNER JOIN categorias AS c ON(p.categoria=c.id) INNER JOIN marca AS m ON(p.marca=m.id)"
+			+ " WHERE p.stock < " + cantidad + " AND c.nombre LIKE '%" + categoria + "%' AND p.estado = 1 ORDER BY p.stock";
+		String[] titulos = {
+			"Id",
+			"Codigo Barra",
+			"Nombre",
+			"precioVenta",
+			"Moneda",
+			"Fecha Vencimiento",
+			"Stock",
+			"Categoria",
+			"Marca",
+			"Ubicacion",
+			"Descripcion"
+		};
 		String[] registros = new String[12];
 		modelo = new DefaultTableModel(null, titulos) {
 			@Override
@@ -514,63 +525,60 @@ public class Productos extends Conexiondb {
 			Logger.getLogger(CtrlProducto.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-	//metodo para obtener el total de inversion en el negocio precio de compra
+	//metodo para obtener el total de proyeccionVentas en el negocio precio de compra
 
-	public float inversion() {
+	public void proyeccionVentas() {
 		cn = Conexion();
-		float inversion = 0;
-		this.consulta = "SELECT SUM(precioCompra*stock) AS inversion FROM productos";
+		this.consulta = "SELECT DISTINCT (SELECT SUM(precioVenta*stock) FROM productos WHERE monedaVenta='Dolar' AND estado = 1)"
+			+ " AS proyeccionDolares, (SELECT SUM(precioVenta*stock) FROM productos WHERE monedaVenta='Córdobas' AND estado = 1)"
+			+ " AS proyeccionCordobas FROM productos";
 		try {
 			PreparedStatement pst = this.cn.prepareStatement(this.consulta);
 			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
-				inversion = rs.getFloat("inversion");
+				this.inversionCordobas = rs.getFloat("proyeccionCordobas");
+				this.inversionDolares = rs.getFloat("proyeccionDolares");
 			}
 			this.cn.close();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e + "funcion inversion en modelo");
 		}
-		return inversion;
 	}
 
-	public float inversionCordobas() {
+	public void inversionCordobas() {
 		cn = Conexion();
-		float inversion = 0;
-		this.consulta = "SELECT SUM(precioCompra*stock) AS inversion FROM productos WHERE monedaCompra = 'Córdobas'";
+		this.consulta = "SELECT SUM(precioCompra*stock) AS inversion FROM productos WHERE monedaCompra = 'Córdobas' AND estado = 1";
 		try {
 			PreparedStatement pst = this.cn.prepareStatement(this.consulta);
 			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
-				inversion = rs.getFloat("inversion");
+				this.inversionCordobas = rs.getFloat("inversion");
 			}
 			this.cn.close();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e + "funcion inversion en modelo");
 		}
-		return inversion;
 	}
 
-	public float inversionDolar() {
+	public void inversionDolar() {
 		cn = Conexion();
-		float inversion = 0;
-		this.consulta = "SELECT SUM(precioCompra*stock) AS inversion FROM productos WHERE monedaCompra = 'Dolar'";
+		this.consulta = "SELECT SUM(precioCompra*stock) AS inversion FROM productos WHERE monedaCompra = 'Dolar' AND estado = 1";
 		try {
 			PreparedStatement pst = this.cn.prepareStatement(this.consulta);
 			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
-				inversion = rs.getFloat("inversion");
+				this.inversionDolares = rs.getFloat("inversion");
 			}
 			this.cn.close();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e + "funcion inversion en modelo");
 		}
-		return inversion;
 	}
 
 	public void ExitsCodBarra(String codBarra) {
 		String producto = "";
 		this.cn = Conexion();
-		this.consulta = "SELECT codigoBarra FROM productos WHERE codigoBarra = ?";
+		this.consulta = "SELECT codigoBarra FROM productos WHERE codigoBarra = ? AND estado = 1";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
 			this.pst.setString(1, codBarra);
@@ -725,9 +733,24 @@ public class Productos extends Conexiondb {
 
 	public DefaultTableModel BusquedaGeneralProductoVender(String buscar) {
 		cn = Conexion();
-		this.consulta = "SELECT productos.id, productos.codigoBarra, productos.nombre AS nombreProducto, precioVenta, monedaVenta, fechaVencimiento, stock, ubicacion, productos.descripcion, categorias.nombre AS nombreCategoria, marca.nombre as nombreMarca FROM productos LEFT JOIN categorias ON(productos.categoria=categorias.id) LEFT JOIN marca ON(productos.marca=marca.id) WHERE CONCAT(productos.codigoBarra, productos.nombre) LIKE '%" + buscar + "%'";
+		this.consulta = "SELECT p.id, p.codigoBarra, p.nombre AS nombreProducto, precioVenta, monedaVenta,"
+			+ " fechaVencimiento, stock, ubicacion, p.descripcion, c.nombre AS nombreCategoria, m.nombre as nombreMarca"
+			+ " FROM productos AS p LEFT JOIN categorias AS c ON(p.categoria=c.id) LEFT JOIN marca AS m ON(p.marca=m.id) WHERE"
+			+ " CONCAT(p.codigoBarra, p.nombre) LIKE '%" + buscar + "%' AND p.estado = 1";
 		String[] registros = new String[11];
-		String[] titulos = {"Id", "Codigo Barra", "Nombre", "precioVenta", "Moneda", "Fecha Vencimiento", "Stock", "Categoria", "marca", "Ubicacion", "Descripcion"};
+		String[] titulos = {
+			"Id",
+			"Codigo Barra",
+			"Nombre",
+			"precioVenta",
+			"Moneda",
+			"Fecha Vencimiento",
+			"Stock",
+			"Categoria",
+			"marca",
+			"Ubicacion",
+			"Descripcion"
+		};
 		modelo = new DefaultTableModel(null, titulos) {
 			@Override
 			public boolean isCellEditable(int row, int col) {
@@ -758,5 +781,22 @@ public class Productos extends Conexiondb {
 
 		return modelo;
 	}
-
+	
+	public void eliminar(){
+		this.cn = Conexion();
+		this.consulta = "UPDATE productos SET estado = 0 WHERE id = ?";	
+		try {
+			this.pst = this.cn.prepareStatement(this.consulta);
+			this.pst.setString(1,this.id);
+			this.pst.executeUpdate();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, e + " en el metodo eliminar en el modelo productos.");
+		}finally{
+			try {
+				this.cn.close();
+			} catch (SQLException ex) {
+				Logger.getLogger(Productos.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+	}
 }
