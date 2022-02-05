@@ -23,9 +23,9 @@ public class CtrlConfiguraciones implements ActionListener {
 	String ip, tipoOrdenador;
 	int idIp;
 
-	public CtrlConfiguraciones(IMenu menu, Configuraciones info) {
+	public CtrlConfiguraciones(IMenu menu, Configuraciones config) {
 		this.menu = menu;
-		this.config = info;
+		this.config = config;
 		this.mostrarImpresoras();
 		this.mostrarImpresoraEstablecida();
 		this.mostrarIps();
@@ -50,16 +50,15 @@ public class CtrlConfiguraciones implements ActionListener {
 		this.menu.eliminarIp.setActionCommand("mnEliminarIp");
 		this.menu.cbxMulticonexion.addActionListener(this);
 		this.menu.cbxMulticonexion.setActionCommand("cbxMulticonexion");
-		info.obtenerInfoFactura();
-		this.menu.txtInfoActual.setText(
-			info.getNombre()
-			+ "\n" + info.getDireccion()
-			+ "\n RFC:  " + info.getRfc()
-			+ "\n Rango Permitido: " + info.getRangoInicio()
+		config.obtenerInfoFactura();
+		this.menu.txtInfoActual.setText(config.getNombre()
+			+ "\n" + config.getDireccion()
+			+ "\n RFC:  " + config.getRfc()
+			+ "\n Rango Permitido: " + config.getRangoInicio()
 			+ " - "
-			+ info.getRangoFinal()
-			+ "\n Telefono: " + info.getTelefono()
-			+ "\n" + info.getAnotaciones()
+			+ config.getRangoFinal()
+			+ "\n Telefono: " + config.getTelefono()
+			+ "\n" + config.getAnotaciones()
 		);
 	}
 

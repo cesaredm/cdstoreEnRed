@@ -77,15 +77,14 @@ public class SocketServer implements Runnable {
 		try {
 			Object clase = this.entrada.readObject();
 			SockectCliente cliente = new SockectCliente();
-			String[] ips = {"127.0.0.1"};
 			String dato = ((Object) clase.getClass().getSimpleName()).toString();
 			switch (dato) {
 				case "Facturacion": {
 					this.factura = (Facturacion) clase;
 					this.factura.GuardarFactura();
+					this.factura.guardarDetalle();
 					this.facturacionController.updateNumberFactura(this.factura.ObtenerIdFactura());
 					this.facturacionController.mostrarProductosVender("");
-					cliente.setIps(ips);
 					cliente.socketInit(this.factura);
 				}
 				break;
@@ -93,7 +92,6 @@ public class SocketServer implements Runnable {
 					this.pagos = (PagosCreditos) clase;
 					this.pagos.Guardar();
 					this.pagosContoller.UltimoPago();
-					cliente.setIps(ips);
 					cliente.socketInit(clase);
 					
 				}
@@ -127,7 +125,8 @@ public class SocketServer implements Runnable {
 				this.closeInputFlow();
 			}
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "ERROR EN EL MODELO DE SOCKETSERVER" + e);
+			JOptionPane.showMessageDialog(null, " ERROR EN EL METODO RUN EN MODELO DE SOCKETSERVER" + e);
+			e.printStackTrace();
 		}
 
 	}

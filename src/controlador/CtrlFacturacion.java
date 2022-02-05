@@ -56,6 +56,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		nombreProduct,
 		tipoVenta,
 		usuario;
+
+	String[][] items;
 	java.sql.Timestamp fechaFactura;
 	IMenu menu;
 	int permiso;
@@ -435,6 +437,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			this.validar();
 			this.modelo = (DefaultTableModel) menu.tblFactura.getModel();
 			int filas = this.modelo.getRowCount();//Cuento las filas de la tabla Factura
+			this.items = new String[filas][5];
 			if (menu.btnGuardarFactura.isEnabled()) {
 				String[] ArregloImprimir = new String[filas];
 				this.facturaModel.setCaja(1);
@@ -458,20 +461,21 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 					this.precio = Float.parseFloat(this.CleanChars(this.modelo.getValueAt(cont, 4).toString()));
 					//capturo el total de detalle compra de producto para guardar en detallefactura
 					this.totalDetalle = Float.parseFloat(this.CleanChars(this.modelo.getValueAt(cont, 5).toString()));
+
 					//envio los datos a guardar de los detalles
-					this.detalle.setFactura(this.idfactura);
-					this.detalle.setProductoDetalle(idProducto);
-					this.detalle.setPrecio(precio);
-					this.detalle.setCantidad(cantidad);
-					this.detalle.setImporteDetalle(totalDetalle);
-					this.detalle.DetalleFactura();
-					//funcion para diminuir el stock segun la cantidad que se venda
+					this.items[cont][0] = String.valueOf(this.idfactura);
+					this.items[cont][1] = String.valueOf(this.idProducto);
+					this.items[cont][2] = String.valueOf(this.precio);
+					this.items[cont][3] = String.valueOf(this.cantidad);
+					this.items[cont][4] = String.valueOf(this.totalDetalle);
 					//validar si el nombre del producto es mayor de 10 caracteres
 					if (nombreProduct.length() > 10) {
 						nombreProduct = nombreProduct.substring(0, 10);
 					}
 					ArregloImprimir[cont] = nombreProduct + " " + cantidad + "   " + precio + "  " + totalDetalle + "\n";
 				}
+				this.facturaModel.setItems(this.items);
+				this.facturaModel.guardarDetalle();
 				menu.txtNumeroFactura.setText(this.facturaModel.ObtenerIdFactura());
 				this.multiconexion();
 				menu.txtCodBarraFactura.setText("");
@@ -508,6 +512,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			}
 		} catch (Exception err) {
 			//JOptionPane.showMessageDialog(null, err);
+			err.printStackTrace();
 		}
 	}
 
@@ -577,9 +582,9 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 
 	public void multiconexion() {
 		if (Configuraciones.multiconexion) {
-			this.socketCliente.setIps(Configuraciones.listIpsCliente);
+//			this.socketCliente.setIps(Configuraciones.listIpsCliente);
 			this.socketCliente.socketInit(this.facturaModel);
-		}else{
+		} else {
 
 		}
 	}

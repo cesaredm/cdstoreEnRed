@@ -33,6 +33,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
     Productos p;
     Clientes c;
     Creditos cred;
+    Configuraciones config;
     Facturacion factura;
     Reportes reportes;
     Usuarios usuarios;
@@ -49,8 +50,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
     CtrlTransacciones ctrlGastos;
     CtrlPagos ctrlPagos;
     CtrlImprimirReport print;
-    CtrlConfiguraciones CTRLinfo;
-    Configuraciones info;
+    CtrlConfiguraciones ctrlConfig;
     CtrlDevoluciones devoluciones;
     CtrlGenCodBarra codBarra;
     CtrlRegistroMonedas ctrlRegistroMonedas;
@@ -83,9 +83,9 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         this.usuarios = new Usuarios();
         this.gastos = new Transacciones();
         this.pagos = new PagosCreditos();
-        this.info = new Configuraciones();
+        this.config = new Configuraciones();
         this.registroMonedas = new RegistroMonedas();
-        this.CTRLinfo = new CtrlConfiguraciones(menu, info);
+        this.ctrlConfig = new CtrlConfiguraciones(menu, config);
         ctrlClient = new CtrlClientes(menu, c);
         ctrlP = new CtrlProducto(p, menu, permiso);
         Notificacion();
@@ -95,8 +95,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         ctrlUsua = new CtrlUsuarios(menu, usuarios);
         ctrlGastos = new CtrlTransacciones(menu, gastos);
         ctrlPagos = new CtrlPagos(menu, pagos);
-//        this.ctrlRegistroMonedas = new CtrlRegistroMonedas(menu, registroMonedas);
-        this.print = new CtrlImprimirReport(menu, info);
+        this.print = new CtrlImprimirReport(menu, config);
         this.devoluciones = new CtrlDevoluciones(menu, reportes);
         this.codBarra = new CtrlGenCodBarra(menu);
 	this.socketServer = new SocketServer();

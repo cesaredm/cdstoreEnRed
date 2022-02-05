@@ -7,6 +7,7 @@ package modelo;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,21 +19,15 @@ public class SockectCliente {
 
 	final int PORT = 3000;
 	Socket cliente;
-	private String[] ips;
 	ObjectOutputStream output;
 
 	public SockectCliente() {
 
 	}
 
-	public void setIps(String[] ips) {
-		this.ips = ips;
-	}
-
 	public void socketInit(Object objeto) {
 		try {
-			for (String ip : ips) {
-
+			for (String ip : Configuraciones.listIpsCliente) {
 				this.cliente = new Socket(ip, PORT);
 				this.output = new ObjectOutputStream(this.cliente.getOutputStream());
 				this.output.writeObject(objeto);

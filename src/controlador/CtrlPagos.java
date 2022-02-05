@@ -262,7 +262,6 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 				if (this.saldoActualCordobas >= 0 && this.saldoActualDolares >= 0) {
 					pagos.Guardar();
 					this.estadoCreditos.updateAabierto(this.credito);
-					this.socketCliente.setIps(ips);
 					this.socketCliente.socketInit(this.pagos);
 					UltimoPago();
 					info.obtenerInfoFactura();

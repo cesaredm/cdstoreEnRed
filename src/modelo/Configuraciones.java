@@ -6,6 +6,8 @@
 package modelo;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -26,7 +28,7 @@ public class Configuraciones extends Conexiondb {
 	private String ip,
 		tipoOrdenador;
 	public static boolean multiconexion;
-	public static String[] listIpsCliente;
+	public static ArrayList<String> listIpsCliente; 
 	/* ------------ CONFIURACION DE IMPRESORAS ----------- */
 	public static String impresora;
 	/* ----------- OBJETOS PARA MANIPULACION DE DATOS MYSQL ---------- */
@@ -404,21 +406,14 @@ public class Configuraciones extends Conexiondb {
 
 	/* OBTENER LAS DIRECCIONES IP DE LOS ORDENADORES CLIENTE PARA EL ENVIO DE DATOS */
 	public void getIpsOrdenadoresCliente() {
-		int cont = 0;
 		this.cn = Conexion();
 		this.consulta = "SELECT ipDireccion AS ip FROM ips WHERE tipoOrdenador = 'Cliente'";
+		this.listIpsCliente = new ArrayList<String>();
 		try {
 			this.st = this.cn.createStatement();
 			this.rs = this.st.executeQuery(this.consulta);
 			while (this.rs.next()) {
-				cont++;
-			}
-			this.listIpsCliente = new String[cont];
-			cont = 0;
-			this.rs.first();
-			while (this.rs.next()) {
-				cont++;
-				this.listIpsCliente[cont] = this.rs.getString("ip");
+				this.listIpsCliente.add(this.rs.getString("ip"));
 
 			}
 		} catch (SQLException e) {

@@ -38,6 +38,13 @@ public class Facturacion extends Conexiondb implements Serializable {
 	private float totalCordobas,
 		totalDolar;
 	private int id;
+	/*----------------- DATOS DE DETALLES --------------- */
+	private String[][] items;
+	private int factura,
+		productoDetalle;
+	private float precio,
+		cantidad,
+		importeDetalle;
 
 	public Facturacion() {
 		this.cn = null;
@@ -156,15 +163,96 @@ public class Facturacion extends Conexiondb implements Serializable {
 	public String getMonedaVenta() {
 		return monedaVenta;
 	}
-	
-	public void setUsuario(String usuario){
+
+	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
 
-	public String getUsuario(){
+	public String getUsuario() {
 		return this.usuario;
 	}
-//Guardar Factura
+
+	/* ------------------------- GETTERS Y SETTERS DE DETALLES -------------------- */
+	public String[][] getItems() {
+		return items;
+	}
+
+	public void setItems(String[][] items) {
+		this.items = items;
+	}
+
+	public int getFactura() {
+		return factura;
+	}
+
+	public void setFactura(int factura) {
+		this.factura = factura;
+	}
+
+	public int getProductoDetalle() {
+		return productoDetalle;
+	}
+
+	public void setProductoDetalle(int productoDetalle) {
+		this.productoDetalle = productoDetalle;
+	}
+
+	public float getPrecio() {
+		return precio;
+	}
+
+	public void setPrecio(float precio) {
+		this.precio = precio;
+	}
+
+	public float getCantidad() {
+		return cantidad;
+	}
+
+	public void setCantidad(float cantidad) {
+		this.cantidad = cantidad;
+	}
+
+	public float getImporteDetalle() {
+		return importeDetalle;
+	}
+
+	public void setImporteDetalle(float importeDetalle) {
+		this.importeDetalle = importeDetalle;
+	}
+
+	public void DetalleFactura() {
+		cn = Conexion();
+		this.consulta = "INSERT INTO detalleFactura(factura, producto, precioProducto, cantidadProducto, totalVenta) VALUES(?,?,?,?,?)";
+		try {
+			pst = this.cn.prepareStatement(this.consulta);
+			pst.setInt(1, this.factura);
+			pst.setInt(2, this.productoDetalle);
+			pst.setFloat(3, precio);
+			pst.setFloat(4, cantidad);
+			pst.setFloat(5, this.importeDetalle);
+			this.banderin = pst.executeUpdate();
+			if (banderin > 0) {
+				//JOptionPane.showMessageDialog(null, "detalle guardado");
+			}
+			cn.close();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, e + "ERROR : en el metodo DetalleFactura en el modelo DetalleFactura");
+		}
+	}
+
+	public void guardarDetalle() {
+		for (String[] item : this.items) {
+			this.factura = Integer.parseInt(item[0]);
+			this.productoDetalle = Integer.parseInt(item[1]);
+			this.precio = Float.parseFloat(item[2]);
+			this.cantidad = Float.parseFloat(item[3]);
+			this.importeDetalle = Float.parseFloat(item[4]);
+			this.DetalleFactura();
+		}
+	}
+
+	//Guardar Factura
 	public void GuardarFactura() {
 		cn = Conexion();
 		this.consulta = "INSERT INTO facturas(caja ,fecha, nombre_comprador, credito, tipoVenta, impuestoISV, totalCordobas, totalDolares,"
@@ -200,7 +288,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 				pst.setFloat(6, iva);
 				pst.setFloat(7, totalCordobas);
 				pst.setFloat(8, totalDolar);
-				pst.setString(9,this.usuario);
+				pst.setString(9, this.usuario);
 				this.banderin = pst.executeUpdate();
 				if (banderin > 0) {
 					//JOptionPane.showMessageDialog(null, "Factura Guardada Exitosamente", "Informacion", JOptionPane.WARNING_MESSAGE);
@@ -515,12 +603,12 @@ public class Facturacion extends Conexiondb implements Serializable {
 		return isYes;
 	}
 
-	public String cleanChars(String value){
+	public String cleanChars(String value) {
 		value = value.replace("C", "");
 		value = value.replace("$", "");
-		return value;	
+		return value;
 	}
-	
+
 	public void obtenerPorCodBarra(String codBarra) {
 		this.producto = new String[6];
 		float importe;
@@ -539,7 +627,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 					this.producto[3] = rs.getString("nombre");
 					this.stock = rs.getFloat("stock");
 					this.monedaVenta = rs.getString("monedaVenta");
-					this.producto[4] = (this.monedaVenta.equals("Dolar")) 
+					this.producto[4] = (this.monedaVenta.equals("Dolar"))
 						? "$" + rs.getString("precioVenta") : "C$" + rs.getString("precioVenta");
 				}
 				if (this.producto[4] != null) {
@@ -549,7 +637,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 					} else {
 						this.producto[5] = "C$" + formato.format(importe);
 					}
-				} 
+				}
 			} else {
 				this.exito = false;
 				JOptionPane.showMessageDialog(null, "Producto no esta insgresado.. O no tiene código de barra");
@@ -613,7 +701,7 @@ public class Facturacion extends Conexiondb implements Serializable {
 
 	public void ActualizarDevolucion(int id, float iva, float totalCordobas, float totalDolares) {
 		this.cn = Conexion();
-		String IVA = formato.format(iva), 
+		String IVA = formato.format(iva),
 			TOTALCORDOBAS = formato.format(totalCordobas),
 			TOTALDOLARES = formato.format(totalDolares);
 		this.consulta = "UPDATE facturas SET impuestoISV = ?, totalCordobas = ?, totalDolares = ? WHERE id = ?";
