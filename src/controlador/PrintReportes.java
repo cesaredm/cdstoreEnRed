@@ -195,7 +195,7 @@ public class PrintReportes extends CtrlImprimir {
 			+ "Ingresos por abonos en efectivo    " + this.pagosE + "\n"
 			+ "Ingresos por abonos con tarjeta    " + this.pagosT + "\n"
 			+ "Ingresos de efectivo               " + this.ingresosE + "\n"
-			+ "Creditos                           " + this.creditos + "\n"
+			+ "Créditos                           " + this.creditos + "\n"
 			+ "Egresos de efectivo de caja        " + this.egreso + "\n"
 			+ "===========================================\n"
 			+ "Total vendido                      " + this.totalV + "\n"
@@ -214,7 +214,7 @@ public class PrintReportes extends CtrlImprimir {
 			+ "Ingresos por abonos en efectivo    " + this.pagosE + "\n"
 			+ "Ingresos por abonos con tarjeta    " + this.pagosT + "\n"
 			+ "Ingresos de efectivo               " + this.ingresosE + "\n"
-			+ "Creditos                           " + this.creditos + "\n"
+			+ "Créditos                           " + this.creditos + "\n"
 			+ "Egresos de efectivo de caja        " + this.egreso + "\n"
 			+ "===========================================\n"
 			+ "Total vendido                      " + this.totalV + "\n"
@@ -310,19 +310,19 @@ public class PrintReportes extends CtrlImprimir {
 
 	public void print(String TipoReport) {
 		try {
-
 			reiniciar();
 			//Agregamos la imagen
 			escpos.write(imageWrapper, escposImage).feed(1);
-
 			switch (TipoReport) {
 				case "DiarioCordobas": {
-					escpos.writeLF(contentTicketDiarioCordobas)
+					System.out.println(this.contentTicketDiarioCordobas);
+					escpos.writeLF(this.contentTicketDiarioCordobas)
 						.feed(2).cut(EscPos.CutMode.FULL);
 				}
 				break;
 				case "DiarioDolares": {
-					escpos.writeLF(contentTicketDiarioDolar)
+					System.out.println(this.contentTicketDiarioDolar);
+					escpos.writeLF(this.contentTicketDiarioDolar)
 						.feed(2).cut(EscPos.CutMode.FULL);
 				}
 				break;
@@ -365,6 +365,7 @@ public class PrintReportes extends CtrlImprimir {
 			close();
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(null, ex);
+			ex.printStackTrace();
 		}
 	}
 

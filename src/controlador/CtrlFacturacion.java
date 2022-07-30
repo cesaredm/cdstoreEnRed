@@ -461,7 +461,6 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 					this.precio = Float.parseFloat(this.CleanChars(this.modelo.getValueAt(cont, 4).toString()));
 					//capturo el total de detalle compra de producto para guardar en detallefactura
 					this.totalDetalle = Float.parseFloat(this.CleanChars(this.modelo.getValueAt(cont, 5).toString()));
-
 					//envio los datos a guardar de los detalles
 					this.items[cont][0] = String.valueOf(this.idfactura);
 					this.items[cont][1] = String.valueOf(this.idProducto);

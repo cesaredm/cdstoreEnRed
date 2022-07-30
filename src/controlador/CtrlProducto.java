@@ -59,6 +59,8 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 	Date fecha;
 	DefaultTableModel modelo;
 	int permiso;
+	float stockActual,nuevoStock,diminuyeStock,aumentaStock;
+	ArrayList updateK = new ArrayList();
 	DecimalFormat formato;
 
 	public CtrlProducto(Productos p, IMenu menu, int permiso) {
@@ -198,7 +200,7 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 				c = Float.parseFloat(Cantidad);
 				if (Cantidad != null) {
 					productos.AgregarProductoStock(id, Cantidad);
-					productos.guardarKardexIncial(producto, user, c, "add");
+					productos.addKardex(producto, user, c, "add");
 					MostrarProductos("");
 					MostrarProductosVender("");
 					StockMinimoP("", 0);
@@ -604,7 +606,7 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 	public void guardarKardex(float cantidad) {
 		int producto = this.productos.ultimoRegistro();
 		String user = menu.lblUsuarioSistema.getText(), anotacion = "inicial";
-		this.productos.guardarKardexIncial(producto, user, cantidad, anotacion);
+		this.productos.addKardex(producto, user, cantidad, anotacion);
 
 	}
 
@@ -622,12 +624,21 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 			this.productos.setLaboratorio(laboratorio);
 			this.productos.setPrecioMinimoVenta(precioMinimoVenta);
 			this.productos.setStock(stock);
+			this.nuevoStock = stock;
 			this.productos.setUbicacion(ubicacion);
 			this.productos.setUtilidad(utilidad);
 			productos.Actualizar();
 			MostrarProductos("");
 			MostrarProductosVender("");
-			guardarKardex(stock);
+			this.edicionStock();
+			productos.addKardex(
+				Integer.parseInt(this.productos.getId()),
+				menu.lblUsuarioSistema.getText(),
+				Float.parseFloat(this.updateK.get(0).toString()),
+				this.updateK.get(1).toString()
+			);
+			this.updateK.clear();
+			//guardarKardex(stock);
 			LimpiarProducto();
 			inversion();
 			this.proyeccionVentas();
@@ -670,6 +681,7 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 				menu.cmbMonedaVentaProducto.setSelectedItem(this.productos.getMonedaVent());
 				menu.jcFechaVProducto.setDate(this.productos.getFechaVencimiento());
 				menu.txtCantidadProducto.setValue(this.productos.getStock());
+				this.stockActual = this.productos.getStock();
 				menu.txtCategoriaProducto.setText(this.productos.getCategoria());
 				menu.txtLaboratorioProducto.setText(productos.getLaboratorio());
 				menu.txtUbicacionProducto.setText(this.productos.getUbicacion());
@@ -837,11 +849,26 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 		}
 	}
 
+	public void edicionStock(){
+		String nota = "";
+		if(this.stockActual > this.nuevoStock){
+			this.diminuyeStock = this.stockActual - this.nuevoStock;	
+			this.updateK.add(diminuyeStock);
+			nota="Desminuyo";
+		}else if(this.stockActual < this.nuevoStock){
+			this.aumentaStock = this.nuevoStock - stockActual;	
+			this.updateK.add(aumentaStock);
+			nota="add";
+		}
+		this.updateK.add(nota);
+	}
+
 	public void Kardex(String id) {
 		this.menu.lblSalidasKardex.setText(this.productos.countKardexSalidas(id));
-		this.menu.tblKardexS.setModel(this.productos.kardexSalidas(id));
-		this.menu.tblKardexE.setModel(this.productos.kardexEntradas(id));
 		this.menu.lblStockInicialKardex.setText(this.productos.kardexInicial(id));
+		this.menu.lblEntradasKardex.setText(this.productos.countKardexEntradas(id));
+		this.menu.tblKardexS.setModel(this.productos.kardexSalidas(id));
+		this.menu.tblKardexE.setModel(this.productos.kardexOtrosMovimientos(id));
 	}
 
 	public void MostrarProductosVender(String Buscar) {

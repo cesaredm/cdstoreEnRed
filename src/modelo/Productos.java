@@ -192,11 +192,9 @@ public class Productos extends Conexiondb {
 		return inversionDolares;
 	}
 
-
 	public float getInversionCordobas() {
 		return inversionCordobas;
 	}
-
 
 	public void Guardar() {
 		cn = Conexion();
@@ -259,7 +257,7 @@ public class Productos extends Conexiondb {
 		}
 	}
 
-	public void guardarKardexIncial(int producto, String user, float cantidad, String anotacion) {
+	public void addKardex(int producto, String user, float cantidad, String anotacion) {
 		this.cn = Conexion();
 		this.consulta = "INSERT INTO kardexentradas(producto,usuario,cantidad,anotacion) VALUES(?,?,?,?)";
 		try {
@@ -682,11 +680,31 @@ public class Productos extends Conexiondb {
 		return salidas;
 	}
 
-	public DefaultTableModel kardexEntradas(String id) {
+	public String countKardexEntradas(String id) {
 		this.cn = Conexion();
-		this.consulta = "SELECT P.ID,P.CODIGOBARRA,P.NOMBRE,K.CANTIDAD,K.FECHA, K.ANOTACION,K.USUARIO FROM PRODUCTOS AS P INNER JOIN"
-			+ " KARDEXENTRADAS AS K ON(P.ID=K.PRODUCTO) WHERE P.ID = ? AND (K.ANOTACION = 'add' OR K.ANOTACION = 'edicion stock')";
-		String[] titulos = {"ID", "COD. BARRA", "NOMBRE", "CANTIDAD ENTRADA", "FECHA ENTRADA", "ACCION", "USUARIO"};
+		this.consulta = "SELECT SUM(k.cantidad) AS entradas FROM kardexentradas AS k WHERE k.producto = ? AND k.anotacion='add'";
+		String salidas = "";
+		try {
+			this.pst = this.cn.prepareStatement(this.consulta);
+			this.pst.setString(1, id);
+			ResultSet rs = this.pst.executeQuery();
+			while (rs.next()) {
+				salidas = rs.getString("entradas");
+			}
+			this.cn.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e + " en el metodo kardex en modelo productos");
+		}
+		return salidas;
+	}
+
+	
+
+	public DefaultTableModel kardexOtrosMovimientos(String id) {
+		this.cn = Conexion();
+		this.consulta = "SELECT p.id,p.codigoBarra,p.nombre,k.cantidad,k.fecha, k.anotacion,k.usuario FROM productos AS p INNER JOIN"
+			+ " kardexentradas AS k ON(p.id=k.producto) WHERE p.id = ? AND (k.anotacion = 'add' OR k.anotacion = 'Desminuyo')";
+		String[] titulos = {"ID", "COD. BARRA", "NOMBRE", "CANTIDAD", "FECHA ENTRADA", "ACCION", "USUARIO"};
 		String[] datos = new String[7];
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
@@ -781,17 +799,17 @@ public class Productos extends Conexiondb {
 
 		return modelo;
 	}
-	
-	public void eliminar(){
+
+	public void eliminar() {
 		this.cn = Conexion();
-		this.consulta = "UPDATE productos SET estado = 0 WHERE id = ?";	
+		this.consulta = "UPDATE productos SET estado = 0 WHERE id = ?";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
-			this.pst.setString(1,this.id);
+			this.pst.setString(1, this.id);
 			this.pst.executeUpdate();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e + " en el metodo eliminar en el modelo productos.");
-		}finally{
+		} finally {
 			try {
 				this.cn.close();
 			} catch (SQLException ex) {

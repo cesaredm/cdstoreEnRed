@@ -39,12 +39,12 @@ public class CtrlImprimir {
 	EscPosImage escposImage;
 	// this wrapper uses esc/pos sequence: "GS 'v' '0'"
 	RasterBitImageWrapper imageWrapper;
-	
+
 	public CtrlImprimir() {
 		try {
 			if (Configuraciones.impresora.equals("Ninguna")) {
 				this.printService = PrinterOutputStream.getPrintServiceByName("");
-			}else{
+			} else {
 				this.printService = PrinterOutputStream.getPrintServiceByName(Configuraciones.impresora);
 			}
 			this.printerOutputStream = new PrinterOutputStream(printService);
@@ -56,7 +56,7 @@ public class CtrlImprimir {
 			//centrar texto
 			this.centrar = new Style().setJustification(EscPosConst.Justification.Center);
 			this.algorithm = new BitonalThreshold(127);
-			this.githubBufferedImage = SamplesCommon.getImage(SamplesCommon.sampleImages.bless);
+			this.githubBufferedImage = SamplesCommon.getImage(SamplesCommon.sampleImages.blessKids);
 			this.escposImage = new EscPosImage(new CoffeeImageImpl(githubBufferedImage), algorithm);
 			this.imageWrapper = new RasterBitImageWrapper();
 			this.imageWrapper.setJustification(EscPosConst.Justification.Center);
@@ -67,7 +67,11 @@ public class CtrlImprimir {
 
 	public void reiniciar() {
 		try {
-			this.printService = PrinterOutputStream.getPrintServiceByName("EPSON TM-T20III Receipt");
+			if (Configuraciones.impresora.equals("Ninguna")) {
+				this.printService = PrinterOutputStream.getPrintServiceByName("");
+			} else {
+				this.printService = PrinterOutputStream.getPrintServiceByName(Configuraciones.impresora);
+			}
 			this.printerOutputStream = new PrinterOutputStream(printService);
 			this.escpos = new EscPos(this.printerOutputStream);
 		} catch (IOException ex) {

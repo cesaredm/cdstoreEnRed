@@ -93,7 +93,6 @@ public class SocketServer implements Runnable {
 					this.pagos.Guardar();
 					this.pagosContoller.UltimoPago();
 					cliente.socketInit(clase);
-					
 				}
 				break;
 			}

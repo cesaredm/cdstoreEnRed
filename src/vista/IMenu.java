@@ -349,30 +349,18 @@ public class IMenu extends javax.swing.JFrame {
                 CortesCaja = new javax.swing.JDialog();
                 jPanel22 = new javax.swing.JPanel();
                 jLabel120 = new javax.swing.JLabel();
-                jLabel121 = new javax.swing.JLabel();
-                txtFechaInicioCierre = new javax.swing.JTextField();
-                jLabel122 = new javax.swing.JLabel();
-                txtBancosCierre = new javax.swing.JTextField();
                 jLabel123 = new javax.swing.JLabel();
                 jLabel124 = new javax.swing.JLabel();
-                txtEgresosCierre = new javax.swing.JTextField();
-                txtCreditosCierre = new javax.swing.JTextField();
-                jLabel125 = new javax.swing.JLabel();
-                jLabel126 = new javax.swing.JLabel();
-                txtTotalVendidoCierre = new javax.swing.JTextField();
-                jLabel127 = new javax.swing.JLabel();
                 jLabel128 = new javax.swing.JLabel();
-                txtIngresoEfectivoCierre = new javax.swing.JTextField();
-                txtCajaCierre = new javax.swing.JTextField();
                 jScrollPane25 = new javax.swing.JScrollPane();
                 txtDescripcionCierre = new javax.swing.JTextArea();
                 btnGuardarCierre = new javax.swing.JButton();
-                jLabel129 = new javax.swing.JLabel();
-                txtExistenciaEfectivoCierre = new javax.swing.JTextField();
                 jLabel130 = new javax.swing.JLabel();
-                txtMesCierre = new javax.swing.JTextField();
                 jLabel138 = new javax.swing.JLabel();
-                txtFechaFinalCierre = new javax.swing.JTextField();
+                txtCajaCierre = new javax.swing.JTextField();
+                jsDolarCierre = new javax.swing.JSpinner();
+                jsCordobasCierres = new javax.swing.JSpinner();
+                jcFechaCierre = new com.toedter.calendar.JDateChooser();
                 ventanaProductosMasVendidos = new javax.swing.JDialog();
                 jPanel25 = new javax.swing.JPanel();
                 jc1 = new com.toedter.calendar.JDateChooser();
@@ -514,6 +502,7 @@ public class IMenu extends javax.swing.JFrame {
                 btnAperturaCaja = new javax.swing.JButton();
                 btnRespaldo = new javax.swing.JButton();
                 btnProductosMasVendidos = new javax.swing.JButton();
+                btnCierreCaja = new javax.swing.JButton();
                 pnlInversion = new javax.swing.JPanel();
                 lblProyeccion = new javax.swing.JLabel();
                 jLabel55 = new javax.swing.JLabel();
@@ -2432,142 +2421,66 @@ public class IMenu extends javax.swing.JFrame {
 
                 CortesCaja.setTitle("Cierre de caja");
 
-                jPanel22.setBackground(new java.awt.Color(255, 255, 255));
                 jPanel22.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-                jLabel120.setBackground(new java.awt.Color(255, 255, 255));
                 jLabel120.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
                 jLabel120.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
                 jLabel120.setText("Cierres de caja");
                 jLabel120.setOpaque(true);
                 jPanel22.add(jLabel120, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 380, 40));
 
-                jLabel121.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                jLabel121.setText("Ingresos efectivo caja");
-                jPanel22.add(jLabel121, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, -1));
-
-                txtFechaInicioCierre.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                txtFechaInicioCierre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                txtFechaInicioCierre.setToolTipText("");
-                txtFechaInicioCierre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-                txtFechaInicioCierre.setEnabled(false);
-                jPanel22.add(txtFechaInicioCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 40, 160, -1));
-
-                jLabel122.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                jLabel122.setText("Bancos");
-                jPanel22.add(jLabel122, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 215, -1, -1));
-
-                txtBancosCierre.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                txtBancosCierre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                txtBancosCierre.setToolTipText("");
-                txtBancosCierre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-                txtBancosCierre.setEnabled(false);
-                jPanel22.add(txtBancosCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 215, 160, -1));
-
                 jLabel123.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                jLabel123.setText("Desde");
+                jLabel123.setText("Fecha");
                 jPanel22.add(jLabel123, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
 
                 jLabel124.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                jLabel124.setText("Caja");
+                jLabel124.setText("Efectivo Dolares");
                 jPanel22.add(jLabel124, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 145, -1, -1));
 
-                txtEgresosCierre.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                txtEgresosCierre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                txtEgresosCierre.setToolTipText("");
-                txtEgresosCierre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-                txtEgresosCierre.setEnabled(false);
-                jPanel22.add(txtEgresosCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 285, 160, -1));
-
-                txtCreditosCierre.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                txtCreditosCierre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                txtCreditosCierre.setToolTipText("");
-                txtCreditosCierre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-                txtCreditosCierre.setEnabled(false);
-                jPanel22.add(txtCreditosCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 250, 160, -1));
-
-                jLabel125.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                jLabel125.setText("Creditos");
-                jPanel22.add(jLabel125, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, -1, -1));
-
-                jLabel126.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                jLabel126.setText("Egresos");
-                jPanel22.add(jLabel126, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 285, -1, -1));
-
-                txtTotalVendidoCierre.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                txtTotalVendidoCierre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                txtTotalVendidoCierre.setToolTipText("");
-                txtTotalVendidoCierre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-                txtTotalVendidoCierre.setEnabled(false);
-                jPanel22.add(txtTotalVendidoCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 320, 160, -1));
-
-                jLabel127.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                jLabel127.setText("TotalVendido");
-                jPanel22.add(jLabel127, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 320, -1, -1));
-
                 jLabel128.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                jLabel128.setText("Descripcion");
-                jPanel22.add(jLabel128, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 390, -1, -1));
+                jLabel128.setText("Nota");
+                jPanel22.add(jLabel128, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, -1));
 
-                txtIngresoEfectivoCierre.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                txtIngresoEfectivoCierre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                txtIngresoEfectivoCierre.setToolTipText("");
-                txtIngresoEfectivoCierre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-                txtIngresoEfectivoCierre.setEnabled(false);
-                jPanel22.add(txtIngresoEfectivoCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 180, 160, -1));
+                txtDescripcionCierre.setColumns(20);
+                txtDescripcionCierre.setRows(5);
+                jScrollPane25.setViewportView(txtDescripcionCierre);
+
+                jPanel22.add(jScrollPane25, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 180, 250, 60));
+
+                btnGuardarCierre.setBackground(new java.awt.Color(0, 166, 192));
+                btnGuardarCierre.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                btnGuardarCierre.setForeground(new java.awt.Color(255, 255, 255));
+                btnGuardarCierre.setText("Aceptar");
+                btnGuardarCierre.setBorderPainted(false);
+                btnGuardarCierre.setFocusPainted(false);
+                btnGuardarCierre.setFocusable(false);
+                jPanel22.add(btnGuardarCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 250, -1, 30));
+
+                jLabel130.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
+                jLabel130.setText("Efectivo Córdobas");
+                jPanel22.add(jLabel130, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, -1, -1));
+
+                jLabel138.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
+                jLabel138.setText("Caja");
+                jPanel22.add(jLabel138, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 75, -1, -1));
 
                 txtCajaCierre.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
                 txtCajaCierre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
                 txtCajaCierre.setToolTipText("");
                 txtCajaCierre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
                 txtCajaCierre.setEnabled(false);
-                jPanel22.add(txtCajaCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 145, 160, -1));
+                jPanel22.add(txtCajaCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 75, 160, -1));
 
-                txtDescripcionCierre.setColumns(20);
-                txtDescripcionCierre.setRows(5);
-                jScrollPane25.setViewportView(txtDescripcionCierre);
+                jsDolarCierre.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                jsDolarCierre.setModel(new javax.swing.SpinnerNumberModel(0.0f, 0.0f, null, 0.01f));
+                jPanel22.add(jsDolarCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 145, 160, -1));
 
-                jPanel22.add(jScrollPane25, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 390, 250, 60));
+                jsCordobasCierres.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                jsCordobasCierres.setModel(new javax.swing.SpinnerNumberModel(0.0f, 0.0f, null, 0.01f));
+                jPanel22.add(jsCordobasCierres, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 110, 160, -1));
 
-                btnGuardarCierre.setBackground(new java.awt.Color(0, 166, 192));
-                btnGuardarCierre.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-                btnGuardarCierre.setText("Aceptar");
-                btnGuardarCierre.setBorderPainted(false);
-                btnGuardarCierre.setFocusPainted(false);
-                btnGuardarCierre.setFocusable(false);
-                jPanel22.add(btnGuardarCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 460, -1, 30));
-
-                jLabel129.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                jLabel129.setText("Existencia efectivo caja");
-                jPanel22.add(jLabel129, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 355, -1, -1));
-
-                txtExistenciaEfectivoCierre.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                txtExistenciaEfectivoCierre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                txtExistenciaEfectivoCierre.setToolTipText("");
-                txtExistenciaEfectivoCierre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-                txtExistenciaEfectivoCierre.setEnabled(false);
-                jPanel22.add(txtExistenciaEfectivoCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 355, 160, -1));
-
-                jLabel130.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                jLabel130.setText("Mes");
-                jPanel22.add(jLabel130, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, -1, -1));
-
-                txtMesCierre.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                txtMesCierre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                txtMesCierre.setToolTipText("");
-                txtMesCierre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-                jPanel22.add(txtMesCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 110, 160, -1));
-
-                jLabel138.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                jLabel138.setText("Hasta");
-                jPanel22.add(jLabel138, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 75, -1, -1));
-
-                txtFechaFinalCierre.setFont(new java.awt.Font("Segoe UI Light", 0, 16)); // NOI18N
-                txtFechaFinalCierre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                txtFechaFinalCierre.setToolTipText("");
-                txtFechaFinalCierre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-                txtFechaFinalCierre.setEnabled(false);
-                jPanel22.add(txtFechaFinalCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 75, 160, -1));
+                jcFechaCierre.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                jPanel22.add(jcFechaCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 40, 160, 30));
 
                 javax.swing.GroupLayout CortesCajaLayout = new javax.swing.GroupLayout(CortesCaja.getContentPane());
                 CortesCaja.getContentPane().setLayout(CortesCajaLayout);
@@ -2577,7 +2490,7 @@ public class IMenu extends javax.swing.JFrame {
                 );
                 CortesCajaLayout.setVerticalGroup(
                         CortesCajaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel22, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
+                        .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
                 );
 
                 ventanaProductosMasVendidos.setTitle("Productos mas vendidos");
@@ -2960,7 +2873,7 @@ public class IMenu extends javax.swing.JFrame {
                         .addComponent(jScrollPane33, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
                 );
 
-                jTabbedPane3.addTab("Entradas", jPanel39);
+                jTabbedPane3.addTab("Otros movimientos", jPanel39);
 
                 lblStockInicialKardex.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
                 lblStockInicialKardex.setText("0.00");
@@ -3732,7 +3645,7 @@ public class IMenu extends javax.swing.JFrame {
                 btnRespaldo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                 btnRespaldo.setFocusPainted(false);
                 btnRespaldo.setFocusable(false);
-                jPanel26.add(btnRespaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 94, 160, 35));
+                jPanel26.add(btnRespaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 133, 160, 35));
 
                 btnProductosMasVendidos.setBackground(new java.awt.Color(0, 205, 172));
                 btnProductosMasVendidos.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
@@ -3742,6 +3655,15 @@ public class IMenu extends javax.swing.JFrame {
                 btnProductosMasVendidos.setFocusPainted(false);
                 btnProductosMasVendidos.setFocusable(false);
                 jPanel26.add(btnProductosMasVendidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 55, 160, 35));
+
+                btnCierreCaja.setBackground(new java.awt.Color(0, 102, 153));
+                btnCierreCaja.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+                btnCierreCaja.setForeground(new java.awt.Color(255, 255, 255));
+                btnCierreCaja.setText("Cierre de caja");
+                btnCierreCaja.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                btnCierreCaja.setFocusPainted(false);
+                btnCierreCaja.setFocusable(false);
+                jPanel26.add(btnCierreCaja, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 94, 160, 35));
 
                 pnlInversion.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)), "Inversión"));
                 pnlInversion.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -3907,7 +3829,7 @@ public class IMenu extends javax.swing.JFrame {
                                                         .addComponent(jScrollPane37, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
                                                         .addComponent(jScrollPane38, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                                         .addGroup(jPanel13Layout.createSequentialGroup()
-                                                .addComponent(jPanel26, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jPanel26, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(pnlInversion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap(104, Short.MAX_VALUE))
@@ -5765,8 +5687,8 @@ public class IMenu extends javax.swing.JFrame {
                 pnlMenuLateral.add(btnTransacciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 360, 200, 47));
 
                 logoClothing.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
-                logoClothing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/blessIcon.png"))); // NOI18N
-                pnlMenuLateral.add(logoClothing, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, -1, 80));
+                logoClothing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logoBlesskids.png"))); // NOI18N
+                pnlMenuLateral.add(logoClothing, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 10, -1, 80));
 
                 btnInfoFactura.setBackground(new java.awt.Color(69, 76, 89));
                 btnInfoFactura.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -5976,6 +5898,7 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JButton btnCalcularGanancia;
         public javax.swing.JButton btnCancel;
         public javax.swing.JPanel btnCerrarSesion;
+        public javax.swing.JButton btnCierreCaja;
         public javax.swing.JPanel btnClientes;
         public javax.swing.JButton btnConfigFactura;
         public javax.swing.JButton btnConfigRedes;
@@ -6082,15 +6005,9 @@ public class IMenu extends javax.swing.JFrame {
         private javax.swing.JLabel jLabel119;
         public javax.swing.JLabel jLabel12;
         private javax.swing.JLabel jLabel120;
-        private javax.swing.JLabel jLabel121;
-        private javax.swing.JLabel jLabel122;
         private javax.swing.JLabel jLabel123;
         private javax.swing.JLabel jLabel124;
-        private javax.swing.JLabel jLabel125;
-        private javax.swing.JLabel jLabel126;
-        private javax.swing.JLabel jLabel127;
         private javax.swing.JLabel jLabel128;
-        private javax.swing.JLabel jLabel129;
         private javax.swing.JLabel jLabel13;
         private javax.swing.JLabel jLabel130;
         private javax.swing.JLabel jLabel137;
@@ -6318,6 +6235,7 @@ public class IMenu extends javax.swing.JFrame {
         public com.toedter.calendar.JDateChooser jcFecha1;
         public com.toedter.calendar.JDateChooser jcFecha2;
         public com.toedter.calendar.JDateChooser jcFechaApertura;
+        public com.toedter.calendar.JDateChooser jcFechaCierre;
         public com.toedter.calendar.JDateChooser jcFechaCredito;
         public com.toedter.calendar.JDateChooser jcFechaFactura;
         public com.toedter.calendar.JDateChooser jcFechaGasto;
@@ -6338,6 +6256,8 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JPanel jpInformacionCrediticia;
         public javax.swing.JSpinner jsCantidadDolar;
         public javax.swing.JSpinner jsCantidadDolar1;
+        public javax.swing.JSpinner jsCordobasCierres;
+        public javax.swing.JSpinner jsDolarCierre;
         public javax.swing.JSpinner jsFacturaPago;
         public javax.swing.JSpinner jsFacturaPagoSalida;
         public javax.swing.JSpinner jsLimiteCredito;
@@ -6465,7 +6385,6 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JTextArea txtAreaAnotacionPago;
         public javax.swing.JTextArea txtAreaAnotacionesInfoFactura;
         public javax.swing.JTextArea txtAreaInfoPago;
-        public javax.swing.JTextField txtBancosCierre;
         public javax.swing.JTextField txtBuscar;
         public javax.swing.JTextField txtBuscarCategoria;
         public javax.swing.JTextField txtBuscarCategoriaAdd;
@@ -6496,7 +6415,6 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JTextField txtCrearCodigoBarra;
         public javax.swing.JTextField txtCreditoFactura;
         public javax.swing.JTextField txtCreditoPago;
-        public javax.swing.JTextField txtCreditosCierre;
         public javax.swing.JTextArea txtDescripcionCategoria;
         public javax.swing.JTextArea txtDescripcionCierre;
         public javax.swing.JTextArea txtDescripcionGasto;
@@ -6505,21 +6423,15 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JTextField txtDireccionCliente;
         public javax.swing.JTextArea txtDireccionTienda;
         public javax.swing.JTextField txtEfectivoApertura;
-        public javax.swing.JTextField txtEgresosCierre;
-        public javax.swing.JTextField txtExistenciaEfectivoCierre;
-        public javax.swing.JTextField txtFechaFinalCierre;
-        public javax.swing.JTextField txtFechaInicioCierre;
         public javax.swing.JTextField txtFinalRango;
         public javax.swing.JTextField txtGananciaProducto;
         public javax.swing.JTextField txtImpuesto;
         public javax.swing.JTextArea txtInfoActual;
-        public javax.swing.JTextField txtIngresoEfectivoCierre;
         public javax.swing.JTextField txtInicioRango;
         public javax.swing.JTextField txtIpOrdenador;
         public javax.swing.JTextField txtLaboratorioAdd;
         public javax.swing.JTextField txtLaboratorioProducto;
         public javax.swing.JTextField txtMargenGanancia;
-        public javax.swing.JTextField txtMesCierre;
         public javax.swing.JTextField txtNClienteFactura;
         public javax.swing.JTextField txtNombreCategoria;
         public javax.swing.JTextField txtNombreLaboratorio;
@@ -6542,7 +6454,6 @@ public class IMenu extends javax.swing.JFrame {
         public javax.swing.JTextField txtTotalDolar;
         public javax.swing.JTextField txtTotalGlobalCordobas;
         public javax.swing.JTextField txtTotalGolbalDolar;
-        public javax.swing.JTextField txtTotalVendidoCierre;
         public javax.swing.JTextField txtUbicacionProducto;
         public javax.swing.JDialog ventanaCategoria;
         public javax.swing.JDialog ventanaMarca;

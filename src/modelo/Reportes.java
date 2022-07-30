@@ -60,12 +60,16 @@ public class Reportes extends Conexiondb {
 		totalIngresosBancosDolar,
 		inversionDolares,
 		inversionCordobas;
+		
+	
 
 	public Reportes() {
 		this.pst = null;
 		this.consulta = null;
 		this.cn = null;
 	}
+
+	
 
 	public float getVentasEfectivoDiarioDolar() {
 		return ventasEfectivoDiarioDolar;
@@ -1398,4 +1402,6 @@ public class Reportes extends Conexiondb {
 			}
 		}
 	}
+
+	
 }

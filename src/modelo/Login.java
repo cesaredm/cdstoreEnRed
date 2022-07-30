@@ -3,6 +3,8 @@ package modelo;
 import controlador.CtrlProducto;
 import vista.ILogin;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -93,7 +95,7 @@ public class Login extends Conexiondb {
                 fecha = rs.getString("fechaInstalacion");
             }
             //si el campo de fechaInstalacion esta vacia estado pasa a false si no pasa a true y obtengo la fecha de instalacion
-            if(fecha.equals(""))
+            if(fecha.equals("") || fecha == null)
             {
                 this.estado = "false";
                 
@@ -103,7 +105,13 @@ public class Login extends Conexiondb {
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e+" en la funcion validarExist en mdl login");
-        }
+        }finally{
+		try {
+			this.cn.close();
+		} catch (SQLException ex) {
+			Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
     }
     
     //metodo para guardar la fecha de actulizacion si no hay una fecha de instalacion, se hace una actualizacion porque esta en la tabla infoFactura de la bd la cual arranca con datos de prueba

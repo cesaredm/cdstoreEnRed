@@ -254,7 +254,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 				if (this.moneda.equals("Córdobas")) {
 					this.saldoActualCordobas = this.saldoCordobas - this.monto;
 					this.saldoActualDolares = this.saldoDolar;
-				} else if(this.moneda.equals("Dolar")){
+				} else if (this.moneda.equals("Dolar")) {
 					this.saldoActualDolares = this.saldoDolar - this.monto;
 					this.saldoActualCordobas = this.saldoCordobas;
 				}
@@ -262,7 +262,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 				if (this.saldoActualCordobas >= 0 && this.saldoActualDolares >= 0) {
 					pagos.Guardar();
 					this.estadoCreditos.updateAabierto(this.credito);
-					this.socketCliente.socketInit(this.pagos);
+					this.multiconexion();
 					UltimoPago();
 					info.obtenerInfoFactura();
 					imprimir(
@@ -287,7 +287,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 				}
 
 			} catch (Exception e) {
-
+				e.printStackTrace();
 			}
 		}
 
@@ -316,6 +316,16 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 			verificar = false;
 		}
 		return verificar;
+	}
+
+	//para saber si trabajara con multiconexion o no
+	public void multiconexion() {
+		if (Configuraciones.multiconexion) {
+//			this.socketCliente.setIps(Configuraciones.listIpsCliente);
+			this.socketCliente.socketInit(this.pagos);
+		} else {
+
+		}
 	}
 
 	public void MostrarCreditos(String buscar) {
@@ -370,7 +380,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 			close();
 
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 

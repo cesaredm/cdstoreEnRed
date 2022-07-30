@@ -110,6 +110,7 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 		try {
 			print("DiarioCordobas");
 		} catch (Exception err) {
+			err.printStackTrace();
 			//JOptionPane.showMessageDialog(null, "");
 		}
 	}
@@ -210,11 +211,10 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 			fecha = (String) menu.tblReporte.getValueAt(filaseleccionada, 1);
 			//formaPago es con tarjeta efectivo o al credito
 			IVA = (String) menu.tblReporte.getValueAt(filaseleccionada, 2);
-			formaPago = (String) menu.tblReporte.getValueAt(filaseleccionada, 5);
-			creditoId = (String) menu.tblReporte.getValueAt(filaseleccionada, 6);
-			comprador = (String) menu.tblReporte.getValueAt(filaseleccionada, 4);
-			System.out.println(comprador);
-			caja = (String) menu.tblReporte.getValueAt(filaseleccionada, 7);
+			formaPago = (String) menu.tblReporte.getValueAt(filaseleccionada, 6);
+			creditoId = (String) menu.tblReporte.getValueAt(filaseleccionada, 7);
+			comprador = (String) menu.tblReporte.getValueAt(filaseleccionada, 5);
+			caja = (String) menu.tblReporte.getValueAt(filaseleccionada, 8);
 			for (int i = 0; i < filas; i++) {
 				producto = (String) menu.tblMostrarDetalleFactura.getValueAt(i, 3);
 				cantidad = (String) menu.tblMostrarDetalleFactura.getValueAt(i, 4);
@@ -239,7 +239,7 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 			}
 			Ticket d = new Ticket();
 			d.nameLocal = info.getNombre();
-			info.getDireccion();
+			d.direccion = info.getDireccion();
 			d.telefono = info.getTelefono();
 			d.RFC = info.getRfc();
 			d.Rango = info.getRangoInicio() + " - " + info.getRangoFinal();
@@ -262,6 +262,7 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 			d.llenarTicket();
 			d.printFactura();
 		} catch (Exception err) {
+			err.printStackTrace();
 			//JOptionPane.showMessageDialog(null, err + " Erro en la funcion btnReImprimirFactura");
 		}
 	}

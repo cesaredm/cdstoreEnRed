@@ -305,6 +305,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
 //            menu.btnInfoFactura.setBackground(new java.awt.Color(72,72,72));
             menu.lblEditarInfoFactura.setForeground(new java.awt.Color(255,255,255));
             
+	    CierresController.createInstanciaController(menu, new CierresModel());
             if(this.permiso == 2)
             {
                 menu.pnlClientes.setVisible(false);

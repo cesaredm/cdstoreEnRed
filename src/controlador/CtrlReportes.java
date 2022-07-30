@@ -83,6 +83,7 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		this.menu.btnGuardarApertura.setActionCommand("GUARDAR-APERTURA");
 		this.menu.btnAddTotalV.addActionListener(this);
 		this.menu.btnAddTotalV.setActionCommand("ADD-TOTALV");
+		
 //		this.menu.btnMostrarRegistroMoneda.addActionListener(this);
 		this.menu.tblReporte.addMouseListener(this);
 		this.menu.btnMostrarInversion.addActionListener(this);
@@ -102,12 +103,14 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		this.menu.btnEnviarCorreo.addActionListener(this);
 //		this.menu.btnMostrarRegistroMonedaHoy.addActionListener(this);
 		this.menu.btnActualizarProductosVentasDiarias.addActionListener(this);
+		this.menu.jcFechaCierre.setEnabled(false);
 		EstiloTablaTotalV();
 		this.estiloTablaReportes();
 		formato = new DecimalFormat("###,###,###,###,#00.00");
 		iniciar();
 		this.formatColumn = new DefaultTableCellRenderer();
 	}
+
 	public void iniciar() {
 //        reportesDiarios(this.fecha);
 //        MostrarReportesDario(this.fecha);
@@ -124,7 +127,9 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		SumaTotalFiltroReporte(this.fecha, this.fecha);
 		inversion();
 		proyeccionVentas();
-	};
+	}
+
+	;
 
 	public boolean getEstadoC() {
 		return estadoC;
@@ -206,9 +211,7 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 
 			}
 		}
-		if (e.getSource() == menu.btnGuardarCierre) {
-			RealizarCorte();
-		}
+		
 		if (e.getSource() == menu.btnProductosMasVendidos) {
 			menu.ventanaProductosMasVendidos.setLocationRelativeTo(null);
 			menu.ventanaProductosMasVendidos.setSize(1165, 350);
@@ -236,9 +239,10 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 
 			}
 		}
-		if(e.getSource() == this.menu.btnActualizarProductosVentasDiarias){
+		if (e.getSource() == this.menu.btnActualizarProductosVentasDiarias) {
 			this.productosVentasDiarias();
 		}
+		
 
 	}
 
@@ -283,6 +287,7 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 	}
 
 	
+
 	public void inversion() {
 		this.reportes.inversionCordobas();
 		this.reportes.inversionDolar();
@@ -290,8 +295,8 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		this.menu.lblInversionCordobas.setText(this.formato.format(this.reportes.getInversionCordobas()));
 	}
 
-	public void proyeccionVentas(){
-		float precioDolar = Float.parseFloat(this.menu.txtPrecioDolarVenta.getText()),proyeccion = 0;
+	public void proyeccionVentas() {
+		float precioDolar = Float.parseFloat(this.menu.txtPrecioDolarVenta.getText()), proyeccion = 0;
 		this.reportes.proyeccionVentas();
 		proyeccion = this.reportes.getInversionCordobas() + (this.reportes.getInversionDolares() * precioDolar);
 		this.menu.lblProyeccion.setText(this.formato.format(proyeccion));
@@ -479,19 +484,7 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 		menu.txtEfectivoApertura.setText("");
 	}
 
-	public void LimpiarCierre() {
-		menu.txtExistenciaEfectivoCierre.setText("");
-		menu.txtBancosCierre.setText("");
-		menu.txtCreditosCierre.setText("");
-		menu.txtEgresosCierre.setText("");
-		menu.txtTotalVendidoCierre.setText("");
-		menu.txtDescripcionCierre.setText("");
-		menu.txtFechaInicioCierre.setText("");
-		menu.txtFechaFinalCierre.setText("");
-		menu.txtMesCierre.setText("");
-		menu.txtIngresoEfectivoCierre.setText("");
-		menu.txtCajaCierre.setText("");
-	}
+	
 
 	public void GuardarAperturas() {
 		String efectivo = menu.txtEfectivoApertura.getText();
@@ -516,34 +509,7 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 	}
 //funcion pára realizar el corte por los momentos no se esta usando
 
-	public void RealizarCorte() {
-		String descripcion = menu.txtDescripcionCierre.getText(), fecha = menu.txtFechaInicioCierre.getText();;
-		String efectivo = menu.txtIngresoEfectivoCierre.getText(),
-			bancos = menu.txtBancosCierre.getText(),
-			creditos = menu.txtCreditosCierre.getText(),
-			totalV = menu.txtTotalVendidoCierre.getText(),
-			Egresos = menu.txtEgresosCierre.getText(),
-			existCaja = menu.txtExistenciaEfectivoCierre.getText(),
-			fechaInicio = menu.txtFechaInicioCierre.getText(),
-			fechaFinal = menu.txtFechaFinalCierre.getText(),
-			mes = menu.txtMesCierre.getText();
-		int caja = aperturas.IdCaja(menu.cmbCajasApertura.getSelectedItem().toString());
-		if (menu.isNumeric(efectivo) && menu.isNumeric(bancos) && menu.isNumeric(creditos) && menu.isNumeric(totalV) && menu.isNumeric(Egresos) && menu.isNumeric(existCaja)) {
-			if (!efectivo.equals("") && !bancos.equals("") && !creditos.equals("") && !totalV.equals("") && !Egresos.equals("") && !existCaja.equals("")) {
-				float efectivoC = Float.parseFloat(efectivo),
-					bancosC = Float.parseFloat(bancos),
-					creditosC = Float.parseFloat(creditos),
-					totalVC = Float.parseFloat(totalV),
-					EgresosC = Float.parseFloat(Egresos),
-					ExistenciaCaja = Float.parseFloat(existCaja);
-				aperturas.GuardarCierre(fechaInicio, fechaFinal, mes, caja, efectivoC, bancosC, creditosC, EgresosC, totalVC, ExistenciaCaja, descripcion);
-				LimpiarCierre();
-			}
-
-		} else {
-
-		}
-	}
+	
 
 	public void EstiloTablaTotalV() {
 		menu.tblMostrarTotalV.getTableHeader().setFont(new Font("Sugoe UI", Font.PLAIN, 14));
@@ -573,7 +539,7 @@ public class CtrlReportes implements ActionListener, MouseListener, KeyListener 
 
 	}
 
-	public void productosVentasDiarias(){
+	public void productosVentasDiarias() {
 		java.sql.Date fechaSQL = new java.sql.Date(this.fecha.getTime());
 		this.reportes.productosVentasDiarias(fechaSQL);
 		this.menu.tblProductosVentasDiarias.setModel(this.reportes.getModeloTable());

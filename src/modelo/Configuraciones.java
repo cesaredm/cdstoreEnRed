@@ -136,15 +136,14 @@ public class Configuraciones extends Conexiondb {
 		this.cn = Conexion();
 		this.consulta = "UPDATE infoFactura SET nombre = ?, telefono = ?, direccion = ?, RFC = ?, inicioRango = ?, finalRango = ?,"
 			+ " anotaciones = ? WHERE id = ?";
-
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
 			this.pst.setString(1, nombre);
 			this.pst.setString(2, telefono);
 			this.pst.setString(3, direccion);
 			this.pst.setString(4, rfc);
-			this.pst.setString(5, rangoInicio);
-			this.pst.setString(6, rangoFinal);
+			this.pst.setInt(5, (rangoInicio.equals("")) ? 0 : Integer.parseInt(rangoInicio));
+			this.pst.setInt(6, (rangoFinal.equals("")) ? 0 : Integer.parseInt(rangoFinal));
 			this.pst.setString(7, anotaciones);
 			this.pst.setInt(8, id);
 			int banderin = this.pst.executeUpdate();
