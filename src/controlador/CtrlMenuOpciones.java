@@ -111,7 +111,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
     public void setUsuario(String usuario){
         this.usuario = usuario;
     }
-    
+
     @Override
     public void mouseClicked(MouseEvent e) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -574,7 +574,8 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
             Login l = new Login();
             //crear nuevo objeto de controlador login
             CtrlLogin ReinicioSesion = new CtrlLogin(login, l);
-            devolverProductoStock();
+            //devolverProductoStock();
+
             //inicira con la funcio iniciar de la clase CtrlLogin
             ReinicioSesion.iniciar();
             
@@ -657,7 +658,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
         {
             id = (String) menu.tblFactura.getValueAt(i, 0);
             cantidad = (String) menu.tblFactura.getValueAt(i, 2);
-            this.p.AgregarProductoStock(id, cantidad);
+            this.p.AgregarProductoStock(id, cantidad,1);
         }
     }
 
@@ -668,7 +669,7 @@ public class CtrlMenuOpciones implements MouseListener, ActionListener, WindowLi
 
     @Override
     public void windowClosing(WindowEvent e) {
-        devolverProductoStock();
+        //devolverProductoStock();
     }
 
     @Override

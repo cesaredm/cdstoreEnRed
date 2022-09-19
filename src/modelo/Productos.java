@@ -431,16 +431,17 @@ public class Productos extends Conexiondb {
 		return modelo;
 	}
 
-	public void AgregarProductoStock(String id, String cantidad)//metodo para agregar producto al stock
+	public void AgregarProductoStock(String id, String cantidad, int opcion)//metodo para agregar producto al stock
 	{
 		cn = Conexion();
 		float c = Float.parseFloat(cantidad);
 		int idP = Integer.parseInt(id);
-		this.consulta = "{CALL agregarProductoStock(?,?)}";
+		this.consulta = "{CALL agregarProductoStock(?,?,?)}";
 		try {
 			CallableStatement cst = this.cn.prepareCall(this.consulta);
 			cst.setInt(1, idP);
 			cst.setFloat(2, c);
+			cst.setInt(3, opcion);
 			this.banderin = cst.executeUpdate();
 			if (banderin > 0) {
 				//JOptionPane.showMessageDialog(null, "Se Agrego Exitosamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);

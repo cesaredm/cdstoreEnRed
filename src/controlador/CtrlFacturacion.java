@@ -447,8 +447,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 				this.facturaModel.setCredito(this.idCredito);
 				this.facturaModel.setPago(this.idFormaPago);
 				this.facturaModel.setIva(this.isv);
-				this.facturaModel.setTotalCordobas(this.total);
-				this.facturaModel.setTotalDolar(this.totalDolar);
+				this.facturaModel.setTotalCordobas(0);
+				this.facturaModel.setTotalDolar(0);
 				this.facturaModel.GuardarFactura();
 				for (int cont = 0; cont < filas; cont++) {
 					//capturo el id de producto para guardar en detallefactura
@@ -482,7 +482,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 				//limpio la facturaModel
 				DeshabilitarBtnGuardarFactura();
 				this.estadosCreditos.updateApendiente(idCredito);
-				this.estadosCreditos.updateAabierto(idCredito);
+				//this.estadosCreditos.updateAabierto(idCredito);
 				//creditos.MostrarCreditos("");
 				this.MostrarCreditosCreados("");
 				this.MostrarReportesDario(this.fecha);
@@ -528,7 +528,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 				this.facturaModel.setCredito(this.idCredito);
 				this.facturaModel.setPago(this.idFormaPago);
 				this.facturaModel.setIva(this.isv);
-				this.facturaModel.setTotalCordobas(this.total);
+				this.facturaModel.setTotalCordobas(0);
 				this.facturaModel.GuardarFactura();
 				for (int cont = 0; cont < filas; cont++) {
 					//capturo el id de producto para guardar en detallefactura
@@ -601,6 +601,10 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		}
 	}
 
+	public void addThisLine(){
+		
+	}
+
 	public void AgregarProductoFacturaEnter() {
 		String codBarra = menu.txtCodBarraFactura.getText(),
 			id;
@@ -612,8 +616,9 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		float sacarImpuesto = 0,
 			porcentajeImp = 0;
 		this.facturaModel.obtenerPorCodBarra(codBarra);
+		this.facturaModel.Vender(this.facturaModel.getProducto()[0], this.facturaModel.getProducto()[2]);
 		if (this.facturaModel.isExito()) {
-			if (this.facturaModel.getStock() > 0) {
+			if (this.facturaModel.vender) {
 				this.modelo = (DefaultTableModel) menu.tblFactura.getModel();
 				this.modelo.addRow(this.facturaModel.getProducto());
 				if (this.facturaModel.getMonedaVenta().equals("Dolar")) {
@@ -621,7 +626,6 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 				} else {
 					this.totalImporteCordobas += Float.parseFloat(CleanChars(this.facturaModel.getProducto()[5]));
 				}
-				this.facturaModel.Vender(this.facturaModel.getProducto()[0], this.facturaModel.getProducto()[2]);
 				sacarImpuesto = Float.parseFloat(1 + "." + menu.lblImpuestoISV.getText());
 				porcentajeImp = Float.parseFloat(menu.lblImpuestoISV.getText());
 				this.totalGlobalCordobas = totalImporteCordobas + (totalImporteDolar * precioDolarVenta);
@@ -749,6 +753,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			for (int i = 0; i < filas; i++) {
 				this.modelo.removeRow(0);
 			}
+			this.facturaModel.vaciartableproductos_temp();
 			this.mostrarProductosVender("");
 			menu.txtNClienteFactura.setText("");
 			menu.txtAClienteFactura.setText("");
@@ -825,7 +830,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 				stock = Float.parseFloat(modelo.getValueAt(filaseleccionada, 6).toString());
 				cantidad = JOptionPane.showInputDialog(null, "Cantidad:");
 				cantidadPVender = (cantidad.equals("")) ? 0 : Float.parseFloat(cantidad);
-				if (cantidadPVender <= stock) {
+				this.facturaModel.Vender(id,cantidad);
+				if (this.facturaModel.vender) {
 					if (cantidadPVender > 0) {
 						if (monedaVenta.equals("Córdobas")) {
 							importe = (Float.parseFloat(precio) * cantidadPVender);
@@ -859,7 +865,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 						menu.txtTotalDolar.setText(formato.format(this.totalDolar));
 						this.menu.txtTotalGolbalDolar.setText(this.formato.format(this.totalGlobalDolar));
 						this.menu.txtTotalGlobalCordobas.setText(this.formato.format(this.totalGlobalCordobas));
-						this.facturaModel.Vender(id, cantidad);
+						//this.facturaModel.Vender(id, cantidad);
 						this.mostrarProductosVender("");
 						menu.txtBuscarPorNombre.selectAll();
 						DeshabilitarBtnGuardarFactura();
@@ -968,7 +974,8 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 					JOptionPane.INFORMATION_MESSAGE
 				);
 				cantidadIngresar = Float.parseFloat(spiner.getValue().toString());
-				if (cantidadIngresar <= facturaModel.getStock()) {
+				this.facturaModel.Vender(id, String.valueOf(cantidadIngresar));
+				if (this.facturaModel.vender) {
 					cantidadActual = Float.parseFloat(this.modelo.getValueAt(filaseleccionada, 2).toString());
 					precio = Float.parseFloat(this.CleanChars(this.modelo.getValueAt(filaseleccionada, 4).toString()));
 					this.facturaModel.monedaVentaProducto(id);
@@ -984,7 +991,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 					}
 					this.modelo.setValueAt(String.valueOf(cantidadUpdate), filaseleccionada, 2);
 					this.modelo.setValueAt(moneda + " " + formato.format(importeUpdate), filaseleccionada, 5);
-					this.facturaModel.Vender(id, String.valueOf(cantidadIngresar));
+					//this.facturaModel.Vender(id, String.valueOf(cantidadIngresar));
 					this.totalGlobalCordobas = totalImporteCordobas + (totalImporteDolar * precioDolarVenta);
 					this.totalGlobalDolar = totalImporteDolar + (totalImporteCordobas / precioDolarCompra);
 					sacarImpuesto = Float.parseFloat(1 + "." + menu.lblImpuestoISV.getText());
@@ -1454,7 +1461,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 		for (int i = 0; i < filaF; i++) {
 			idProd = menu.tblFactura.getValueAt(i, 0).toString();
 			cP = menu.tblFactura.getValueAt(i, 2).toString();
-			modelProduct.AgregarProductoStock(idProd, cP);
+			//modelProduct.AgregarProductoStock(idProd, cP,1);
 		}
 		LimpiarTablaFactura();
 		//RECOLECCION DE DATOS PARA LA EDICION
@@ -1571,7 +1578,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 				menu.txtTotalGolbalDolar.setText(this.formato.format(this.totalGlobalDolar));
 				menu.txtSubTotal.setText("" + formato.format(this.subTotal));
 				menu.txtImpuesto.setText("" + formato.format(this.isv));
-				modelProduct.AgregarProductoStock(id, cantidad);
+				modelProduct.AgregarProductoStock(id, cantidad,0);
 				this.mostrarProductosVender("");
 				this.modelo.removeRow(filaseleccionada);
 				DeshabilitarBtnGuardarFactura();
@@ -1591,7 +1598,7 @@ public class CtrlFacturacion implements ActionListener, CaretListener, MouseList
 			for (int i = 0; i < filas; i++) {
 				id = (String) this.modelo.getValueAt(i, 0);
 				cantidad = (String) this.modelo.getValueAt(i, 2);
-				modelProduct.AgregarProductoStock(id, cantidad);
+				//modelProduct.AgregarProductoStock(id, cantidad);
 			}
 			LimpiarTablaFactura();
 			DeshabilitarBtnGuardarFactura();

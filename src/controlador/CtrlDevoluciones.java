@@ -137,10 +137,10 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 						//validar que moneda
 						if (this.factura.getMonedaVenta().equals("Dolar")) {
 							this.importe = (cantidadUpdate * precio);
-							this.totalDolares = this.importe;
+							this.totalDolares -= (cantidadDevolver*precio) ;
 						} else {
 							this.importe = this.cantidadUpdate * this.precio;
-							this.total = this.importe;
+							this.total -= (cantidadDevolver*precio);
 						}
 						//totalGlobal para calcular el impuesto
 						this.totalGlobalCordobas = this.total + (this.totalDolares * this.precioDolar);
@@ -165,7 +165,8 @@ public class CtrlDevoluciones implements ActionListener, WindowListener {
 							);
 							this.producto.AgregarProductoStock(
 								String.valueOf(this.idProducto),
-								String.valueOf(this.cantidadDevolver)
+								String.valueOf(this.cantidadDevolver),
+								1
 							);
 							MostrarDetalleFactura(this.idFactura);
 							MostrarProductos("");

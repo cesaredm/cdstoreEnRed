@@ -151,7 +151,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 	}
 
 	public void actualizar() {
-		if (this.validar()) {
+		if (this.validar(false)) {
 			this.pagos.setCredito(this.credito);
 			this.pagos.setMonto(this.monto);
 			this.pagos.setMoneda(this.moneda);
@@ -210,9 +210,11 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 		this.menu.lblNumeroPago.setText("" + creditos.obtenerUltimoPago());
 	}
 
-	public boolean validar() {
+	public boolean validar(boolean opcion) {
 		boolean validar = true;
-		this.menu.jcFechaPago.setDate(new Date());
+		if(opcion){
+			this.menu.jcFechaPago.setDate(new Date());
+		}
 		this.credito = (this.menu.txtCreditoPago.getText().equals("")) ? 0 : Integer.parseInt(menu.txtCreditoPago.getText());
 		this.monto = Float.parseFloat(menu.jsMontoPago.getValue().toString());
 		this.formaPago = Integer.parseInt(this.pagos.ObtenerFormaPago(this.menu.cmbFormaPagoCredito.getSelectedItem().toString()));
@@ -233,7 +235,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 	public void guardarPago() {
 		String[] ips = {"127.0.0.1"};
 		String numeroPago = menu.lblNumeroPago.getText();
-		if (this.validar()) {
+		if (this.validar(true)) {
 			try {
 				this.creditos.saldoInicialCredito(this.credito);
 				this.creditos.saldoPorCredito(this.credito);
@@ -242,20 +244,20 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 				this.saldoDolar = this.creditos.getSaldoDolares() - this.creditos.getPagosDolar();
 				this.pagos.setCredito(this.credito);
 				this.pagos.setMonto(this.monto);
-				this.pagos.setMoneda(moneda);
+				this.pagos.setMoneda(this.moneda);
 				this.pagos.setFecha(this.fechaSQL);
 				this.pagos.setFormaPago(this.formaPago);
 				this.pagos.setAnotacion(this.anotacion);
-				if (this.verificarCreditoCalcelado(monto, credito, moneda)) {
+				if (this.verificarCreditoCalcelado(this.monto, this.credito, this.moneda)) {
 					//agregar numero unico de forma ascendente
 					this.pagos.setVerificarCancelado("cancelado");
 				}
 
 				if (this.moneda.equals("Córdobas")) {
-					this.saldoActualCordobas = this.saldoCordobas - this.monto;
+					this.saldoActualCordobas = Float.parseFloat(this.formato.format(this.saldoCordobas)) - this.monto;
 					this.saldoActualDolares = this.saldoDolar;
 				} else if (this.moneda.equals("Dolar")) {
-					this.saldoActualDolares = this.saldoDolar - this.monto;
+					this.saldoActualDolares = Float.parseFloat(this.formato.format(this.saldoDolar)) - this.monto;
 					this.saldoActualCordobas = this.saldoCordobas;
 				}
 
@@ -296,21 +298,23 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 	/* ------------------- verificar si con el abono actual se esta cancelado el credito ----------------*/
 	public boolean verificarCreditoCalcelado(float abono, int credito, String moneda) {
 		boolean verificar = true;
-		Creditos creditoModel = new Creditos();
+		/*Creditos creditoModel = new Creditos();
 		creditoModel.pagosPorCedito(credito);
 		creditoModel.saldoInicialCredito(credito);
-		creditoModel.saldoPorCredito(credito);
-		float saldoCordobas = creditoModel.getSaldoCordobas() - creditoModel.getPagosCordobas(),
-			saldoDolares = creditoModel.getSaldoDolares() - creditoModel.getPagosDolar();
+		creditoModel.saldoPorCredito(credito);*/
+		float saldoCordoba = this.creditos.getSaldoCordobas() - this.creditos.getPagosCordobas(),
+			saldoDolares = this.creditos.getSaldoDolares() - this.creditos.getPagosDolar();
+		saldoCordoba = Float.parseFloat(this.formato.format(saldoCordoba));
+		saldoDolares = Float.parseFloat(this.formato.format(saldoDolares));
 
 		/*-------------------- resta del saldo - el abono -----------------------*/
 		if (moneda.equals("Dolar")) {
 			saldoDolares -= abono;
-		} else {
-			saldoCordobas -= abono;
+		} else if(moneda.equals("Córdobas")) {
+			saldoCordoba -= abono;
 		}
 		/*------------------- Validacion si con este pago se esta cancelando --------------------*/
-		if (saldoCordobas == 0 && saldoDolares == 0) {
+		if (saldoCordoba == 0 && saldoDolares == 0) {
 			verificar = true;
 		} else {
 			verificar = false;

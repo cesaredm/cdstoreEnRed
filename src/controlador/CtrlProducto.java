@@ -199,7 +199,7 @@ public class CtrlProducto extends CtrlImprimir implements ActionListener, CaretL
 				Cantidad = menu.txtCantidadAgregar.getText();//JOptionPane.showInputDialog("Ingrese la Cantidad de " + nombre, "");
 				c = Float.parseFloat(Cantidad);
 				if (Cantidad != null) {
-					productos.AgregarProductoStock(id, Cantidad);
+					productos.AgregarProductoStock(id, Cantidad,1);
 					productos.addKardex(producto, user, c, "add");
 					MostrarProductos("");
 					MostrarProductosVender("");

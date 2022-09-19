@@ -63,6 +63,7 @@ public class CtrlLogin implements ActionListener, KeyListener, FocusListener {
     public void iniciar() {
         this.login.setVisible(true);
         this.login.setLocationRelativeTo(null);
+	this.modelLogin.vaciartableproductos_temp();
     }
 
     public void Preparar() {

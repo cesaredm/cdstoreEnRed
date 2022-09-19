@@ -172,7 +172,7 @@ public class CtrlCreditos extends PrintReportes implements ActionListener, Caret
 							this.modelo.getValueAt(filaseleccionada, 0)
 								.toString()
 						);
-						CtrlImprimirReport.nCredito = id;
+						CtrlImprimirReport.nCredito = this.id;
 						this.mostrarInfoCrediticiaActual(this.id);
 						menu.jdInfoCrediticia.setSize(1267, 600);
 						menu.jdInfoCrediticia.setVisible(true);

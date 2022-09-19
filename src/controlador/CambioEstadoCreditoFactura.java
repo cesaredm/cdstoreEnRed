@@ -12,6 +12,7 @@ public class CambioEstadoCreditoFactura implements EstadoCreditos {
 	public void updateApendiente(int idCredito) {
 		if (idCredito > 0) {
 			creditos.pagosPorCedito(idCredito);
+			creditos.saldoInicialCredito(idCredito);
 			creditos.saldoPorCredito(idCredito);
 			this.saldoCordobas = creditos.getSaldoCordobas() - creditos.getPagosCordobas();
 			this.saldoDolares = creditos.getSaldoDolares() - creditos.getPagosDolar();
@@ -27,6 +28,7 @@ public class CambioEstadoCreditoFactura implements EstadoCreditos {
 	public void updateAabierto(int idCredito) {
 		//variable para almacenar total de credito de cliete
 		creditos.pagosPorCedito(idCredito);
+		creditos.saldoInicialCredito(idCredito);
 		creditos.saldoPorCredito(idCredito);
 		this.saldoCordobas = creditos.getSaldoCordobas() - creditos.getPagosCordobas();
 		this.saldoDolares = creditos.getSaldoDolares() - creditos.getPagosDolar();

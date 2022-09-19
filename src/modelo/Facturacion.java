@@ -3,6 +3,8 @@ package modelo;
 import java.io.Serializable;
 import java.sql.*;
 import java.text.DecimalFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.DefaultComboBoxModel;
@@ -274,8 +276,8 @@ public class Facturacion extends Conexiondb implements Serializable {
 					//JOptionPane.showMessageDialog(null, "Factura Guardada Exitosamente", "Informacion", JOptionPane.WARNING_MESSAGE);
 				}
 				cn.close();
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, e);
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(null, e + " En la funcion GuardarFactura en model facturacion");
 			}
 		} else {
 			try {
@@ -512,20 +514,33 @@ public class Facturacion extends Conexiondb implements Serializable {
 		}
 		return id;
 	}
-
+	
+	public boolean vender = true;
 	public void Vender(String id, String cantidad) {
 		cn = Conexion();
 		Float cantidadP = Float.parseFloat(cantidad);
 		int idP = Integer.parseInt(id);
-		this.consulta = "{CALL venderProductoStock(?,?)}";
+		this.consulta = "CALL addproductofactura(?,?)";
 		try {
-			CallableStatement cst = this.cn.prepareCall(this.consulta);
-			cst.setInt(1, idP);
-			cst.setFloat(2, cantidadP);
-			cst.execute();
-			cn.close();
+			this.pst = this.cn.prepareStatement(this.consulta);
+			this.pst.setInt(1, idP);
+			this.pst.setFloat(2, cantidadP);
+			ResultSet rs = this.pst.executeQuery();
+			while(rs.next()){
+				if(rs.getString("message") != null){
+					this.vender=false;
+				}else{
+					this.vender=true;
+				}
+			}
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e);
+		}finally{
+			try {
+				cn.close();
+			} catch (SQLException ex) {
+				Logger.getLogger(Facturacion.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 	}
 
@@ -625,7 +640,6 @@ public class Facturacion extends Conexiondb implements Serializable {
 					this.producto[1] = rs.getString("codigoBarra");
 					this.producto[2] = "1.0";
 					this.producto[3] = rs.getString("nombre");
-					this.stock = rs.getFloat("stock");
 					this.monedaVenta = rs.getString("monedaVenta");
 					this.producto[4] = (this.monedaVenta.equals("Dolar"))
 						? "$" + rs.getString("precioVenta") : "C$" + rs.getString("precioVenta");
@@ -748,5 +762,24 @@ public class Facturacion extends Conexiondb implements Serializable {
 			JOptionPane.showMessageDialog(null, e + " en la funcion obtenerTotalFacturaSeleccionada en modelo Facturacion");
 		}
 	}
+
+	public void vaciartableproductos_temp(){
+	    this.cn = Conexion();
+	    this.consulta = "TRUNCATE TABLE productos_temp";
+	    try {
+		   Statement st = this.cn.createStatement();
+		   st.execute(this.consulta);
+	    } catch (SQLException e) {
+		    JOptionPane.showMessageDialog(null, 
+			    "error al vaciar la tabla productos_temp en el modelo facturacion vaciartableproductos_temp" + e
+		    );
+	    }finally{
+		    try {
+			    this.cn.close();
+		    } catch (SQLException ex) {
+			    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+		    }
+	    }
+    }
 
 }

@@ -483,10 +483,10 @@ public class Creditos extends Conexiondb {
 		String[] titulos = {"Cantidad", "Producto", "Precio", "Importe", "Factura", "Fecha"};
 		this.cn = Conexion();
 		this.registros = new String[6];
-		String consultaSecundary = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,DATE_FORMAT(f.fecha,'%a, %d-%b-%Y') AS fecha"
-			+ " FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id) INNER JOIN facturas AS f"
-			+ " ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? AND p.monedaVenta = 'Dolar'"
-			+ " AND df.cantidadProducto > 0";
+		String consultaSecundary = "SELECT df.cantidadProducto, p.nombre,df.precioProducto,df.totalVenta,df.factura,"
+			+ "DATE_FORMAT(f.fecha,'%a, %d-%b-%Y') AS fecha FROM detallefactura AS df INNER JOIN productos AS p ON(df.producto=p.id)"
+			+ " INNER JOIN facturas AS f ON(df.factura=f.id) INNER JOIN creditos AS c ON(f.credito=c.id) WHERE c.id = ? "
+			+ "AND p.monedaVenta = 'Dolar' AND df.cantidadProducto > 0";
 		this.modelo = new DefaultTableModel(null, titulos) {
 			@Override
 			public boolean isCellEditable(int row, int col) {

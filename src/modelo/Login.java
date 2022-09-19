@@ -131,6 +131,23 @@ public class Login extends Conexiondb {
         }
         
     }
+
+    public void vaciartableproductos_temp(){
+	    this.cn = Conexion();
+	    this.consulta = "TRUNCATE TABLE productos_temp";
+	    try {
+		   Statement st = this.cn.createStatement();
+		   st.execute(this.consulta);
+	    } catch (SQLException e) {
+		    JOptionPane.showMessageDialog(null, "error al vaciar la tabla productos_temp en el modelo login vaciartableproductos_temp" + e);
+	    }finally{
+		    try {
+			    this.cn.close();
+		    } catch (SQLException ex) {
+			    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+		    }
+	    }
+    }
     
 }
 
