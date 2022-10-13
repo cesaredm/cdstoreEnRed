@@ -134,17 +134,17 @@ public class PagosCreditos extends Conexiondb implements Serializable {
 
 	//metodo para Guardar pagos
 	public void Guardar() {
-		this.consulta = "INSERT INTO pagoscreditos(credito,monto,moneda,fecha,formaPago,anotacion,pagoCancelacion) VALUES(?,?,?,?,?,?,?)";
+		this.consulta = "INSERT INTO pagoscreditos(fecha,credito,monto,moneda,formaPago,anotacion,pagoCancelacion) VALUES(?,?,?,?,?,?,?)";
 		cn = Conexion();
 		try {
 			pst = this.cn.prepareStatement(this.consulta);
-			pst.setInt(1, credito);
-			pst.setFloat(2, monto);
-			pst.setString(3, this.moneda);
-			pst.setTimestamp(4, fecha);
+			pst.setTimestamp(1, fecha);
+			pst.setInt(2, credito);
+			pst.setFloat(3, monto);
+			pst.setString(4, this.moneda);
 			pst.setInt(5, formaPago);
 			pst.setString(6, anotacion);
-			pst.setString(7,verificarCancelado);
+			pst.setString(7, this.verificarCancelado);
 			this.banderin = pst.executeUpdate();
 			if (this.banderin > 0) {
 				JOptionPane.showMessageDialog(null, "Pago guardado exitosamete", "Informacion", JOptionPane.INFORMATION_MESSAGE);

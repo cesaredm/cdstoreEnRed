@@ -206,7 +206,7 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 				caja = "",
 				creditoId = "",
 				IVA = "";
-			float total = 0, subTotal = 0, totaldolares = 0;
+			String total = "", subTotal = "", totaldolares = "";
 			factura = (String) menu.tblReporte.getValueAt(filaseleccionada, 0);
 			fecha = (String) menu.tblReporte.getValueAt(filaseleccionada, 1);
 			//formaPago es con tarjeta efectivo o al credito
@@ -215,19 +215,21 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 			creditoId = (String) menu.tblReporte.getValueAt(filaseleccionada, 7);
 			comprador = (String) menu.tblReporte.getValueAt(filaseleccionada, 5);
 			caja = (String) menu.tblReporte.getValueAt(filaseleccionada, 8);
+			total = (String) menu.tblReporte.getValueAt(filaseleccionada, 4);
+			totaldolares = (String) menu.tblReporte.getValueAt(filaseleccionada, 3);
+
 			for (int i = 0; i < filas; i++) {
 				producto = (String) menu.tblMostrarDetalleFactura.getValueAt(i, 3);
 				cantidad = (String) menu.tblMostrarDetalleFactura.getValueAt(i, 4);
 				precio = (String) menu.tblMostrarDetalleFactura.getValueAt(i, 5);
 				importe = (String) menu.tblMostrarDetalleFactura.getValueAt(i, 6);
-				total += Float.parseFloat(menu.tblMostrarDetalleFactura.getValueAt(i, 6).toString());
+				//total += Float.parseFloat(menu.tblMostrarDetalleFactura.getValueAt(i, 6).toString());
 				if (producto.length() > 10) {
 					producto = producto.substring(0, 10);
 				}
 				Listaproducto[i] = producto + " " + cantidad + "   " + precio + "  " + importe + "\n";
 			}
 			//calcular subtotal
-			subTotal = total - Float.parseFloat(IVA);
 
 			if (creditoId == null) {
 				//tipoVenta es la forma al contado o credito
@@ -252,7 +254,7 @@ public class CtrlImprimirReport extends PrintReportes implements ActionListener 
 			d.formaPago = formaPago;
 			d.dateTime = fecha;
 			d.items = Listaproducto;
-			d.subTotal = String.valueOf(subTotal);
+			d.subTotal = String.valueOf(0.00);
 			d.iva = IVA;
 			d.totalCordobas = String.valueOf(total);
 			d.totalDolares = String.valueOf(totaldolares);

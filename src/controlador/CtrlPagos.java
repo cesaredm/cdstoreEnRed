@@ -248,17 +248,18 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 				this.pagos.setFecha(this.fechaSQL);
 				this.pagos.setFormaPago(this.formaPago);
 				this.pagos.setAnotacion(this.anotacion);
-				if (this.verificarCreditoCalcelado(this.monto, this.credito, this.moneda)) {
-					//agregar numero unico de forma ascendente
-					this.pagos.setVerificarCancelado("cancelado");
-				}
-
 				if (this.moneda.equals("Córdobas")) {
 					this.saldoActualCordobas = Float.parseFloat(this.formato.format(this.saldoCordobas)) - this.monto;
 					this.saldoActualDolares = this.saldoDolar;
 				} else if (this.moneda.equals("Dolar")) {
 					this.saldoActualDolares = Float.parseFloat(this.formato.format(this.saldoDolar)) - this.monto;
 					this.saldoActualCordobas = this.saldoCordobas;
+				}
+
+				if(this.saldoActualCordobas == 0 && this.saldoActualDolares == 0){
+					this.pagos.setVerificarCancelado("cancelado");
+				}else{
+					this.pagos.setVerificarCancelado(null);
 				}
 
 				if (this.saldoActualCordobas >= 0 && this.saldoActualDolares >= 0) {
@@ -295,6 +296,7 @@ public class CtrlPagos extends CtrlImprimir implements ActionListener, CaretList
 
 	}
 
+	//ESTA FUNCION NO ESTA FUNCIONANDO (BORRARLA)
 	/* ------------------- verificar si con el abono actual se esta cancelado el credito ----------------*/
 	public boolean verificarCreditoCalcelado(float abono, int credito, String moneda) {
 		boolean verificar = true;
