@@ -614,9 +614,9 @@ public class Productos extends Conexiondb {
 
 	public DefaultTableModel kardexSalidas(String id) {
 		this.cn = Conexion();
-		this.consulta = "SELECT P.ID,P.CODIGOBARRA,P.NOMBRE,DF.CANTIDADPRODUCTO AS CANTIDADDESALIDA, F.FECHA AS FECHASALIDA, F.ID AS NUMEROFACTURA FROM"
-			+ " PRODUCTOS AS P INNER JOIN DETALLEFACTURA AS DF ON(P.ID=DF.PRODUCTO) INNER JOIN FACTURAS AS F ON(DF.FACTURA=F.ID)"
-			+ " WHERE P.ID = ? AND DF.CANTIDADPRODUCTO != 0";
+		this.consulta = "SELECT P.id,P.codigoBarra,P.nombre,DF.cantidadProducto AS cantidadDeSalida, F.fecha AS fechaSalida, F.id AS numeroFactura FROM"
+			+ " productos AS P INNER JOIN detalleFactura AS DF ON(P.id=DF.producto) INNER JOIN facturas AS F ON(DF.factura=F.id)"
+			+ " WHERE P.id = ? AND DF.cantidadProducto!= 0";
 		String[] titulos = {"ID", "COD. BARRA", "NOMBRE", "CANTIDAD SALIDA", "FECHA SALIDA", "N. FACTURA"};
 		String[] datos = new String[6];
 		this.modelo = new DefaultTableModel(null, titulos) {
@@ -629,12 +629,12 @@ public class Productos extends Conexiondb {
 			this.pst.setString(1, id);
 			ResultSet rs = this.pst.executeQuery();
 			while (rs.next()) {
-				datos[0] = rs.getString("ID");
-				datos[1] = rs.getString("CODIGOBARRA");
-				datos[2] = rs.getString("NOMBRE");
-				datos[3] = rs.getString("CANTIDADDESALIDA");
-				datos[4] = rs.getString("FECHASALIDA");
-				datos[5] = rs.getString("NUMEROFACTURA");
+				datos[0] = rs.getString("id");
+				datos[1] = rs.getString("codigoBarra");
+				datos[2] = rs.getString("nombre");
+				datos[3] = rs.getString("cantidadDeSalida");
+				datos[4] = rs.getString("fechaSalida");
+				datos[5] = rs.getString("numeroFactura");
 				this.modelo.addRow(datos);
 			}
 			this.cn.close();
@@ -664,8 +664,8 @@ public class Productos extends Conexiondb {
 
 	public String countKardexSalidas(String id) {
 		this.cn = Conexion();
-		this.consulta = "SELECT SUM(DF.CANTIDADPRODUCTO) AS SALIDA FROM DETALLEFACTURA AS DF INNER JOIN PRODUCTOS AS P ON(DF.PRODUCTO=P.ID)"
-			+ " WHERE P.ID = ?";
+		this.consulta = "SELECT SUM(DF.cantidadProducto) AS salida FROM detalleFactura AS DF INNER JOIN productos AS P ON(DF.producto=P.id)"
+			+ " WHERE P.id = ?";
 		String salidas = "";
 		try {
 			this.pst = this.cn.prepareStatement(this.consulta);
@@ -717,13 +717,13 @@ public class Productos extends Conexiondb {
 			this.pst.setString(1, id);
 			ResultSet rs = this.pst.executeQuery();
 			while (rs.next()) {
-				datos[0] = rs.getString("ID");
-				datos[1] = rs.getString("CODIGOBARRA");
-				datos[2] = rs.getString("NOMBRE");
-				datos[3] = rs.getString("CANTIDAD");
-				datos[4] = rs.getString("FECHA");
-				datos[5] = rs.getString("ANOTACION");
-				datos[6] = rs.getString("USUARIO");
+				datos[0] = rs.getString("id");
+				datos[1] = rs.getString("codigoBarra");
+				datos[2] = rs.getString("nombre");
+				datos[3] = rs.getString("cantidad");
+				datos[4] = rs.getString("fecha");
+				datos[5] = rs.getString("anotacion");
+				datos[6] = rs.getString("usuario");
 				this.modelo.addRow(datos);
 			}
 			this.cn.close();

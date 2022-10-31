@@ -700,9 +700,9 @@ public class Creditos extends Conexiondb {
 	}
 
 	/*                          vinculado con la funcion morosos   */
-	public float creditoGlobalCliente(int id) {
-		this.consulta = "SELECT SUM(facturas.totalFactura) AS totalCredito FROM creditos INNER JOIN clientes ON(creditos.cliente = clientes.id) "
-			+ "INNER JOIN facturas ON(facturas.credito = creditos.id) WHERE creditos.id = ?";
+	public void creditoGlobalCliente(int id) {
+		this.consulta = "SELECT SUM(facturas.totalDolares) AS totalDolares, SUM(facturas.totalCordobas) AS totalCordobas FROM creditos INNER JOIN clientes"
+			+ " ON(creditos.cliente = clientes.id) INNER JOIN facturas ON(facturas.credito = creditos.id) WHERE creditos.id = ?";
 		this.cn = Conexion();
 		float total = 0;
 		try {
@@ -710,19 +710,18 @@ public class Creditos extends Conexiondb {
 			this.pst.setInt(1, id);
 			ResultSet rs = this.pst.executeQuery();
 			while (rs.next()) {
-				total = rs.getFloat("totalCredito");
+				this.saldoCordobas = rs.getFloat("totalDolares");
+				this.saldoDolares = rs.getFloat("totalDolares");
 			}
-			this.cn.close();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e + " en la funcion creditoGlobalCliente en modelo creditos");
 		}
-		return total;
 	}
 
 	/*                          vinculado con la funcion morosos   */
-	public float AbonoGlobalCliente(int id) {
-		this.consulta = "SELECT SUM(p.monto) AS totalAbonos FROM pagoscreditos AS p "
-			+ "INNER JOIN creditos AS c ON(p.credito = c.id) INNER JOIN clientes ON(c.cliente=clientes.id) WHERE c.id = ?";
+	public void abonoGlobalCordobas(int id) {
+		this.consulta = "SELECT SUM(p.monto) AS totalAbonosC FROM pagoscreditos AS p "
+			+ "INNER JOIN creditos AS c ON(p.credito = c.id) INNER JOIN clientes ON(c.cliente=clientes.id) WHERE c.id = ? AND p.moneda = 'Córdobas'";
 		this.cn = Conexion();
 		float total = 0;
 		try {
@@ -730,13 +729,27 @@ public class Creditos extends Conexiondb {
 			this.pst.setInt(1, id);
 			ResultSet rs = this.pst.executeQuery();
 			while (rs.next()) {
-				total = rs.getFloat("totalAbonos");
+				pagosDolar = rs.getFloat("totalAbonosC");
 			}
-			this.cn.close();
+		} catch (SQLException e){
+			JOptionPane.showMessageDialog(null, e + " en la funcion AbonosGlobalCliente en modelo creditos");
+		}
+	}
+	public void abonoGlobalDolares(int id) {
+		this.consulta = "SELECT SUM(p.monto) AS totalAbonosD FROM pagoscreditos AS p "
+			+ "INNER JOIN creditos AS c ON(p.credito = c.id) INNER JOIN clientes ON(c.cliente=clientes.id) WHERE c.id = ? AND p.moneda = 'Dolar'";
+		this.cn = Conexion();
+		float total = 0;
+		try {
+			this.pst = this.cn.prepareStatement(this.consulta);
+			this.pst.setInt(1, id);
+			ResultSet rs = this.pst.executeQuery();
+			while (rs.next()) {
+				this.pagosDolar = rs.getFloat("totalAbonosD");
+			}
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e + " en la funcion AbonosGlobalCliente en modelo creditos");
 		}
-		return total;
 	}
 
 	public int obtenerUltimoPago() {
@@ -756,17 +769,17 @@ public class Creditos extends Conexiondb {
 		return id + 1;
 	}
 
-	public DefaultTableModel morosos(Date fecha) {
+	public DefaultTableModel morosos(Date fecha){
 		int contRow = 0;
-		float saldo;
+		float saldoC,saldoD;
 		this.cn = Conexion();
-		String[] titulos = {"Nombres", "Apellidos", "Telefono", "Dirección", "F. pago", "Monto ultimo pago", "N pago", "Saldo"};
-		this.registros = new String[8];
+		String[] titulos = {"Nombres", "Apellidos", "Telefono", "Dirección", "F. pago", "Monto ultimo pago","Moneda", "N pago", "Saldo $","Saldo C$"};
+		this.registros = new String[10];
 		this.consulta = "SELECT p.id, p.credito, DATE_FORMAT(p.fecha,'%a, %d-%b-%Y') AS fechaFormat ,"
-			+ " p.monto,cl.nombres,apellidos,telefono,direccion FROM pagoscreditos AS p"
+			+ " p.monto,p.moneda,cl.nombres,apellidos,telefono,direccion FROM pagoscreditos AS p"
 			+ " INNER JOIN (SELECT credito, max(fecha) AS mfecha FROM pagoscreditos GROUP BY credito) AS ultimoPago ON"
 			+ " p.credito=ultimoPago.credito INNER JOIN creditos AS c ON(p.credito=c.id) INNER JOIN clientes AS cl ON(cl.id=c.cliente)"
-			+ " AND p.fecha=ultimoPago.mfecha AND c.estado='Pendiente' AND p.fecha < ?";
+			+ " AND p.fecha=ultimoPago.mfecha AND c.estado='Pendiente' AND DATE(p.fecha) < ?";
 		this.modelo = new DefaultTableModel(null, titulos) {
 			public boolean isCellEditable(int row, int col) {
 				return false;
@@ -776,18 +789,25 @@ public class Creditos extends Conexiondb {
 			this.pst = this.cn.prepareStatement(setLocalFormat);
 			this.pst.execute();
 			this.pst = this.cn.prepareStatement(this.consulta);
-			this.pst.setDate(1, fecha);
+			this.pst.setDate(1,fecha);
 			ResultSet rs = this.pst.executeQuery();
+			System.out.println(rs.getRow());
 			while (rs.next()) {
-				saldo = this.creditoGlobalCliente(rs.getInt("credito")) - this.AbonoGlobalCliente(rs.getInt("credito"));
+				this.pagosPorCedito(rs.getInt("credito"));
+				this.saldoInicialCredito(rs.getInt("credito"));
+				this.saldoPorCredito(rs.getInt("credito"));
+				saldoC = this.saldoCordobas - this.pagosCordobas;
+				saldoD = this.saldoDolares - this.pagosDolar;
 				this.registros[0] = rs.getString("nombres");
 				this.registros[1] = rs.getString("Apellidos");
 				this.registros[2] = rs.getString("telefono");
 				this.registros[3] = rs.getString("direccion");
 				this.registros[4] = rs.getString("fechaFormat");
 				this.registros[5] = rs.getString("monto");
-				this.registros[6] = rs.getString("id");
-				this.registros[7] = this.formato.format(saldo);
+				this.registros[6] = rs.getString("moneda");
+				this.registros[7] = rs.getString("id");
+				this.registros[8] = this.formato.format(saldoD);
+				this.registros[9] = this.formato.format(saldoC);
 				this.modelo.addRow(this.registros);
 				contRow++;
 
@@ -797,9 +817,15 @@ public class Creditos extends Conexiondb {
 			} else {
 				this.empty = false;
 			}
-			this.cn.close();
 		} catch (SQLException e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, e + " en el metodo morosos en modelo creditos");
+		}finally{
+			try {
+				this.cn.close();
+			} catch (SQLException ex) {
+				Logger.getLogger(Creditos.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 		return this.modelo;
 	}
